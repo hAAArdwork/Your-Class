@@ -1,6 +1,12 @@
 <template>
   <v-container fill-height fluid>
     <v-row>
+      <v-col cols="12" class="text-center white--text">
+        <p class="text-h3 font-weight-black mb-0">Your Class</p>
+        <p class="text-h5 font-weight-medium">
+          온라인 통합 실습 관리 시스템
+        </p>
+      </v-col>
       <v-col>
         <!-- 반응형 UI 설정 -->
         <v-card
@@ -35,6 +41,15 @@
                     @click:append="show = !show"
                   >
                   </v-text-field>
+                  <v-btn block color="primary" class="mt-5">로그인</v-btn>
+                </v-col>
+                <v-col cols="10" class="text-center">
+                  <span class="text-secondary">
+                    앗, 아직 회원이 아니신가요?
+                  </span>
+                  <router-link class="inline" to="/">
+                    회원가입 하러가기
+                  </router-link>
                 </v-col>
               </v-row>
             </v-form>
