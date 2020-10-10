@@ -40,9 +40,10 @@
       <router-view></router-view>
     </v-main>
 
+    <!-- 
     <v-footer absolute class="font-weight-bold">
       <v-col cols="12" class="text-center">This is Footer</v-col>
-    </v-footer>
+    </v-footer> -->
   </v-app>
 </template>
 
