@@ -29,7 +29,7 @@
         </v-btn>
       </router-link>
 
-      <router-link to="/login" class="router">
+      <router-link :to="{ name: 'Login' }" class="router">
         <v-btn icon>
           <v-icon>mdi-login-variant</v-icon>
         </v-btn>
