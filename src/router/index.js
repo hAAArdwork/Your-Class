@@ -1,6 +1,6 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
-import Store from "../store";
+// import Store from "../store";
 import Home from "../views/Home.vue";
 
 Vue.use(VueRouter);
@@ -13,15 +13,15 @@ const routes = [
     meta: {
       title: "Your Class",
       requiredAuth: true
-    },
-    // 로그인 상태가 아닐 때, 로그인 화면으로 강제 이동
-    beforeEnter: (to, from, next) => {
-      if (!Store.getters.loginStatus) {
-        next("/auth");
-      } else {
-        next();
-      }
     }
+    // 로그인 상태가 아닐 때, 로그인 화면으로 강제 이동
+    // beforeEnter: (to, from, next) => {
+    //   if (!Store.getters.loginStatus) {
+    //     next("/auth");
+    //   } else {
+    //     next();
+    //   }
+    // }
   },
   {
     path: "/auth",
@@ -50,6 +50,7 @@ const router = new VueRouter({
   routes
 });
 
+// 라우팅 시, 페이지 제목(상단 탭) 변경
 router.beforeEach((to, from, next) => {
   document.title = to.meta.title;
   next();

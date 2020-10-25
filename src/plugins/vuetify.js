@@ -10,9 +10,11 @@ const customColor = new Vuetify({
   theme: {
     themes: {
       light: {
-        primary: colors.orange.lighten1,
-        secondary: colors.orange.lighten3,
-        accent: colors.orange.darken1
+        primary: colors.shades.black, // 기본 색상
+        secondary: colors.shades.white, // 기본 색상
+        accent: colors.lightBlue.lighten3, // 강조 색상
+        success: colors.green.lighten2, // 성공 색상
+        error: colors.red.lighten2
       }
     }
   }

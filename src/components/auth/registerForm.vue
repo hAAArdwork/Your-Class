@@ -2,18 +2,19 @@
   <!-- 반응형 UI 설정 -->
   <v-card
     class="mx-auto rounded-lg"
-    min-width="400px"
-    max-width="600px"
+    min-width="315px"
+    max-width="500px"
     width="50vw"
   >
     <v-card-title>
       <span class="text-h5 font-weight-medium">회원가입</span>
+      <v-spacer></v-spacer>
     </v-card-title>
     <v-divider></v-divider>
     <v-card-text>
       <v-form v-model="valid">
         <v-row class="d-flex justify-center">
-          <v-col cols="10">
+          <v-col cols="10" class="px-0">
             <v-text-field
               class="registerForm"
               label="Email"
@@ -64,23 +65,48 @@
               label="School"
               prepend-icon="mdi-school"
             ></v-select>
-            <v-switch
-              class="registerForm"
-              v-model="isStudent"
-              :label="`${isStudent ? '학생' : '교사'} 자격으로 가입합니다.`"
-            ></v-switch>
+
+            <v-radio-group row v-model="authority" :mandatory="false">
+              <template v-slot:label>
+                <div>
+                  <strong class="primary--text">사용자 권한</strong>을
+                  설정하세요!
+                </div>
+              </template>
+              <v-radio
+                class="mx-auto"
+                label="학생"
+                color="success"
+                value="isStudent"
+              ></v-radio>
+              <v-radio
+                class="mx-auto"
+                label="교사"
+                color="error"
+                value="isTeacher"
+              ></v-radio>
+            </v-radio-group>
+
             <v-file-input
               class="registerForm"
               label="공무원증 후면을 촬영 후, 업로드해주세요."
-              v-if="!isStudent"
+              v-if="authority === 'isTeacher'"
               v-model="photoFile"
               show-size
               counter
             >
             </v-file-input>
-            <v-btn block color="primary" class="mt-5">
+            <v-btn block color="accent" class="mt-5">
               회원가입
             </v-btn>
+          </v-col>
+          <v-col cols="10" class="text-center">
+            <span class="text-secondary">
+              이미 회원이신가요?
+            </span>
+            <router-link :to="{ name: 'Login' }">
+              로그인 하러가기
+            </router-link>
           </v-col>
         </v-row>
       </v-form>
@@ -101,7 +127,7 @@ export default {
     name: "",
     birthday: "",
     schools: ["서라벌고등학교", "운정고등학교", "테스트고등학교"],
-    isStudent: true,
+    authority: "isStudent",
     photoFile: null,
 
     // 유효성 검사 규칙들
