@@ -38,7 +38,7 @@
           </v-col>
           <v-col cols="10" class="text-center">
             <span class="text-secondary">
-              앗, 아직 회원이 아니신가요?
+              아직 회원이 아니신가요?
             </span>
             <router-link :to="{ name: 'Register' }">
               회원가입 하러가기

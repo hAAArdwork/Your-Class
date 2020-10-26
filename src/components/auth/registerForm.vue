@@ -95,7 +95,7 @@
 
             <v-radio-group row v-model="userAuthority" :mandatory="false">
               <template v-slot:label>
-                <div><strong> 사용자 권한 </strong>을 설정하세요!</div>
+                <div>{{ userAuthoritySelectionText }}</div>
               </template>
 
               <v-radio
@@ -210,7 +210,19 @@ export default {
       return value =>
         !value || value.size < 5000000 || "사진 용량은 5MB를 넘을 수 없습니다.";
     }
-  })
+  }),
+  computed: {
+    userAuthoritySelectionText() {
+      switch (this.$vuetify.breakpoint.name) {
+        case "xs":
+          return "사용자 권한";
+        case "sm":
+          return "사용자 권한 선택";
+        default:
+          return "사용자 권한을 선택하세요.";
+      }
+    }
+  }
 };
 </script>
 

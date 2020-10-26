@@ -2,7 +2,7 @@
   <div>
     <v-container class="introduction" fluid>
       <v-responsive
-        class="pa-10 mx-auto d-flex align-center"
+        class="pa-5 pa-sm-10 mx-auto d-flex align-center"
         min-height="85vh"
         max-width="1250px"
       >
@@ -31,10 +31,14 @@
               </v-col>
 
               <v-col cols="12">
-                <v-btn class="mx-5 accent" :to="{ name: 'Login' }">
+                <v-btn class="mx-2 mx-sm-5 accent" :to="{ name: 'Login' }">
                   로그인
                 </v-btn>
-                <v-btn class="mx-5 grey" dark :to="{ name: 'Register' }">
+                <v-btn
+                  class="mx-2 mx-sm-5 grey"
+                  dark
+                  :to="{ name: 'Register' }"
+                >
                   회원가입
                 </v-btn>
               </v-col>
@@ -45,7 +49,12 @@
           <v-col cols="12" md="6">
             <!-- 서비스 기능 설명 카드 렌더링 -->
             <v-row class="d-flex justify-center align-center">
-              <v-col cols="6" v-for="(data, index) in cardData" :key="index">
+              <v-col
+                cols="12"
+                sm="6"
+                v-for="(data, index) in cardData"
+                :key="index"
+              >
                 <!-- Props로 각각 카드에 해당하는 데이터 전달 -->
                 <introductionCard :card-data="data" />
               </v-col>
@@ -57,7 +66,7 @@
 
     <v-container fluid>
       <v-responsive
-        class="py-10 mx-auto mb-10"
+        class="pa-sm-10 mx-auto mb-10"
         min-height="55vh"
         max-width="1000px"
       >

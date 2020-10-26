@@ -1,7 +1,7 @@
 <template>
   <v-container fluid>
     <v-responsive
-      class="py-10 px-5 mx-auto d-flex align-center"
+      class="pa-5 pa-sm-10 mx-auto d-flex align-center"
       min-height="85vh"
       max-width="1250px"
     >
