@@ -23,17 +23,21 @@
 
       <v-spacer></v-spacer>
 
-      <router-link to="/" class="router">
-        <v-btn icon>
-          <v-icon>mdi-home</v-icon>
-        </v-btn>
-      </router-link>
+      <v-btn icon :to="{ name: 'LandingPage' }" exact>
+        <v-icon>mdi-home</v-icon>
+      </v-btn>
 
-      <router-link :to="{ name: 'Login' }" class="router">
-        <v-btn icon>
-          <v-icon>mdi-login-variant</v-icon>
-        </v-btn>
-      </router-link>
+      <v-btn icon :to="{ name: 'MainPage' }">
+        <v-icon>mdi-dots-grid</v-icon>
+      </v-btn>
+
+      <v-btn icon :to="{ name: 'MyPage' }">
+        <v-icon>mdi-account</v-icon>
+      </v-btn>
+
+      <v-btn icon :to="{ name: 'Login' }">
+        <v-icon>mdi-login-variant</v-icon>
+      </v-btn>
     </v-app-bar>
 
     <v-main>

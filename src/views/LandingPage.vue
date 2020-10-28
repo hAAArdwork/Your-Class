@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-container class="introduction" fluid>
+    <v-container fluid>
       <v-responsive
         class="pa-5 pa-sm-10 mx-auto d-flex align-center"
         min-height="85vh"
@@ -9,7 +9,7 @@
         <v-row class="d-flex align-center">
           <!-- 좌측 로고 및 슬로건 영역 -->
           <v-col cols="12" md="6">
-            <v-row class="py-10 px-10 d-flex text-center">
+            <v-row class="py-10 px-10 text-center">
               <v-col cols="12">
                 <v-img
                   alt="Bussiness Logo"
@@ -125,7 +125,7 @@
 </template>
 
 <script>
-import introductionCard from "../components/home/introductionCard";
+import introductionCard from "../components/landingPage/introductionCard";
 
 export default {
   components: {
@@ -137,12 +137,12 @@ export default {
       {
         iconPath:
           "https://www.flaticon.com/svg/static/icons/svg/3449/3449713.svg",
-        title: "온라인 실습 관리"
+        title: "온라인 학습 관리"
       },
       {
         iconPath:
           "https://www.flaticon.com/svg/static/icons/svg/3449/3449630.svg",
-        title: "실습등록 및 관리"
+        title: "과제 등록 및 관리"
       },
       {
         iconPath:

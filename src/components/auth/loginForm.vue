@@ -18,7 +18,6 @@
               label="Email"
               v-model="email"
               prepend-icon="mdi-at"
-              hint="이메일 인증을 위해 정확한 정보를 입력해주새요."
               :rules="[isEmail('이메일')]"
             >
             </v-text-field>
@@ -38,7 +37,7 @@
           </v-col>
           <v-col cols="10" class="text-center">
             <span class="text-secondary">
-              아직 회원이 아니신가요?
+              회원이 아니신가요?
             </span>
             <router-link :to="{ name: 'Register' }">
               회원가입 하러가기
