@@ -1,26 +1,64 @@
 <template>
   <div>
     <v-container class="introduction" fluid>
-      <v-responsive class="pa-10 mx-auto" min-height="80vh" max-width="1200px">
-        <v-row class="py-10 white--text text-center">
-          <v-col cols="12">
-            <p class="text-h3 font-weight-black mb-0">Your Class</p>
-            <p class="text-h5 font-weight-medium">
-              온라인 통합 실습 관리 시스템
-            </p>
+      <v-responsive
+        class="pa-5 pa-sm-10 mx-auto d-flex align-center"
+        min-height="85vh"
+        max-width="1250px"
+      >
+        <v-row class="d-flex align-center">
+          <!-- 좌측 로고 및 슬로건 영역 -->
+          <v-col cols="12" md="6">
+            <v-row class="py-10 px-10 d-flex text-center">
+              <v-col cols="12">
+                <v-img
+                  alt="Bussiness Logo"
+                  class="mx-auto"
+                  contain
+                  :src="require('../assets/logo.png')"
+                  transition="fab-transition"
+                  width="150"
+                />
+              </v-col>
+
+              <v-col cols="12">
+                <p class="text-h3 font-weight-bold accent--text">
+                  Your Class
+                </p>
+                <p class="text-h5 font-weight-medium">
+                  당신이 찾던 학습 관리 웹 어플리케이션
+                </p>
+              </v-col>
+
+              <v-col cols="12">
+                <v-btn class="mx-2 mx-sm-5 accent" :to="{ name: 'Login' }">
+                  로그인
+                </v-btn>
+                <v-btn
+                  class="mx-2 mx-sm-5 grey"
+                  dark
+                  :to="{ name: 'Register' }"
+                >
+                  회원가입
+                </v-btn>
+              </v-col>
+            </v-row>
           </v-col>
-        </v-row>
-        <!-- 서비스 기능 설명 카드 렌더링 -->
-        <v-row class="d-flex justify-center align-center">
-          <v-col
-            cols="12"
-            sm="6"
-            md="4"
-            v-for="(data, index) in cardData"
-            :key="index"
-          >
-            <!-- Props로 각각 카드에 해당하는 데이터 전달 -->
-            <introductionCard :card-data="data" />
+
+          <!-- 제공 기능 설명 영역 -->
+          <v-col cols="12" md="6">
+            <!-- 서비스 기능 설명 카드 렌더링 -->
+            <v-row class="d-flex justify-center align-center">
+              <v-col
+                cols="12"
+                sm="6"
+                v-for="(data, index) in cardData"
+                :key="index"
+              >
+                <!-- Props로 각각 카드에 해당하는 데이터 전달 -->
+                <introductionCard :card-data="data" />
+              </v-col>
+            </v-row>
           </v-col>
         </v-row>
       </v-responsive>
@@ -28,14 +66,14 @@
 
     <v-container fluid>
       <v-responsive
-        class="pa-10 mb-10 mx-auto"
+        class="pa-sm-10 mx-auto mb-10"
         min-height="55vh"
         max-width="1000px"
       >
         <!-- 프로젝트 소개 및 구체적인 설명 -->
-        <v-row class="py-10 text--secondary text-center">
+        <v-row class="py-10 text--primary text-center">
           <v-col cols="12">
-            <p class="text-h3 font-weight-black orange--text">
+            <p class="text-h3 font-weight-black accent--text">
               소프트웨어공학개론 프로젝트 결과물입니다.
             </p>
             <p class="text-h5 font-weight-medium">
@@ -43,6 +81,7 @@
               버전을 사용하고 있습니다.
             </p>
           </v-col>
+
           <v-col cols="12">
             <p class="text-h6">
               Lorem Ipsum is simply dummy text of the printing and typesetting
@@ -98,23 +137,22 @@ export default {
       {
         iconPath:
           "https://www.flaticon.com/svg/static/icons/svg/3449/3449713.svg",
-        title: "온라인 실습 관리",
-        description:
-          "Lorem ipsum har inte bara överlevt fem århundraden, utan även övergången till elektronisk typografi utan större förändringar."
+        title: "온라인 실습 관리"
       },
       {
         iconPath:
           "https://www.flaticon.com/svg/static/icons/svg/3449/3449630.svg",
-        title: "실습등록 및 관리",
-        description:
-          "Lorem Ipsum är en utfyllnadstext från tryck- och förlagsindustrin. Lorem ipsum har varit standard ända sedan 1500-talet."
+        title: "실습등록 및 관리"
       },
       {
         iconPath:
           "https://www.flaticon.com/svg/static/icons/svg/3449/3449741.svg",
-        title: "질의응답",
-        description:
-          "när en okänd boksättare tog att antal bokstäver och blandade dem för att göra ett provexemplar av en bok."
+        title: "질의응답"
+      },
+      {
+        iconPath:
+          "https://www.flaticon.com/svg/static/icons/svg/3215/3215477.svg",
+        title: "학습 일정 관리"
       }
     ],
     // 프레임워크 로고 관련 데이터
@@ -126,8 +164,5 @@ export default {
   })
 };
 </script>
-<style scoped>
-.introduction {
-  background: linear-gradient(180deg, #ffa726, #ffffff);
-}
-</style>
+
+<style scoped></style>

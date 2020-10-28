@@ -1,17 +1,41 @@
 <template>
-  <v-container fill-height fluid>
-    <v-row>
-      <v-col cols="12" class="text-center white--text">
-        <p class="text-h3 font-weight-black mb-0">Your Class</p>
-        <p class="text-h5 font-weight-medium">
-          온라인 통합 실습 관리 시스템
-        </p>
-      </v-col>
-      <v-col>
-        <!-- 로그인 폼 컴포넌트 -->
-        <router-view></router-view>
-      </v-col>
-    </v-row>
+  <v-container fluid>
+    <v-responsive
+      class="pa-5 pa-sm-10 mx-auto d-flex align-center"
+      min-height="85vh"
+      max-width="1250px"
+    >
+      <v-row class="d-flex align-center">
+        <!-- 좌측 로고 및 슬로건 영역 -->
+        <v-col cols="12" md="6">
+          <v-row class="py-10 px-10 d-flex text-center">
+            <v-col cols="12">
+              <v-img
+                alt="Bussiness Logo"
+                class="mx-auto"
+                contain
+                :src="require('../assets/logo.png')"
+                width="150"
+              />
+            </v-col>
+
+            <v-col cols="12">
+              <p class="text-h3 font-weight-bold accent--text">
+                Your Class
+              </p>
+              <p class="text-h5 font-weight-medium">
+                당신이 찾던 학습 관리 웹 어플리케이션
+              </p>
+            </v-col>
+          </v-row>
+        </v-col>
+
+        <!-- 제공 기능 설명 영역 -->
+        <v-col cols="12" md="6">
+          <router-view></router-view>
+        </v-col>
+      </v-row>
+    </v-responsive>
   </v-container>
 </template>
 
@@ -23,6 +47,5 @@ export default {
 
 <style scoped>
 .container {
-  background: linear-gradient(180deg, #ffa726, #ffffff);
 }
 </style>

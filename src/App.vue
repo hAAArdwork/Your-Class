@@ -1,6 +1,6 @@
 <template>
   <v-app>
-    <v-app-bar color="primary" elevate-on-scroll dark app>
+    <v-app-bar color="secondary" elevate-on-scroll app>
       <div class="d-flex align-center">
         <v-img
           alt="Bussiness Logo"
@@ -39,11 +39,6 @@
     <v-main>
       <router-view></router-view>
     </v-main>
-
-    <!-- 
-    <v-footer absolute class="font-weight-bold">
-      <v-col cols="12" class="text-center">This is Footer</v-col>
-    </v-footer> -->
   </v-app>
 </template>
 

@@ -2,8 +2,8 @@
   <!-- 반응형 UI 설정 -->
   <v-card
     class="mx-auto rounded-lg"
-    min-width="400px"
-    max-width="600px"
+    min-width="315px"
+    max-width="450px"
     width="50vw"
   >
     <v-card-title>
@@ -13,7 +13,7 @@
     <v-card-text>
       <v-form v-model="valid">
         <v-row class="d-flex justify-center">
-          <v-col cols="10">
+          <v-col cols="10" class="px-0">
             <v-text-field
               label="Email"
               v-model="email"
@@ -32,13 +32,13 @@
               @click:append="show = !show"
             >
             </v-text-field>
-            <v-btn block color="primary" class="mt-5" @click="login">
+            <v-btn block color="accent" class="mt-5" @click="login">
               로그인
             </v-btn>
           </v-col>
           <v-col cols="10" class="text-center">
             <span class="text-secondary">
-              앗, 아직 회원이 아니신가요?
+              아직 회원이 아니신가요?
             </span>
             <router-link :to="{ name: 'Register' }">
               회원가입 하러가기
