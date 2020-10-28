@@ -1,27 +1,19 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
 // import Store from "../store";
-import Home from "../views/Home.vue";
+import LandingPage from "../views/LandingPage.vue";
 
 Vue.use(VueRouter);
 
 const routes = [
   {
     path: "/",
-    name: "Home",
-    component: Home,
+    name: "LandingPage",
+    component: LandingPage,
     meta: {
-      title: "Your Class",
-      requiredAuth: true
+      title: "Your Class"
+      // requiredAuth: true
     }
-    // 로그인 상태가 아닐 때, 로그인 화면으로 강제 이동
-    // beforeEnter: (to, from, next) => {
-    //   if (!Store.getters.loginStatus) {
-    //     next("/auth");
-    //   } else {
-    //     next();
-    //   }
-    // }
   },
   {
     path: "/auth",
@@ -41,6 +33,25 @@ const routes = [
       }
     ],
     meta: { title: "로그인" }
+  },
+  {
+    path: "/main",
+    name: "MainPage",
+    component: () => import("../views/MainPage.vue"),
+    meta: { title: "메인" }
+  },
+  {
+    path: "/mypage",
+    component: () => import("../views/MyPage.vue"),
+    children: [
+      {
+        path: "",
+        name: "MyPage",
+        component: () => import("../components/mypage/userInfo.vue"),
+        meta: { title: "마이페이지" }
+      }
+    ],
+    meta: { title: "마이페이지" }
   }
 ];
 

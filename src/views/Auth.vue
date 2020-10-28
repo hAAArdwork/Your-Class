@@ -45,7 +45,4 @@ export default {
 };
 </script>
 
-<style scoped>
-.container {
-}
-</style>
+<style scoped></style>
