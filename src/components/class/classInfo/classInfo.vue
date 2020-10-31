@@ -18,8 +18,8 @@
       <v-col
         cols="12"
         sm="4"
-        v-for="(data, index_1) in recentPosts"
-        :key="index_1"
+        v-for="data in recentPosts"
+        :key="`Post ${data.id}`"
       >
         <v-card rounded="xl" class="pa-2">
           <v-card-title class="py-1">
@@ -45,7 +45,12 @@
         <span class="text-h4 font-weight-bold">마감 임박 과제물</span>
       </v-col>
 
-      <v-col cols="12" sm="4" v-for="(data, index) in assignments" :key="index">
+      <v-col
+        cols="12"
+        sm="4"
+        v-for="data in assignments"
+        :key="`Assignment ${data.id}`"
+      >
         <v-card rounded="xl" class="pa-2">
           <v-card-title class="py-1">
             <div class="font-weight-bold">{{ data.title }}</div>
@@ -79,16 +84,19 @@ export default {
     },
     recentPosts: [
       {
+        id: 0,
         title: "1장 과제에 대한 질문",
         author: "김진형",
         dateCreated: "2020/10/31"
       },
       {
+        id: 1,
         title: "2장 과제에 대한 질문",
         author: "양준영",
         dateCreated: "2020/10/27"
       },
       {
+        id: 2,
         title: "강좌 공지사항입니다.",
         author: "이정우 선생님",
         dateCreated: "2020/10/26"
@@ -96,11 +104,13 @@ export default {
     ],
     assignments: [
       {
+        id: 0,
         title: "2장 연습문제 풀이",
         author: "이정우 선생님",
         dueDate: "2020/11/10"
       },
       {
+        id: 1,
         title: "1장 연습문제 풀이",
         author: "이정우 선생님",
         dueDate: "2020/10/29"

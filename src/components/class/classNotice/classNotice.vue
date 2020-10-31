@@ -1,7 +1,209 @@
-<template> <div>Notice</div> </template>
+<template>
+  <v-container class="px-4 px-sm-6 px-md-8 px-xl-16">
+    <p class="text-h5 font-weight-bold">
+      공지사항
+    </p>
+
+    <p class="text-subtitle-1 hidden-xs-only">
+      중요한 공지사항을 확인하고, 학습 일정에 반영하세요!
+    </p>
+
+    <v-data-table
+      mobile-breakpoint="0"
+      :headers="headers"
+      :items="posts"
+      :items-per-page="itemPerPage"
+      :page.sync="page"
+      :expanded.sync="expanded"
+      @page-count="pageCount = $event"
+      hide-default-header
+      hide-default-footer
+      show-expand
+      single-expand
+      :sort-desc="[true]"
+      :sort-by="['number']"
+      item-key="number"
+      class="elevation-6"
+    >
+      <template v-slot:expanded-item="{ headers, item }">
+        <td :colspan="headers.length">공지사항 세부 내용 {{ item.title }}</td>
+      </template>
+
+      <template v-slot:[`item.number`]="{ item }">
+        {{ item.number }}
+      </template>
+
+      <template v-slot:[`item.title`]="{ item }">
+        <div
+          :class="
+            $vuetify.breakpoint.name == 'sm' || 'xs' ? 'text-truncate' : ''
+          "
+          :style="`max-width: ${truncateLength};`"
+        >
+          {{ item.title }}
+        </div>
+      </template>
+
+      <template v-slot:[`item.author`]="{ item }">
+        {{
+          $vuetify.breakpoint.name != "xs"
+            ? item.author
+            : item.author.split(" ")[0]
+        }}
+      </template>
+
+      <template v-slot:[`item.dateCreated`]="{ item }">
+        <span class="hidden-xs-only">{{
+          $vuetify.breakpoint.name == "sm"
+            ? item.dateCreated.substr(0, 10)
+            : item.dateCreated
+        }}</span>
+      </template>
+    </v-data-table>
+
+    <div class="text-center pt-2">
+      <v-pagination color="accent" v-model="page" :length="pageCount">
+      </v-pagination>
+    </div>
+  </v-container>
+</template>
 
 <script>
-export default {};
+export default {
+  data: () => ({
+    expanded: [],
+    page: 1,
+    pageCount: 0,
+    headers: [
+      { text: "번호", value: "number", align: "center" },
+      { text: "제목", value: "title", align: "center", sortable: false },
+      { text: "작성자", value: "author", align: "center", sortable: false },
+      { text: "작성일", value: "dateCreated", align: "center", sortable: false }
+    ],
+    posts: [
+      {
+        number: 1,
+        subject: "물리",
+        title: "과목 일정에 대한 공지입니다.",
+        author: "이정우 선생님",
+        dateCreated: "2020-03-01 10:30"
+      },
+      {
+        number: 2,
+        subject: "물리",
+        title: "1장 수업 자료입니다.",
+        author: "이정우 선생님",
+        dateCreated: "2020-03-03 10:30"
+      },
+      {
+        number: 3,
+        subject: "물리",
+        title: "2장 수업 자료입니다.",
+        author: "이정우 선생님",
+        dateCreated: "2020-03-11 10:30"
+      },
+      {
+        number: 4,
+        subject: "물리",
+        title: "3장 수업 자료입니다.",
+        author: "이정우 선생님",
+        dateCreated: "2020-03-13 10:30"
+      },
+      {
+        number: 5,
+        subject: "물리",
+        title: "4장 수업 자료입니다.",
+        author: "이정우 선생님",
+        dateCreated: "2020-03-21 10:30"
+      },
+      {
+        number: 6,
+        subject: "물리",
+        title: "5장 수업 자료입니다.",
+        author: "이정우 선생님",
+        dateCreated: "2020-03-29 10:30"
+      },
+      {
+        number: 7,
+        subject: "물리",
+        title: "1차 과제물에 대한 안내입니다.",
+        author: "이정우 선생님",
+        dateCreated: "2020-04-02 10:30"
+      },
+      {
+        number: 8,
+        subject: "물리",
+        title: "과목 일정 변경에 대한 공지입니다.",
+        author: "이정우 선생님",
+        dateCreated: "2020-04-05 10:30"
+      },
+      {
+        number: 9,
+        subject: "물리",
+        title: "중간고사 일정에 대한 공지입니다.",
+        author: "이정우 선생님",
+        dateCreated: "2020-04-15 10:30"
+      },
+      {
+        number: 10,
+        subject: "물리",
+        title: "수행평가 일정에 대한 공지입니다.",
+        author: "이정우 선생님",
+        dateCreated: "2020-04-16 10:30"
+      },
+      {
+        number: 11,
+        subject: "물리",
+        title: "6장 수업 자료입니다.",
+        author: "이정우 선생님",
+        dateCreated: "2020-04-20 10:30"
+      },
+      {
+        number: 12,
+        subject: "물리",
+        title: "7장 수업 자료입니다.",
+        author: "이정우 선생님",
+        dateCreated: "2020-04-30 10:30"
+      },
+      {
+        number: 13,
+        subject: "물리",
+        title: "2회차 과제에 대한 안내입니다.",
+        author: "이정우 선생님",
+        dateCreated: "2020-05-01 10:30"
+      }
+    ]
+  }),
+  computed: {
+    itemPerPage() {
+      switch (this.$vuetify.breakpoint.name) {
+        case "xs":
+          return 5;
+        default:
+          return 8;
+      }
+    },
+    truncateLength() {
+      switch (this.$vuetify.breakpoint.name) {
+        case "xs":
+          return "125px";
+        case "sm":
+          return "145px";
+        default:
+          return "";
+      }
+    }
+  }
+};
 </script>
 
-<style></style>
+<style>
+.v-data-table > .v-data-table__wrapper > table > tbody > tr > td,
+.v-data-table > .v-data-table__wrapper > table > tbody > tr > th,
+.v-data-table > .v-data-table__wrapper > table > thead > tr > td,
+.v-data-table > .v-data-table__wrapper > table > thead > tr > th,
+.v-data-table > .v-data-table__wrapper > table > tfoot > tr > td,
+.v-data-table > .v-data-table__wrapper > table > tfoot > tr > th {
+  padding: 0px 10px;
+}
+</style>
