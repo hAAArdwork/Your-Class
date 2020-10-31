@@ -52,6 +52,47 @@ const routes = [
       }
     ],
     meta: { title: "마이페이지" }
+  },
+  {
+    path: "/class",
+    name: "Class",
+    component: () => import("../views/Class.vue"),
+    children: [
+      {
+        path: "",
+        name: "classInfo",
+        component: () => import("../components/class/classInfo/classInfo.vue"),
+        meta: { title: "교과정보" }
+      },
+      {
+        path: "notice",
+        name: "classNotice",
+        component: () =>
+          import("../components/class/classNotice/classNotice.vue"),
+        meta: { title: "교과정보" }
+      },
+      {
+        path: "assignment",
+        name: "classAssignment",
+        component: () =>
+          import("../components/class/classAssignment/classAssignment.vue"),
+        meta: { title: "교과정보" }
+      },
+      {
+        path: "ask",
+        name: "classQuestion",
+        component: () =>
+          import("../components/class/classQuestion/classQuestion.vue"),
+        meta: { title: "교과정보" }
+      },
+      {
+        path: "manage",
+        name: "classManage",
+        component: () =>
+          import("../components/class/classManage/classManage.vue"),
+        meta: { title: "교과정보" }
+      }
+    ]
   }
 ];
 
