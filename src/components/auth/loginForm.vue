@@ -9,7 +9,9 @@
     <v-card-title>
       <span class="text-h5 font-weight-medium">로그인</span>
     </v-card-title>
+
     <v-divider></v-divider>
+
     <v-card-text>
       <v-form v-model="valid">
         <v-row class="d-flex justify-center">
@@ -21,6 +23,7 @@
               :rules="[isEmail('이메일')]"
             >
             </v-text-field>
+
             <v-text-field
               v-model="password"
               label="Password"
@@ -29,16 +32,20 @@
               :type="show ? 'text' : 'password'"
               :rules="[required('비밀번호'), hasKorean('비밀번호')]"
               @click:append="show = !show"
+              @keydown.enter="login"
             >
             </v-text-field>
+
             <v-btn block color="accent" class="mt-5" @click="login">
               로그인
             </v-btn>
           </v-col>
+
           <v-col cols="10" class="text-center">
             <span class="text-secondary">
               회원이 아니신가요?
             </span>
+
             <router-link :to="{ name: 'Register' }">
               회원가입 하러가기
             </router-link>
@@ -74,7 +81,11 @@ export default {
   }),
   methods: {
     login() {
-      this.$store.commit("login");
+      const formData = {
+        email: this.email,
+        password: this.password
+      };
+      this.$store.dispatch("login", formData);
     }
   }
 };

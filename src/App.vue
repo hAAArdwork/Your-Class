@@ -23,20 +23,24 @@
 
       <v-spacer></v-spacer>
 
-      <v-btn icon :to="{ name: 'LandingPage' }" exact>
+      <v-btn v-if="!isLoggedIn" icon :to="{ name: 'LandingPage' }" exact>
         <v-icon>mdi-home</v-icon>
       </v-btn>
 
-      <v-btn icon :to="{ name: 'MainPage' }">
+      <v-btn v-if="isLoggedIn" icon :to="{ name: 'MainPage' }">
         <v-icon>mdi-dots-grid</v-icon>
       </v-btn>
 
-      <v-btn icon :to="{ name: 'MyPage' }">
+      <v-btn v-if="isLoggedIn" icon :to="{ name: 'MyPage' }">
         <v-icon>mdi-account</v-icon>
       </v-btn>
 
-      <v-btn icon :to="{ name: 'Login' }">
+      <v-btn v-if="!isLoggedIn" icon :to="{ name: 'Login' }">
         <v-icon>mdi-login-variant</v-icon>
+      </v-btn>
+
+      <v-btn v-if="isLoggedIn" icon @click="logout">
+        <v-icon>mdi-logout-variant</v-icon>
       </v-btn>
     </v-app-bar>
 
@@ -50,12 +54,22 @@
 export default {
   name: "App",
 
-  components: {},
+  computed: {
+    isLoggedIn() {
+      return this.$store.getters.isLoggedIn;
+    }
+  },
 
   data: () => ({
     logoSrc: "https://cdn.vuetifyjs.com/images/logos/vuetify-logo-dark.png",
     nameSrc: "https://cdn.vuetifyjs.com/images/logos/vuetify-name-dark.png"
-  })
+  }),
+
+  methods: {
+    logout() {
+      this.$store.dispatch("logout");
+    }
+  }
 };
 </script>
 

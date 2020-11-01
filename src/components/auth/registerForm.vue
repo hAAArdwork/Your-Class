@@ -62,15 +62,37 @@
             >
             </v-text-field>
 
-            <v-text-field
-              class="registerForm"
-              v-model="birthday"
-              type="date"
-              label="Date of Birth"
-              prepend-icon="mdi-calendar"
-              :rules="[isValidUser()]"
+            <!-- 생년월일 Date Picker -->
+            <v-menu
+              ref="menu"
+              v-model="menu"
+              :close-on-content-click="false"
+              transition="scale-transition"
+              offset-y
+              min-width="275px"
             >
-            </v-text-field>
+              <template v-slot:activator="{ on, attrs }">
+                <v-text-field
+                  class="registerForm"
+                  v-model="birthday"
+                  label="Birthday date"
+                  prepend-icon="mdi-calendar"
+                  v-bind="attrs"
+                  v-on="on"
+                  :rules="[isValidUser()]"
+                  readonly
+                ></v-text-field>
+              </template>
+
+              <v-date-picker
+                ref="picker"
+                v-model="birthday"
+                color="accent"
+                :max="new Date().toISOString().substr(0, 10)"
+                min="1935-01-01"
+                @change="save"
+              ></v-date-picker>
+            </v-menu>
 
             <v-select
               class="registerForm"
@@ -81,7 +103,7 @@
               :rules="[required('학교 정보')]"
             ></v-select>
 
-            <v-file-input
+            <!-- <v-file-input
               class="registerForm"
               v-model="photoFile"
               accept="image/png, image/jpeg, image/bmp"
@@ -91,7 +113,7 @@
               counter
               :rules="[isTooBig()]"
             >
-            </v-file-input>
+            </v-file-input> -->
 
             <v-radio-group row v-model="userAuthority" :mandatory="false">
               <template v-slot:label>
@@ -113,20 +135,9 @@
               ></v-radio>
             </v-radio-group>
 
-            <v-tooltip left>
-              <template v-slot:activator="{ on, attrs }">
-                <v-btn
-                  color="accent"
-                  v-on="on"
-                  v-bind="attrs"
-                  :disabled="!valid"
-                  block
-                >
-                  회원가입
-                </v-btn>
-              </template>
-              <span>모든 항목을 입력하면 활성화됩니다.</span>
-            </v-tooltip>
+            <v-btn color="accent" block :disabled="!valid" @click="register">
+              회원가입
+            </v-btn>
           </v-col>
 
           <v-col cols="10" class="text-center">
@@ -150,6 +161,7 @@ export default {
     // Form 컨트롤 데이터
     passwordShow: false,
     confirmShow: false,
+    menu: false,
     valid: false,
     schoolList: ["서라벌고등학교", "운정고등학교", "테스트고등학교"],
 
@@ -163,7 +175,7 @@ export default {
     birthday: "",
     school: "",
     userAuthority: "isStudent",
-    photoFile: null,
+    // photoFile: null,
 
     /*
      * 유효성 검사(Validation) 관련 내용.
@@ -204,12 +216,12 @@ export default {
       return value =>
         (minimum > new Date(value) && maximum < new Date(value)) ||
         `미취학 아동 및 역사인물은 가입할 수 없습니다.`;
-    },
-    // 사진 업로드 용량을 제한하기 위한 검사.
-    isTooBig() {
-      return value =>
-        !value || value.size < 5000000 || "사진 용량은 5MB를 넘을 수 없습니다.";
     }
+    // 사진 업로드 용량을 제한하기 위한 검사.
+    // isTooBig() {
+    //   return value =>
+    //     !value || value.size < 5000000 || "사진 용량은 5MB를 넘을 수 없습니다.";
+    // }
   }),
   computed: {
     userAuthoritySelectionText() {
@@ -221,6 +233,57 @@ export default {
         default:
           return "사용자 권한을 선택하세요.";
       }
+    }
+  },
+  watch: {
+    menu(val) {
+      val && setTimeout(() => (this.$refs.picker.activePicker = "YEAR"));
+    }
+  },
+  methods: {
+    save(date) {
+      this.$refs.menu.save(date);
+    },
+    register() {
+      const registerFormData = {
+        email: this.email,
+        password: this.password,
+        password_confirm: this.passwordConfirm,
+        name: this.name,
+        birthday: this.birthday,
+        school: this.school,
+        is_student: this.isStudent ? true : false
+      };
+
+      console.log(registerFormData);
+
+      this.$axios
+        .post(`user/register`, registerFormData)
+        .then(response => {
+          console.log(response);
+          // const data = response.data;
+
+          alert("회원가입이 완료되었습니다. 로그인 해주세요.");
+          this.$router.replace("/auth"); // 로그인 성공 시, 홈 페이지로 리디렉트한다.
+        })
+        .catch(error => {
+          console.log(error);
+          // 로그인 오류 시, 서버로부터 반환된 에러 데이터를 가져온다.
+          const errorResponse = error.response;
+
+          // Bad Request (400) 에러 처리
+          if (errorResponse.status == 400) {
+            alert("HTTP 400 - 잘못된 요청입니다.");
+          }
+          // Unauthorized (401) 에러 처리
+          if (errorResponse.status == 401) {
+            alert("HTTP 401 - 이메일 또는 비밀번호를 다시 확인해주세요.");
+          }
+          // Not Found(404) 에러 처리
+          else if (errorResponse.status == 404) {
+            alert("HTTP 404 - 연결이 원활하지 못합니다. 잠시 후 시도해주세요.");
+          }
+        });
     }
   }
 };
