@@ -1,6 +1,6 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
-// import Store from "../store";
+import Store from "../store";
 import LandingPage from "../views/LandingPage.vue";
 
 Vue.use(VueRouter);
@@ -10,10 +10,7 @@ const routes = [
     path: "/",
     name: "LandingPage",
     component: LandingPage,
-    meta: {
-      title: "Your Class"
-      // requiredAuth: true
-    }
+    meta: { title: "Your Class" }
   },
   {
     path: "/auth",
@@ -38,13 +35,21 @@ const routes = [
         meta: { title: "이메일 인증" }
       }
     ],
-    meta: { title: "로그인" }
+    meta: { title: "로그인" },
+    // 이미 로그인 한 사용자가 로그인 페이지에 접근하지 못하도록 하는 Router Guard
+    beforeEnter: (to, from, next) => {
+      if (!Store.getters["auth/hasAccessToken"]) {
+        next(); // 토큰이 없다면, 로그인 화면으로 이동한다.
+      } else {
+        next("/main"); // 토큰이 있다면, 목적 Route로 이동한다.
+      }
+    }
   },
   {
     path: "/main",
     name: "MainPage",
     component: () => import("../views/MainPage.vue"),
-    meta: { title: "메인" }
+    meta: { title: "메인", requiresAuth: true }
   },
   {
     path: "/mypage",
@@ -54,14 +59,13 @@ const routes = [
         path: "",
         name: "MyPage",
         component: () => import("../components/mypage/userInfo.vue"),
-        meta: { title: "마이페이지" }
+        meta: { title: "마이페이지", requiresAuth: true }
       }
     ],
-    meta: { title: "마이페이지" }
+    meta: { title: "마이페이지", requiresAuth: true }
   },
   {
     path: "/class",
-    name: "Class",
     component: () => import("../views/Class.vue"),
     children: [
       {
@@ -75,30 +79,31 @@ const routes = [
         name: "classNotice",
         component: () =>
           import("../components/class/classNotice/classNotice.vue"),
-        meta: { title: "교과정보" }
+        meta: { title: "공지사항" }
       },
       {
         path: "assignment",
         name: "classAssignment",
         component: () =>
           import("../components/class/classAssignment/classAssignment.vue"),
-        meta: { title: "교과정보" }
+        meta: { title: "과제" }
       },
       {
         path: "ask",
         name: "classQuestion",
         component: () =>
           import("../components/class/classQuestion/classQuestion.vue"),
-        meta: { title: "교과정보" }
+        meta: { title: "질의응답" }
       },
       {
         path: "manage",
         name: "classManage",
         component: () =>
           import("../components/class/classManage/classManage.vue"),
-        meta: { title: "교과정보" }
+        meta: { title: "교과관리" }
       }
-    ]
+    ],
+    meta: { requiresAuth: true }
   }
 ];
 
@@ -114,14 +119,24 @@ router.beforeEach((to, from, next) => {
   next();
 });
 
-// router.beforeEach((to, from, next) => {
-//   if (to.matched.some(record => record.meta.requiredAuth)) {
-//     if (!store.getters.loginStatus) {
-//       next("/login");
-//     } else {
-//       next();
-//     }
-//   }
-// });
+// 로그인이 필요한 페이지에 접근하는 경우에 대한 Router Guard
+router.beforeEach(async (to, from, next) => {
+  await Store.dispatch("auth/autoLogin");
+
+  // 목적 Route가 인증을 요구하는 경우,
+  if (to.matched.some(record => record.meta.requiresAuth)) {
+    // Vuex State의 토큰 정보를 확인한다.
+
+    if (!Store.getters["auth/hasAccessToken"]) {
+      next("/auth"); // 토큰이 없다면, 로그인 화면으로 이동한다.
+    } else {
+      next(); // 토큰이 있다면, 목적 Route로 이동한다.
+    }
+  }
+  // 목적 Route가 인증을 요구하지 않으면, 목적지로 바로 이동한다.
+  else {
+    next();
+  }
+});
 
 export default router;

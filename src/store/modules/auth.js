@@ -25,11 +25,14 @@ const mutations = {
   },
 
   // 로그아웃 Mutation
-  logout(state) {
-    state.accessToken = null;
-    state.refreshToken = null;
-    state.accessTokenExpires = null;
-    state.refreshTokenExpires = null;
+  logout() {
+    // Vuex 저장소를 초기화한다.
+    location.reload();
+  },
+
+  fetchNewToken(state, payload) {
+    state.accessToken = payload.accessToken;
+    state.accessTokenExpires = payload.accessTokenExpires;
   },
 
   // Loading Flag Mutation
@@ -53,7 +56,7 @@ const actions = {
         const refreshTokenExpires = new Date(data.refresh_expiration_date);
 
         // State에 저장할 데이터
-        const authData = {
+        const tokenData = {
           accessToken: data.access,
           refreshToken: data.refresh,
           accessTokenExpires: accessTokenExpires.toString(),
@@ -61,16 +64,19 @@ const actions = {
         };
 
         // 토큰 데이터를 Vuex State에 저장한다.
-        commit("login", authData);
+        commit("login", tokenData);
         // Loading Flag를 false로 설정한다.
         commit("fetchLoading", false);
 
-        localStorage.setItem("accessToken", authData.accessToken);
-        localStorage.setItem("refreshToken", authData.refreshToken);
-        localStorage.setItem("accessTokenExpires", authData.accessTokenExpires);
+        localStorage.setItem("accessToken", tokenData.accessToken);
+        localStorage.setItem("refreshToken", tokenData.refreshToken);
+        localStorage.setItem(
+          "accessTokenExpires",
+          tokenData.accessTokenExpires
+        );
         localStorage.setItem(
           "refreshTokenExpires",
-          authData.refreshTokenExpires
+          tokenData.refreshTokenExpires
         );
 
         // 로그인 성공 시, 홈 페이지로 리디렉트한다.
@@ -114,6 +120,77 @@ const actions = {
     localStorage.removeItem("refreshToken");
     localStorage.removeItem("accessTokenExpires");
     localStorage.removeItem("refreshTokenExpires");
+  },
+
+  async autoLogin({ commit, dispatch }) {
+    const accessToken = localStorage.getItem("accessToken");
+    const refreshToken = localStorage.getItem("refreshToken");
+    const accessExpires = localStorage.getItem("accessTokenExpires");
+    const refreshExpires = localStorage.getItem("refreshTokenExpires");
+
+    if (!accessToken && !refreshToken) {
+      console.log("토큰이 존재하지 않습니다. 로그인 해주세요.");
+      return;
+    }
+
+    const accessTimeLeft = new Date(accessExpires) - new Date();
+    const refreshTimeLeft = new Date(refreshExpires) - new Date();
+
+    const flag = isRefreshable(accessTimeLeft, refreshTimeLeft);
+
+    if (flag == false) {
+      await dispatch("logout");
+
+      alert("로그인 유효 시간이 만료되었습니다. 다시 로그인해주세요.");
+
+      return;
+    }
+
+    const tokenData = {
+      accessToken,
+      refreshToken,
+      accessExpires,
+      refreshExpires
+    };
+
+    if (flag == null) {
+      await commit("login", tokenData);
+
+      console.log("토큰 재발급 없이 자동 로그인 완료!");
+
+      return;
+    }
+
+    axios
+      .post("user/refresh", {
+        refresh: refreshToken
+      })
+      .then(({ data }) => {
+        const newAccessToken = data.access;
+        const newAccessTokenExpires = new Date(data.access_expiration_date);
+
+        // 인증 정보를 업데이트한다.
+        tokenData.accessToken = newAccessToken;
+        tokenData.accessTokenExpires = newAccessTokenExpires.toString();
+
+        localStorage.setItem("accessToken", tokenData.accessToken);
+        localStorage.setItem(
+          "accessTokenExpires",
+          tokenData.accessTokenExpires
+        );
+
+        // 갱신된 인증 정보를 State에 반영한다.
+        commit("login", tokenData);
+
+        console.log("accessToken 재발급 후 자동 로그인 완료!");
+      })
+      .catch(error => {
+        console.log("Failed", error.response.data);
+
+        alert("토큰 갱신에 실패했습니다. 다시 로그인해주세요.");
+
+        dispatch("logout");
+      });
   }
 };
 
@@ -125,6 +202,16 @@ const getters = {
   // 로딩 여부 반환
   isLoading(state) {
     return state.isLoading;
+  }
+};
+
+const isRefreshable = (accessTimeLeft, refreshTimeLeft) => {
+  if (accessTimeLeft < 0 && refreshTimeLeft > 0) {
+    return true;
+  } else if (refreshTimeLeft < 0) {
+    return false;
+  } else {
+    return null;
   }
 };
 
