@@ -103,18 +103,6 @@
               :rules="[required('학교 정보')]"
             ></v-select>
 
-            <!-- <v-file-input
-              class="registerForm"
-              v-model="photoFile"
-              accept="image/png, image/jpeg, image/bmp"
-              label="공무원증 후면 사본을 업로드해주세요."
-              v-if="userAuthority === 'isTeacher'"
-              show-size
-              counter
-              :rules="[isTooBig()]"
-            >
-            </v-file-input> -->
-
             <v-radio-group row v-model="userAuthority" :mandatory="false">
               <template v-slot:label>
                 <div>{{ userAuthoritySelectionText }}</div>
@@ -135,7 +123,13 @@
               ></v-radio>
             </v-radio-group>
 
-            <v-btn color="accent" block :disabled="!valid" @click="register">
+            <v-btn
+              color="accent"
+              block
+              :disabled="!valid"
+              :loading="isLoading"
+              @click="register"
+            >
               회원가입
             </v-btn>
           </v-col>
@@ -163,6 +157,7 @@ export default {
     confirmShow: false,
     menu: false,
     valid: false,
+    isLoading: false,
     schoolList: ["서라벌고등학교", "운정고등학교", "테스트고등학교"],
 
     /*
@@ -217,11 +212,6 @@ export default {
         (minimum > new Date(value) && maximum < new Date(value)) ||
         `미취학 아동 및 역사인물은 가입할 수 없습니다.`;
     }
-    // 사진 업로드 용량을 제한하기 위한 검사.
-    // isTooBig() {
-    //   return value =>
-    //     !value || value.size < 5000000 || "사진 용량은 5MB를 넘을 수 없습니다.";
-    // }
   }),
   computed: {
     userAuthoritySelectionText() {
@@ -241,10 +231,16 @@ export default {
     }
   },
   methods: {
+    // Date Picker에서 선택된 값을 저장한다.
     save(date) {
       this.$refs.menu.save(date);
     },
+    // 회원가입을 위한 Axios 통신을 실시한다.
     register() {
+      // 로딩 Flag를 True로 설정한다.
+      this.isLoading = true;
+
+      // 입력받은 Form Data를 Object 형태로 만든다.
       const registerFormData = {
         email: this.email,
         password: this.password,
@@ -252,31 +248,41 @@ export default {
         name: this.name,
         birthday: this.birthday,
         school: this.school,
-        is_student: this.isStudent ? true : false
+        is_student: this.userAuthority == "isStudent" ? true : false
       };
 
-      console.log(registerFormData);
-
+      // 서버에 새로운 유저 등록을 HTTP POST로 요청한다.
       this.$axios
         .post(`user/register`, registerFormData)
-        .then(response => {
-          console.log(response);
-          // const data = response.data;
+        .then(() => {
+          // 로딩 Flag를 False로 설정한다.
+          this.isLoading = false;
 
           alert("회원가입이 완료되었습니다. 로그인 해주세요.");
-          this.$router.replace("/auth"); // 로그인 성공 시, 홈 페이지로 리디렉트한다.
+
+          // 회원가입 성공 시, 로그인 페이지로 리디렉트한다.
+          this.$router.replace("/auth");
         })
         .catch(error => {
-          console.log(error);
+          // 로딩 Flag를 False로 설정한다.
+          this.isLoading = false;
+
           // 로그인 오류 시, 서버로부터 반환된 에러 데이터를 가져온다.
           const errorResponse = error.response;
 
           // Bad Request (400) 에러 처리
           if (errorResponse.status == 400) {
-            alert("HTTP 400 - 잘못된 요청입니다.");
+            // Error Response에 Email 데이터가 존재하는 경우,
+            if (errorResponse.data["email"]) {
+              alert("입력하신 이메일로 이미 가입된 사용자가 있습니다.");
+            }
+            // 그렇지 않은 일반적인 상황인 경우,
+            else {
+              alert("HTTP 400 - 잘못된 요청입니다.");
+            }
           }
           // Unauthorized (401) 에러 처리
-          if (errorResponse.status == 401) {
+          else if (errorResponse.status == 401) {
             alert("HTTP 401 - 이메일 또는 비밀번호를 다시 확인해주세요.");
           }
           // Not Found(404) 에러 처리

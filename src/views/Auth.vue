@@ -30,7 +30,7 @@
           </v-row>
         </v-col>
 
-        <!-- 제공 기능 설명 영역 -->
+        <!-- 로그인 및 회원가입 컴포넌트 영역 -->
         <v-col cols="12" md="6">
           <router-view></router-view>
         </v-col>

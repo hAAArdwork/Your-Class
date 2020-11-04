@@ -28,15 +28,21 @@
               v-model="password"
               label="Password"
               prepend-icon="mdi-lock"
-              :append-icon="show ? 'mdi-eye' : 'mdi-eye-off'"
-              :type="show ? 'text' : 'password'"
+              :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
+              :type="showPassword ? 'text' : 'password'"
               :rules="[required('비밀번호'), hasKorean('비밀번호')]"
-              @click:append="show = !show"
+              @click:append="showPassword = !showPassword"
               @keydown.enter="login"
             >
             </v-text-field>
 
-            <v-btn block color="accent" class="mt-5" @click="login">
+            <v-btn
+              block
+              color="accent"
+              class="mt-5"
+              @click="login"
+              :loading="isLoading"
+            >
               로그인
             </v-btn>
           </v-col>
@@ -59,9 +65,11 @@
 <script>
 export default {
   data: () => ({
-    // 로그인 정보 바인딩
-    show: false,
+    // Form Control Data
+    showPassword: false,
     valid: false,
+
+    // 로그인 관련 정보
     email: "",
     password: "",
 
@@ -79,13 +87,20 @@ export default {
       return value => !koreanRegEx.test(value) || "앗! 한/영키를 확인해주세요.";
     }
   }),
+  computed: {
+    isLoading() {
+      return this.$store.getters["auth/isLoading"];
+    }
+  },
   methods: {
     login() {
+      // Form Data를 자바스크립트 객체로 만든다.
       const formData = {
         email: this.email,
         password: this.password
       };
-      this.$store.dispatch("login", formData);
+      // Vuex 저장소의 상태를 변경하기 위해, dispatch로 actions를 작동시킨다.
+      this.$store.dispatch("auth/login", formData);
     }
   }
 };

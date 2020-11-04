@@ -54,27 +54,23 @@
 export default {
   name: "App",
 
-  computed: {
-    isLoggedIn() {
-      return this.$store.getters.isLoggedIn;
-    }
-  },
-
   data: () => ({
     logoSrc: "https://cdn.vuetifyjs.com/images/logos/vuetify-logo-dark.png",
     nameSrc: "https://cdn.vuetifyjs.com/images/logos/vuetify-name-dark.png"
   }),
 
+  computed: {
+    isLoggedIn() {
+      return this.$store.getters["auth/hasAccessToken"];
+    }
+  },
+
   methods: {
     logout() {
-      this.$store.dispatch("logout");
+      this.$store.dispatch("auth/logout");
     }
   }
 };
 </script>
 
-<style scoped>
-.router {
-  text-decoration: none;
-}
-</style>
+<style scoped></style>

@@ -30,6 +30,12 @@ const routes = [
         name: "Register",
         component: () => import("../components/auth/registerForm.vue"),
         meta: { title: "회원가입" }
+      },
+      {
+        path: "activate/:uidb64/:token",
+        name: "Activate",
+        component: () => import("../components/auth/activation.vue"),
+        meta: { title: "이메일 인증" }
       }
     ],
     meta: { title: "로그인" }

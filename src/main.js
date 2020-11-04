@@ -7,6 +7,35 @@ import axios from "axios";
 
 // baseURL 기본값을 정의한다
 axios.defaults.baseURL = "http://127.0.0.1:8000/api/";
+
+// HTTP Request 인터셉터
+axios.interceptors.request.use(
+  function(config) {
+    console.log(config);
+    return config;
+  },
+  function(error) {
+    console.log(error);
+    return Promise.reject(error);
+  }
+);
+
+// HTTP Response 인터셉터
+axios.interceptors.response.use(
+  function(response) {
+    console.log(response);
+    // 응답 데이터를 가공
+    // ...
+    return response;
+  },
+  function(error) {
+    console.log(error);
+    // 오류 응답을 처리
+    // ...
+    return Promise.reject(error);
+  }
+);
+
 Vue.prototype.$axios = axios;
 Vue.config.productionTip = false;
 

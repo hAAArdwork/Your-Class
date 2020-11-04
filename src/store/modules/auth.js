@@ -12,14 +12,7 @@ const state = {
   accessTokenExpires: null,
   refreshTokenExpires: null,
 
-  // 유저 프로필 정보
-  userData: null,
-
-  // 에러 관련
-  loginErrorMsg: null,
-
-  // 로딩 관련
-  isAuthLoading: false
+  isLoading: false
 };
 
 const mutations = {
@@ -37,15 +30,22 @@ const mutations = {
     state.refreshToken = null;
     state.accessTokenExpires = null;
     state.refreshTokenExpires = null;
+  },
+
+  // Loading Flag Mutation
+  fetchLoading(state, payload) {
+    state.isLoading = payload;
   }
 };
 
 const actions = {
   login({ commit }, payload) {
+    // Loading Flag를 true로 바꾼다.
+    commit("fetchLoading", true);
+
     authInstance
       .post(`user/login`, payload)
       .then(response => {
-        console.log(response);
         const data = response.data;
 
         // 자바스크립트 Date 객체로 파싱
@@ -60,8 +60,10 @@ const actions = {
           refreshTokenExpires: refreshTokenExpires.toString()
         };
 
-        // mutation 실행
+        // 토큰 데이터를 Vuex State에 저장한다.
         commit("login", authData);
+        // Loading Flag를 false로 설정한다.
+        commit("fetchLoading", false);
 
         localStorage.setItem("accessToken", authData.accessToken);
         localStorage.setItem("refreshToken", authData.refreshToken);
@@ -71,36 +73,41 @@ const actions = {
           authData.refreshTokenExpires
         );
 
-        router.replace("/main"); // 로그인 성공 시, 홈 페이지로 리디렉트한다.
+        // 로그인 성공 시, 홈 페이지로 리디렉트한다.
+        router.replace("/main");
       })
       .catch(error => {
-        // 로그인 오류 시, 서버로부터 반환된 에러 데이터를 가져온다.
-        const res = error.response;
-        console.log(res);
-
-        const notActive = "No active account found with the given credentials";
+        // 로그인 오류 시, 서버로부터 반환 된 에러 데이터를 가져온다.
+        const errorResponse = error.response;
 
         // Bad Request (400) 에러 처리
-        if (res.status == 400) {
-          alert("HTTP 400 - 잘못된 요청입니다.");
-        }
-        // Unauthorized (401) 에러 처리
-        if (res.status == 401) {
-          if (res.data.detail === notActive) {
-            alert("가입 시 입력한 이메일로 전송된 인증 메일을 확인해주세요.");
+        if (errorResponse.status == 400) {
+          if (errorResponse.data["email"] && errorResponse.data["password"]) {
+            alert("이메일, 비밀번호를 입력해주세요.");
+          } else if (errorResponse.data["email"]) {
+            alert("이메일을 입력해주세요.");
+          } else if (errorResponse.data["password"]) {
+            alert("비밀번호를 입력해주세요.");
           } else {
-            alert("이메일 또는 비밀번호를 다시 확인해주세요.");
+            alert("HTTP 400 - 잘못된 요정입니다.");
           }
         }
+        // Unauthorized (401) 에러 처리
+        else if (errorResponse.status == 401) {
+          alert("이메일 또는 비밀번호가 옳지 않습니다. 다시 확인해주세요.");
+        }
         // Not Found(404) 에러 처리
-        else if (res.status == 404) {
+        else if (errorResponse.status == 404) {
           alert("HTTP 404 - 연결이 원활하지 못합니다. 잠시 후 시도해주세요.");
         }
+
+        // Loading Flag를 false로 설정한다.
+        commit("fetchLoading", false);
       });
   },
 
   logout({ commit }) {
-    // State에서 유저관련 정보를 모두 지운다.
+    // Vuex State에서 토큰 정보를 모두 지운다.
     commit("logout");
 
     localStorage.removeItem("accessToken");
@@ -112,15 +119,18 @@ const actions = {
 
 const getters = {
   // 로그인 여부 반환
-  isLoggedIn(state) {
+  hasAccessToken(state) {
     return state.accessToken !== null;
   },
-  getAccessToken(state) {
-    return state.accessToken;
+  // 로딩 여부 반환
+  isLoading(state) {
+    return state.isLoading;
   }
 };
 
 export default {
+  // Vuex 저장소 네임스페이스 사용
+  namespaced: true,
   state,
   mutations,
   actions,
