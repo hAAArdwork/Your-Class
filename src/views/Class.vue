@@ -1,24 +1,27 @@
 <template>
-  <v-container class="px-3 px-md-6 px-lg-10 px-xl-16" fill-height fluid>
-    <v-responsive class="pa-2 overflow-y-auto" height="90vh">
+  <v-container class="px-3 px-md-10 px-lg-12" fill-height fluid>
+    <v-responsive class="pa-2" height="90vh">
       <v-row>
-        <!-- 좌측 네비게이션 창 -->
-        <v-col cols="3" lg="2" class="hidden-sm-and-down">
+        <!-- MD 이상의 Breakpoint에서 렌더링되는 좌측 네비게이션 창 -->
+        <v-col cols="2" class="hidden-md-and-down">
           <left-navigation :menuList="listItems" />
         </v-col>
 
-        <!-- MD 이하의 Breakpoint에서 표시되는 상단 네비게이션 창 -->
-        <v-col cols="12" class="hidden-md-and-up">
+        <!-- MD 이하의 Breakpoint에서 렌더링되는 상단 네비게이션 창 -->
+        <v-col cols="12" class="hidden-lg-and-up">
           <top-navigation :menuList="listItems" />
         </v-col>
 
         <!-- 우측 라우터 뷰 -->
         <v-col>
           <v-sheet
-            min-height="75vh"
+            class="overflow-y-auto mx-auto"
+            height="75vh"
+            min-height="600px"
+            max-height="75vh"
+            max-width="1250px"
             rounded="lg"
             elevation="6"
-            class="d-flex align-center"
           >
             <router-view></router-view>
           </v-sheet>

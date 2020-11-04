@@ -1,70 +1,78 @@
 <template>
-  <v-container class="px-4 px-sm-6 px-md-8 px-xl-16">
-    <p class="text-h5 font-weight-bold">
-      공지사항
-    </p>
+  <v-container class="px-8" fill-height fluid>
+    <v-row>
+      <v-col cols="12">
+        <p class="text-h4 font-weight-bold">
+          공지사항
+        </p>
+        <p class="text-h6 hidden-xs-only">
+          중요한 공지사항을 확인하고, 학습 일정에 반영하세요!
+        </p>
+      </v-col>
 
-    <p class="text-subtitle-1 hidden-xs-only">
-      중요한 공지사항을 확인하고, 학습 일정에 반영하세요!
-    </p>
-
-    <v-data-table
-      mobile-breakpoint="0"
-      :headers="headers"
-      :items="posts"
-      :items-per-page="itemPerPage"
-      :page.sync="page"
-      :expanded.sync="expanded"
-      @page-count="pageCount = $event"
-      hide-default-header
-      hide-default-footer
-      show-expand
-      single-expand
-      :sort-desc="[true]"
-      :sort-by="['number']"
-      item-key="number"
-      class="elevation-6"
-    >
-      <template v-slot:expanded-item="{ headers, item }">
-        <td :colspan="headers.length">공지사항 세부 내용 {{ item.title }}</td>
-      </template>
-
-      <template v-slot:[`item.number`]="{ item }">
-        {{ item.number }}
-      </template>
-
-      <template v-slot:[`item.title`]="{ item }">
-        <div
-          :class="
-            $vuetify.breakpoint.name == 'sm' || 'xs' ? 'text-truncate' : ''
-          "
-          :style="`max-width: ${truncateLength};`"
+      <v-col cols="12" style="height: 325px;">
+        <v-data-table
+          mobile-breakpoint="0"
+          :headers="headers"
+          :items="posts"
+          :items-per-page="itemPerPage"
+          :page.sync="page"
+          :expanded.sync="expanded"
+          @page-count="pageCount = $event"
+          hide-default-header
+          hide-default-footer
+          show-expand
+          single-expand
+          :sort-desc="[true]"
+          :sort-by="['number']"
+          item-key="number"
         >
-          {{ item.title }}
+          <template v-slot:expanded-item="{ headers, item }">
+            <td :colspan="headers.length">
+              공지사항 세부 내용 {{ item.title }}
+            </td>
+          </template>
+
+          <template v-slot:[`item.number`]="{ item }">
+            {{ item.number }}
+          </template>
+
+          <template v-slot:[`item.title`]="{ item }">
+            <div
+              :class="
+                $vuetify.breakpoint.name == 'sm' || 'xs' ? 'text-truncate' : ''
+              "
+              :style="`max-width: ${truncateLength};`"
+            >
+              {{ item.title }}
+            </div>
+          </template>
+
+          <template v-slot:[`item.author`]="{ item }">
+            {{
+              $vuetify.breakpoint.name != "xs"
+                ? item.author
+                : item.author.split(" ")[0]
+            }}
+          </template>
+
+          <template v-slot:[`item.dateCreated`]="{ item }">
+            <span class="hidden-xs-only">{{
+              $vuetify.breakpoint.name == "sm"
+                ? item.dateCreated.substr(0, 10)
+                : item.dateCreated
+            }}</span>
+          </template>
+        </v-data-table>
+      </v-col>
+
+      <v-col cols="12">
+        <div class="text-center pt-2">
+          <v-pagination color="accent" v-model="page" :length="pageCount">
+          </v-pagination>
         </div>
-      </template>
-
-      <template v-slot:[`item.author`]="{ item }">
-        {{
-          $vuetify.breakpoint.name != "xs"
-            ? item.author
-            : item.author.split(" ")[0]
-        }}
-      </template>
-
-      <template v-slot:[`item.dateCreated`]="{ item }">
-        <span class="hidden-xs-only">{{
-          $vuetify.breakpoint.name == "sm"
-            ? item.dateCreated.substr(0, 10)
-            : item.dateCreated
-        }}</span>
-      </template>
-    </v-data-table>
-
-    <div class="text-center pt-2">
-      <v-pagination color="accent" v-model="page" :length="pageCount">
-      </v-pagination>
-    </div>
+      </v-col>
+    </v-row>
   </v-container>
 </template>
 
@@ -178,9 +186,9 @@ export default {
     itemPerPage() {
       switch (this.$vuetify.breakpoint.name) {
         case "xs":
-          return 5;
+          return 6;
         default:
-          return 8;
+          return 6;
       }
     },
     truncateLength() {

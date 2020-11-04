@@ -122,23 +122,31 @@ const actions = {
     localStorage.removeItem("refreshTokenExpires");
   },
 
+  // localStorage에 저장된 토큰 정보를 기반으로, 새로고침 시 자동 로그인을 실시한다.
   async autoLogin({ commit, dispatch }) {
+    // localStorage로부터 토큰 정보를 가져온다.
     const accessToken = localStorage.getItem("accessToken");
     const refreshToken = localStorage.getItem("refreshToken");
     const accessExpires = localStorage.getItem("accessTokenExpires");
     const refreshExpires = localStorage.getItem("refreshTokenExpires");
 
+    // 토큰이 존재하지 않는 경우, 메소드를 종료한다.
     if (!accessToken && !refreshToken) {
       console.log("토큰이 존재하지 않습니다. 로그인 해주세요.");
       return;
     }
 
+    // 두 토큰의 만료기간까지 남은 시간을 계산한다.
     const accessTimeLeft = new Date(accessExpires) - new Date();
     const refreshTimeLeft = new Date(refreshExpires) - new Date();
 
+    // 두 토큰의 만료 시간을 토대로, 토큰이 갱신(refresh) 가능한지 검토한다.
+    // true: 토큰 갱신 가능, false: 토큰 갱신 불가능, null: 토큰 갱신 불필요.
     const flag = isRefreshable(accessTimeLeft, refreshTimeLeft);
 
+    // 토큰 갱신이 불가능한 경우,
     if (flag == false) {
+      // 로그아웃을 실시한다.
       await dispatch("logout");
 
       alert("로그인 유효 시간이 만료되었습니다. 다시 로그인해주세요.");
@@ -153,6 +161,7 @@ const actions = {
       refreshExpires
     };
 
+    // 토큰 갱신이 불필요한 경우,
     if (flag == null) {
       await commit("login", tokenData);
 
@@ -161,7 +170,9 @@ const actions = {
       return;
     }
 
+    // 토큰 갱신이 필요하고, 가능한 경우,
     axios
+      // 서버 측으로 HTTP POST 요청을 통해 새로운 AccessToken 발급
       .post("user/refresh", {
         refresh: refreshToken
       })

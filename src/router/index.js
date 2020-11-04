@@ -65,11 +65,13 @@ const routes = [
     meta: { title: "마이페이지", requiresAuth: true }
   },
   {
-    path: "/class",
+    path: "/class/:classId", // URI 매개변수 설정을 통해, 각 과목 식별 가능하도록 설정한다.
+    props: true, // props를 true로 설정하면, params를 props의 형태로 받을 수 있다.
     component: () => import("../views/Class.vue"),
     children: [
       {
         path: "",
+        props: true,
         name: "classInfo",
         component: () => import("../components/class/classInfo/classInfo.vue"),
         meta: { title: "교과정보" }
@@ -121,6 +123,7 @@ router.beforeEach((to, from, next) => {
 
 // 로그인이 필요한 페이지에 접근하는 경우에 대한 Router Guard
 router.beforeEach(async (to, from, next) => {
+  // localStorage에 토큰이 있는지 확인하고, 자동 로그인 실시.
   await Store.dispatch("auth/autoLogin");
 
   // 목적 Route가 인증을 요구하는 경우,

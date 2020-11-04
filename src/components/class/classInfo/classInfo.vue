@@ -1,20 +1,28 @@
 <template>
-  <v-container class="px-4 px-sm-6 px-md-8 px-xl-16">
-    <v-row>
-      <v-col cols="12" class="mb-6">
-        <p class="text-h4 font-weight-bold">{{ classInfo.title }}</p>
-        <p class="class-info text-h6 font-weight-bold">
+  <!-- {{ $route.params.classId }} 를 통해 URI에서 라우트 매개변수를 가져올 수 있다. -->
+  <v-container class="px-8" fill-height fluid>
+    <v-row style="height: 100%;">
+      <!-- 과목에 대한 간략한 정보 렌더링 -->
+      <v-col cols="12">
+        <p class="class-info text-h4">
+          {{ classInfo.title }}
+        </p>
+      </v-col>
+
+      <v-col cols="12">
+        <p class="class-info text-h6">
           {{ classInfo.teacher }}
         </p>
-        <p class="class-info text-subtitle-1">
+        <p class="text-subtitle-1">
           {{ classInfo.time }}
         </p>
       </v-col>
 
       <v-col cols="12">
-        <span class="text-h4 font-weight-bold">최근 게시물</span>
+        <p class="class-info text-h4">최근 게시물</p>
       </v-col>
 
+      <!-- 과목과 관련된 3개의 최신 게시물 렌더링 -->
       <v-col
         cols="12"
         sm="4"
@@ -22,11 +30,14 @@
         :key="`Post ${data.id}`"
       >
         <v-card rounded="xl" class="pa-2">
-          <v-card-title class="py-1">
-            <div class="mx-auto font-weight-bold">{{ data.title }}</div>
+          <v-card-title class="py-2">
+            <!-- 게시글 제목이 긴 경우, ...로 잘라서 렌더링한다. -->
+            <div class="mx-auto font-weight-bold text-truncate">
+              {{ data.title }}
+            </div>
           </v-card-title>
 
-          <v-divider></v-divider>
+          <v-divider />
 
           <v-card-subtitle class="text-center">
             <span class="d-block">{{ data.author }}</span>
@@ -35,7 +46,7 @@
 
           <v-card-actions>
             <v-btn class="mx-auto accent" width="100px" height="25px" rounded>
-              <span>상세보기</span>
+              <span class="font-weight-bold">상세보기</span>
             </v-btn>
           </v-card-actions>
         </v-card>
@@ -45,23 +56,25 @@
         <span class="text-h4 font-weight-bold">마감 임박 과제물</span>
       </v-col>
 
+      <!-- 마감 기한이 임박한 3개의 과제물 렌더링 -->
       <v-col
         cols="12"
-        sm="4"
+        sm="6"
+        md="4"
         v-for="data in assignments"
         :key="`Assignment ${data.id}`"
       >
-        <v-card rounded="xl" class="pa-2">
-          <v-card-title class="py-1">
-            <div class="font-weight-bold">{{ data.title }}</div>
-            <v-spacer />
-            <div class="font-weight-bold">
-              {{
-                getDueDate(data.dueDate) > 0
-                  ? getDueDate(data.dueDate)
-                  : "기한종료"
-              }}
+        <v-card rounded="xl" width="100%">
+          <v-card-title>
+            <div class="font-weight-bold text-truncate">
+              {{ data.title }}
             </div>
+
+            <v-spacer></v-spacer>
+
+            <v-chip class="font-weight-bold">
+              {{ getDueDate(data.dueDate) }}일
+            </v-chip>
           </v-card-title>
         </v-card>
       </v-col>
@@ -71,6 +84,9 @@
 
 <script>
 export default {
+  props: [
+    "classId" // classData: Object
+  ],
   computed: {
     today: function() {
       return new Date();
@@ -105,15 +121,15 @@ export default {
     assignments: [
       {
         id: 0,
-        title: "2장 연습문제 풀이",
+        title: "1장 연습문제",
         author: "이정우 선생님",
         dueDate: "2020/11/10"
       },
       {
         id: 1,
-        title: "1장 연습문제 풀이",
+        title: "2장 연습문제",
         author: "이정우 선생님",
-        dueDate: "2020/10/29"
+        dueDate: "2020/11/16"
       }
     ]
   }),
@@ -134,6 +150,7 @@ export default {
 <style scoped>
 .class-info {
   margin-bottom: 0px;
+  font-weight: 600;
 }
 
 .card-text-title {

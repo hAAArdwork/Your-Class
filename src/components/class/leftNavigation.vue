@@ -1,5 +1,5 @@
 <template>
-  <v-sheet rounded="lg" class="pa-2" elevation="4">
+  <v-sheet rounded="lg" class="pa-2" elevation="6">
     <v-list>
       <!-- 회원 프로필 사진 -->
       <v-list-item>

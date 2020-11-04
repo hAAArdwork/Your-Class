@@ -3,7 +3,7 @@
   <v-card
     class="d-flex flex-column justify-center rounded-lg"
     elevation="6"
-    height="225px"
+    height="235px"
   >
     <!-- 카드 타이틀 영역, 요소들 가운데 정렬 -->
     <v-card-title class="pa-2">
@@ -16,12 +16,12 @@
     <v-divider></v-divider>
 
     <!-- 과목 담당자. 과목 배정 시간 렌더링 -->
-    <v-card-text class="text-center pb-2">
+    <v-card-text class="text-center pb-2" style="height: 50%;">
       <p class="text-h6 font-weight-bold mb-3">
         {{ classData.teacher }} 선생님
       </p>
 
-      <v-row>
+      <v-row class="mx-auto" style="width: 75%;">
         <!-- 교시 수에 따라 다른 형태로 렌더링 되도록 설정 -->
         <v-col
           class="pa-0"
@@ -38,7 +38,16 @@
 
     <!-- 강의실 입장 버튼 -->
     <v-card-actions>
-      <v-btn class="mx-auto accent" width="100px" rounded>입장하기</v-btn>
+      <v-btn
+        class="mx-auto accent"
+        width="100px"
+        :to="{
+          name: 'classInfo',
+          params: { classId: classData.id }
+        }"
+        rounded
+        >입장하기</v-btn
+      >
     </v-card-actions>
   </v-card>
 </template>
