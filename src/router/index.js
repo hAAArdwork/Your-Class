@@ -128,12 +128,25 @@ router.beforeEach(async (to, from, next) => {
 
   // 목적 Route가 인증을 요구하는 경우,
   if (to.matched.some(record => record.meta.requiresAuth)) {
-    // Vuex State의 토큰 정보를 확인한다.
-
+    // Vuex State에 토큰이 없다면, 로그인 화면으로 이동한다.
     if (!Store.getters["auth/hasAccessToken"]) {
-      next("/auth"); // 토큰이 없다면, 로그인 화면으로 이동한다.
-    } else {
-      next(); // 토큰이 있다면, 목적 Route로 이동한다.
+      next("/auth");
+    }
+    // Vuex State에 토큰이 있다면, 다음으로 진행한다.
+    else {
+      // Vuex State에서 사용자 정보를 확인하고,
+      if (Store.state.user.email) {
+        next();
+      }
+      // 비어있는 경우 서버에 요청한다.
+      else {
+        await Store.dispatch("user/requestUserData");
+
+        console.log("유저 데이터 Fetch 후 다음 라우터로 진행합니다.");
+
+        next();
+      }
+      // 토큰이 있다면, 목적 Route로 이동한다.
     }
   }
   // 목적 Route가 인증을 요구하지 않으면, 목적지로 바로 이동한다.

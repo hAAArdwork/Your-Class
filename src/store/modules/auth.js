@@ -1,10 +1,6 @@
 import axios from "axios";
 import router from "@/router";
 
-const authInstance = axios.create({
-  baseURL: "http://127.0.0.1:8000/api/"
-});
-
 const state = {
   // 인증 토큰 관련
   accessToken: null,
@@ -46,7 +42,7 @@ const actions = {
     // Loading Flag를 true로 바꾼다.
     commit("fetchLoading", true);
 
-    authInstance
+    axios
       .post(`user/login`, payload)
       .then(response => {
         const data = response.data;
@@ -65,8 +61,6 @@ const actions = {
 
         // 토큰 데이터를 Vuex State에 저장한다.
         commit("login", tokenData);
-        // Loading Flag를 false로 설정한다.
-        commit("fetchLoading", false);
 
         localStorage.setItem("accessToken", tokenData.accessToken);
         localStorage.setItem("refreshToken", tokenData.refreshToken);
@@ -106,7 +100,8 @@ const actions = {
         else if (errorResponse.status == 404) {
           alert("HTTP 404 - 연결이 원활하지 못합니다. 잠시 후 시도해주세요.");
         }
-
+      })
+      .finally(() => {
         // Loading Flag를 false로 설정한다.
         commit("fetchLoading", false);
       });
@@ -120,6 +115,49 @@ const actions = {
     localStorage.removeItem("refreshToken");
     localStorage.removeItem("accessTokenExpires");
     localStorage.removeItem("refreshTokenExpires");
+  },
+
+  register({ commit }, registerFormData) {
+    // Loading Flag를 true로 바꾼다.
+    commit("fetchLoading", true);
+
+    // 서버에 새로운 유저 등록을 HTTP POST로 요청한다.
+    axios
+      .post(`user/register`, registerFormData)
+      .then(() => {
+        alert("회원가입이 완료되었습니다. 로그인 해주세요.");
+
+        // 회원가입 성공 시, 로그인 페이지로 리디렉트한다.
+        this.$router.replace("/auth");
+      })
+      .catch(error => {
+        // 로그인 오류 시, 서버로부터 반환된 에러 데이터를 가져온다.
+        const errorResponse = error.response;
+
+        // Bad Request (400) 에러 처리
+        if (errorResponse.status == 400) {
+          // Error Response에 Email 데이터가 존재하는 경우,
+          if (errorResponse.data["email"]) {
+            alert("입력하신 이메일로 이미 가입된 사용자가 있습니다.");
+          }
+          // 그렇지 않은 일반적인 상황인 경우,
+          else {
+            alert("HTTP 400 - 잘못된 요청입니다.");
+          }
+        }
+        // Unauthorized (401) 에러 처리
+        else if (errorResponse.status == 401) {
+          alert("HTTP 401 - 이메일 또는 비밀번호를 다시 확인해주세요.");
+        }
+        // Not Found(404) 에러 처리
+        else if (errorResponse.status == 404) {
+          alert("HTTP 404 - 연결이 원활하지 못합니다. 잠시 후 시도해주세요.");
+        }
+      })
+      .finally(() => {
+        // Loading Flag를 false로 설정한다.
+        commit("fetchLoading", false);
+      });
   },
 
   // localStorage에 저장된 토큰 정보를 기반으로, 새로고침 시 자동 로그인을 실시한다.
@@ -170,8 +208,8 @@ const actions = {
       return;
     }
 
-    // 토큰 갱신이 필요하고, 가능한 경우,
-    axios
+    // [중요] await 함수로 지정해야 HTTP 리스폰스가 도착한 뒤 라우팅 조건 분기가 실행된다.
+    await axios
       // 서버 측으로 HTTP POST 요청을 통해 새로운 AccessToken 발급
       .post("user/refresh", {
         refresh: refreshToken

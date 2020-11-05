@@ -35,7 +35,7 @@
               :append-icon="passwordShow ? 'mdi-eye' : 'mdi-eye-off'"
               :type="passwordShow ? 'text' : 'password'"
               @click:append="passwordShow = !passwordShow"
-              :rules="[required('비밀번호'), hasKorean()]"
+              :rules="[required('비밀번호'), isLongEnough(), hasKorean()]"
               counter
             >
             </v-text-field>
@@ -153,11 +153,11 @@
 export default {
   data: () => ({
     // Form 컨트롤 데이터
+    valid: false,
     passwordShow: false,
     confirmShow: false,
     menu: false,
-    valid: false,
-    isLoading: false,
+
     schoolList: ["서라벌고등학교", "운정고등학교", "테스트고등학교"],
 
     /*
@@ -196,6 +196,11 @@ export default {
         !englishRegEx.test(value) ||
         "이름에 영어, 특수문자가 포함될 수 없습니다.";
     },
+    // 비밀번호가 8자리 이상인지 검사.
+    isLongEnough() {
+      return value =>
+        value.length() >= 8 || `비밀번호는 8자리 이상이어야 합니다.`;
+    },
     // 비밀번호 확인이 정상적으로 되었는지 검사.
     isIdentical() {
       return value =>
@@ -223,6 +228,9 @@ export default {
         default:
           return "사용자 권한을 선택하세요.";
       }
+    },
+    isLoading() {
+      return this.$store.getters["auth/isLoading"];
     }
   },
   watch: {
@@ -251,45 +259,8 @@ export default {
         is_student: this.userAuthority == "isStudent" ? true : false
       };
 
-      // 서버에 새로운 유저 등록을 HTTP POST로 요청한다.
-      this.$axios
-        .post(`user/register`, registerFormData)
-        .then(() => {
-          // 로딩 Flag를 False로 설정한다.
-          this.isLoading = false;
-
-          alert("회원가입이 완료되었습니다. 로그인 해주세요.");
-
-          // 회원가입 성공 시, 로그인 페이지로 리디렉트한다.
-          this.$router.replace("/auth");
-        })
-        .catch(error => {
-          // 로딩 Flag를 False로 설정한다.
-          this.isLoading = false;
-
-          // 로그인 오류 시, 서버로부터 반환된 에러 데이터를 가져온다.
-          const errorResponse = error.response;
-
-          // Bad Request (400) 에러 처리
-          if (errorResponse.status == 400) {
-            // Error Response에 Email 데이터가 존재하는 경우,
-            if (errorResponse.data["email"]) {
-              alert("입력하신 이메일로 이미 가입된 사용자가 있습니다.");
-            }
-            // 그렇지 않은 일반적인 상황인 경우,
-            else {
-              alert("HTTP 400 - 잘못된 요청입니다.");
-            }
-          }
-          // Unauthorized (401) 에러 처리
-          else if (errorResponse.status == 401) {
-            alert("HTTP 401 - 이메일 또는 비밀번호를 다시 확인해주세요.");
-          }
-          // Not Found(404) 에러 처리
-          else if (errorResponse.status == 404) {
-            alert("HTTP 404 - 연결이 원활하지 못합니다. 잠시 후 시도해주세요.");
-          }
-        });
+      // Vuex Actions 중, register를 호출한다.
+      this.$store.dispatch("auth/register", registerFormData);
     }
   }
 };

@@ -95,12 +95,12 @@ export default {
   methods: {
     login() {
       // Form Data를 자바스크립트 객체로 만든다.
-      const formData = {
+      const loginFormData = {
         email: this.email,
         password: this.password
       };
       // Vuex 저장소의 상태를 변경하기 위해, dispatch로 actions를 작동시킨다.
-      this.$store.dispatch("auth/login", formData);
+      this.$store.dispatch("auth/login", loginFormData);
     }
   }
 };
