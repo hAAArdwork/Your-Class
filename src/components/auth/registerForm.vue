@@ -199,7 +199,7 @@ export default {
     // 비밀번호가 8자리 이상인지 검사.
     isLongEnough() {
       return value =>
-        value.length() >= 8 || `비밀번호는 8자리 이상이어야 합니다.`;
+        value.length >= 8 || `비밀번호는 8자리 이상이어야 합니다.`;
     },
     // 비밀번호 확인이 정상적으로 되었는지 검사.
     isIdentical() {

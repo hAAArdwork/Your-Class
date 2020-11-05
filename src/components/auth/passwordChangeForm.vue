@@ -22,7 +22,7 @@
           :append-icon="passwordShow ? 'mdi-eye' : 'mdi-eye-off'"
           :type="passwordShow ? 'text' : 'password'"
           @click:append="passwordShow = !passwordShow"
-          :rules="[required('비밀번호'), isLongEnough(), hasKorean()]"
+          :rules="[required('비밀번호'), hasKorean(), isLongEnough()]"
           counter
         >
         </v-text-field>

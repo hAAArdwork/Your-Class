@@ -128,7 +128,7 @@ const actions = {
         alert("회원가입이 완료되었습니다. 로그인 해주세요.");
 
         // 회원가입 성공 시, 로그인 페이지로 리디렉트한다.
-        this.$router.replace("/auth");
+        router.replace("/auth");
       })
       .catch(error => {
         // 로그인 오류 시, 서버로부터 반환된 에러 데이터를 가져온다.
@@ -201,7 +201,7 @@ const actions = {
 
     // 토큰 갱신이 불필요한 경우,
     if (flag == null) {
-      await commit("login", tokenData);
+      commit("login", tokenData);
 
       console.log("토큰 재발급 없이 자동 로그인 완료!");
 
@@ -218,10 +218,6 @@ const actions = {
         const newAccessToken = data.access;
         const newAccessTokenExpires = new Date(data.access_expiration_date);
 
-        // 인증 정보를 업데이트한다.
-        tokenData.accessToken = newAccessToken;
-        tokenData.accessTokenExpires = newAccessTokenExpires.toString();
-
         localStorage.setItem("accessToken", tokenData.accessToken);
         localStorage.setItem(
           "accessTokenExpires",
@@ -229,7 +225,10 @@ const actions = {
         );
 
         // 갱신된 인증 정보를 State에 반영한다.
-        commit("login", tokenData);
+        commit("fetchNewToken", {
+          accessToken: newAccessToken,
+          accessTokenExpires: newAccessTokenExpires
+        });
 
         console.log("accessToken 재발급 후 자동 로그인 완료!");
       })

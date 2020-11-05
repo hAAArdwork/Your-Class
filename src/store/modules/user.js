@@ -2,15 +2,20 @@ import axios from "axios";
 // import router from "@/router";
 
 const userAxios = axios.create();
-const accessToken = localStorage.getItem("accessToken");
-
 userAxios.defaults.baseURL = "http://127.0.0.1:8000/api/";
-userAxios.defaults.headers.common["Authorization"] = `Bearer ${accessToken}`;
 
 // HTTP Request 인터셉터
 userAxios.interceptors.request.use(
   function(config) {
     console.log(config);
+
+    const accessToken = localStorage.getItem("accessToken");
+
+    // localStorage에 accessToken이 존재하면, HTTP Request Header에 추가한다.
+    if (accessToken) {
+      config.headers["Authorization"] = `Bearer ${accessToken}`;
+    }
+
     return config;
   },
   function(error) {

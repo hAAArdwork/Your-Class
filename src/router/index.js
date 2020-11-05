@@ -146,7 +146,6 @@ router.beforeEach(async (to, from, next) => {
 
         next();
       }
-      // 토큰이 있다면, 목적 Route로 이동한다.
     }
   }
   // 목적 Route가 인증을 요구하지 않으면, 목적지로 바로 이동한다.
