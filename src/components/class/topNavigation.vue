@@ -1,14 +1,14 @@
 <template>
   <v-sheet rounded="lg" elevation="6">
     <!-- 내부 세부 요소 FlexBox 설정 -->
-    <v-row class="px-6" align="center">
+    <v-row class="px-6" align="center" justify="space-around">
       <!-- 회원 프로필 사진 -->
       <v-col cols="2" class="d-flex justify-center">
         <v-avatar class="accent" size="46">
           <v-img
             class="elevation-6"
             alt="User Avatar"
-            src="https://avataaars.io/?avatarStyle=Transparent&topType=ShortHairShortCurly&accessoriesType=Round&hairColor=Black&facialHairType=Blank&clotheType=ShirtCrewNeck&clotheColor=Gray01&eyeType=Default&eyebrowType=UpDown&mouthType=Smile&skinColor=Light"
+            :src="userData.avatarPath"
           ></v-img>
         </v-avatar>
       </v-col>
@@ -17,12 +17,12 @@
       <v-col cols="2" v-for="(data, index) in menuList" :key="index">
         <!-- Display Braekpoint에 따라 반응형 설정 -->
         <v-btn
-          text
+          active-class="accent"
           :large="$vuetify.breakpoint.name != 'xs'"
           :rounded="$vuetify.breakpoint.name != 'xs'"
           :icon="$vuetify.breakpoint.name == 'xs'"
           :to="{ name: data.route }"
-          color="black"
+          text
           exact
         >
           <v-icon size="24" :left="$vuetify.breakpoint.name != 'xs'">
@@ -40,6 +40,7 @@
 <script>
 export default {
   props: {
+    userData: Object,
     menuList: Array
   }
 };

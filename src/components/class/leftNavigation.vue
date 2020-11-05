@@ -7,7 +7,7 @@
           <v-img
             class="elevation-6"
             alt="User Avatar"
-            src="https://avataaars.io/?avatarStyle=Transparent&topType=ShortHairShortCurly&accessoriesType=Round&hairColor=Black&facialHairType=Blank&clotheType=ShirtCrewNeck&clotheColor=Gray01&eyeType=Default&eyebrowType=UpDown&mouthType=Smile&skinColor=Light"
+            :src="userData.avatarPath"
           ></v-img>
         </v-list-item-avatar>
       </v-list-item>
@@ -16,9 +16,12 @@
       <v-list-item>
         <v-list-item-content class="text-center">
           <v-list-item-title class="text-h5 font-weight-bold">
-            양준영
+            {{ userData.name }}
           </v-list-item-title>
-          <v-list-item-subtitle>tom9744@dgu.ac.kr</v-list-item-subtitle>
+
+          <v-list-item-subtitle>
+            {{ userData.isStudent ? "학생" : "선생님" }}
+          </v-list-item-subtitle>
         </v-list-item-content>
       </v-list-item>
     </v-list>
@@ -29,22 +32,19 @@
     <v-list flat>
       <v-list-item-group color="light-blue darken-2">
         <!-- v-for 디렉티브를 사용해 리스트 출력 -->
-        <v-list-item
-          v-for="(data, index) in menuList"
-          :key="index"
-          :to="{ name: data.route }"
-          exact
-        >
-          <v-list-item-icon>
-            <v-icon size="26">
-              {{ data.icon }}
-            </v-icon>
-          </v-list-item-icon>
+        <div v-for="(data, index) in menuList" :key="index">
+          <v-list-item :to="{ name: data.route }" exact>
+            <v-list-item-icon>
+              <v-icon size="26">
+                {{ data.icon }}
+              </v-icon>
+            </v-list-item-icon>
 
-          <v-list-item-title class="subtitle-1">
-            {{ data.text }}
-          </v-list-item-title>
-        </v-list-item>
+            <v-list-item-title class="subtitle-1">
+              {{ data.text }}
+            </v-list-item-title>
+          </v-list-item>
+        </div>
       </v-list-item-group>
     </v-list>
   </v-sheet>
@@ -53,6 +53,7 @@
 <script>
 export default {
   props: {
+    userData: Object,
     menuList: Array
   }
 };

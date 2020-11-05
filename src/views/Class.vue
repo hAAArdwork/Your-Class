@@ -4,12 +4,14 @@
       <v-row>
         <!-- MD 이상의 Breakpoint에서 렌더링되는 좌측 네비게이션 창 -->
         <v-col cols="2" class="hidden-md-and-down">
-          <left-navigation :menuList="listItems" />
+          <!-- 자식 컴포넌트에 사용자 정보와 그게 맞게 필터링된 메뉴 항목을 Props로 전달한다 -->
+          <left-navigation :userData="userData" :menuList="filteredMenuList" />
         </v-col>
 
         <!-- MD 이하의 Breakpoint에서 렌더링되는 상단 네비게이션 창 -->
         <v-col cols="12" class="hidden-lg-and-up">
-          <top-navigation :menuList="listItems" />
+          <!-- 자식 컴포넌트에 사용자 정보와 그게 맞게 필터링된 메뉴 항목을 Props로 전달한다 -->
+          <top-navigation :userData="userData" :menuList="filteredMenuList" />
         </v-col>
 
         <!-- 우측 라우터 뷰 -->
@@ -40,8 +42,26 @@ export default {
     leftNavigation,
     topNavigation
   },
+  computed: {
+    userData() {
+      return this.$store.getters["user/userData"];
+    },
+    // props로 전달된 메뉴 항목을 권한에 따라 필터링한다.
+    filteredMenuList() {
+      // 학생 권한인 경우,
+      if (this.userData.isStudent) {
+        // filter() 메소드를 사용해 과목관리 항목을 제외한다.
+        return this.listItems.filter(item => {
+          return item.text !== "과목관리";
+        });
+      }
+      // 교사 권한인 경우, 그대로 반환한다.
+      else {
+        return this.listItems;
+      }
+    }
+  },
   data: () => ({
-    selectedItem: 1,
     listItems: [
       {
         text: "과목정보",

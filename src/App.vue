@@ -23,24 +23,59 @@
 
       <v-spacer></v-spacer>
 
-      <v-btn v-if="!isLoggedIn" icon :to="{ name: 'LandingPage' }" exact>
-        <v-icon>mdi-home</v-icon>
+      <v-btn
+        active-class="accent"
+        :to="{ name: 'LandingPage' }"
+        v-if="!isLoggedIn"
+        icon
+        dark
+        exact
+      >
+        <v-icon color="black">mdi-home</v-icon>
       </v-btn>
 
-      <v-btn v-if="isLoggedIn" icon :to="{ name: 'MainPage' }">
-        <v-icon>mdi-dots-grid</v-icon>
+      <v-btn
+        active-class="accent"
+        :to="{ name: 'MainPage' }"
+        v-if="isLoggedIn"
+        icon
+        dark
+      >
+        <v-icon color="black">mdi-dots-grid</v-icon>
       </v-btn>
 
-      <v-btn v-if="isLoggedIn" icon :to="{ name: 'MyPage' }">
-        <v-icon>mdi-account</v-icon>
+      <v-btn
+        active-class="accent"
+        :to="{ name: 'Calendar' }"
+        v-if="isLoggedIn"
+        icon
+        dark
+      >
+        <v-icon color="black">mdi-calendar</v-icon>
       </v-btn>
 
-      <v-btn v-if="!isLoggedIn" icon :to="{ name: 'Login' }">
-        <v-icon>mdi-login-variant</v-icon>
+      <v-btn
+        active-class="accent"
+        :to="{ name: 'MyPage' }"
+        v-if="isLoggedIn"
+        icon
+        dark
+      >
+        <v-icon color="black">mdi-account</v-icon>
       </v-btn>
 
-      <v-btn v-if="isLoggedIn" icon @click="logout">
-        <v-icon>mdi-logout-variant</v-icon>
+      <v-btn
+        active-class="accent"
+        :to="{ name: 'Login' }"
+        v-if="!isLoggedIn"
+        icon
+        dark
+      >
+        <v-icon color="black">mdi-login-variant</v-icon>
+      </v-btn>
+
+      <v-btn active-class="accent" @click="logout" v-if="isLoggedIn" icon dark>
+        <v-icon color="black">mdi-logout-variant</v-icon>
       </v-btn>
     </v-app-bar>
 

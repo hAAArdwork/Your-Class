@@ -85,8 +85,7 @@ const actions = {
       })
       .catch(error => {
         console.log(error);
-        console.log(error.data);
-        console.log(error.respose);
+        console.log(error.response);
       });
   },
 

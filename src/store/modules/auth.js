@@ -178,6 +178,8 @@ const actions = {
     const accessTimeLeft = new Date(accessExpires) - new Date();
     const refreshTimeLeft = new Date(refreshExpires) - new Date();
 
+    console.log(accessTimeLeft, refreshTimeLeft);
+
     // 두 토큰의 만료 시간을 토대로, 토큰이 갱신(refresh) 가능한지 검토한다.
     // true: 토큰 갱신 가능, false: 토큰 갱신 불가능, null: 토큰 갱신 불필요.
     const flag = isRefreshable(accessTimeLeft, refreshTimeLeft);
@@ -218,11 +220,8 @@ const actions = {
         const newAccessToken = data.access;
         const newAccessTokenExpires = new Date(data.access_expiration_date);
 
-        localStorage.setItem("accessToken", tokenData.accessToken);
-        localStorage.setItem(
-          "accessTokenExpires",
-          tokenData.accessTokenExpires
-        );
+        localStorage.setItem("accessToken", newAccessToken);
+        localStorage.setItem("accessTokenExpires", newAccessTokenExpires);
 
         // 갱신된 인증 정보를 State에 반영한다.
         commit("fetchNewToken", {
