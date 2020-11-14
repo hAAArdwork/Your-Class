@@ -111,11 +111,27 @@ export default {
     selectedEvent: {},
     selectedElement: null,
     selectedOpen: false,
+    /*
+     *  이벤트 인스턴스에는 name, start, end, color가 필요하며,
+     *  시작, 종료일의 포맷은 YYYY-MM-DD hh:mm 이다.
+     */
     events: [
       {
-        name: "테스트 할일",
-        start: "2020-11-03 09:30",
-        end: "2020-11-04 11:30",
+        name: "동억이형 결혼식",
+        start: "2020-11-07 11:30",
+        end: "2020-11-07 13:00",
+        color: "blue"
+      },
+      {
+        name: "기업사회 미팅",
+        start: "2020-11-06 13:05",
+        end: "2020-11-06 14:00",
+        color: "blue"
+      },
+      {
+        name: "창업 캡스톤 중간발표",
+        start: "2020-11-11 18:30",
+        end: "2020-11-11 21:00",
         color: "blue"
       }
     ],
@@ -127,8 +143,11 @@ export default {
     this.$refs.calendar.checkChange();
   },
   methods: {
-    rnd(a, b) {
-      return Math.floor((b - a + 1) * Math.random()) + a;
+    prev() {
+      this.$refs.calendar.prev();
+    },
+    next() {
+      this.$refs.calendar.next();
     },
     viewDay({ date }) {
       this.focus = date;
@@ -140,12 +159,7 @@ export default {
     setToday() {
       this.focus = "";
     },
-    prev() {
-      this.$refs.calendar.prev();
-    },
-    next() {
-      this.$refs.calendar.next();
-    },
+
     showEvent({ nativeEvent, event }) {
       const open = () => {
         this.selectedEvent = event;

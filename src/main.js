@@ -6,7 +6,7 @@ import vuetify from "./plugins/vuetify";
 import axios from "axios";
 
 // baseURL 기본값을 정의한다
-axios.defaults.baseURL = "http://127.0.0.1:8000/api/";
+axios.defaults.baseURL = "https://warm-everglades-14511.herokuapp.com/api/";
 
 // HTTP Request 인터셉터
 axios.interceptors.request.use(

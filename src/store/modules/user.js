@@ -2,7 +2,7 @@ import axios from "axios";
 // import router from "@/router";
 
 const userAxios = axios.create();
-userAxios.defaults.baseURL = "http://127.0.0.1:8000/api/";
+userAxios.defaults.baseURL = "https://warm-everglades-14511.herokuapp.com/api/";
 
 // HTTP Request 인터셉터
 userAxios.interceptors.request.use(
