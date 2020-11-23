@@ -8,8 +8,7 @@
         </v-btn>
         </v-toolbar-items>
       </v-toolbar>
-
-          <v-card >
+      <v-card>
           <v-card
             class="mb-7"
             rounded="x1"
@@ -34,23 +33,10 @@
                 삭제하기</v-btn>
             </v-card-actions>
           </v-card>
-          </v-card>
-   
-
-
+    </v-card>
   </v-container>
-
-
-
-
-
 </template>
  
-
-
-
-
-
 <script>
 export default {
   data: () => ({
