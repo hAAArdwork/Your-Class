@@ -37,7 +37,10 @@
       <v-list-item-group color="light-blue darken-2">
         <!-- v-for 디렉티브를 사용해 리스트 출력 -->
         <div v-for="(data, index) in menuList" :key="index">
-          <v-list-item :to="{ name: data.route }" exact>
+          <v-list-item
+            :to="{ name: data.route }"
+            :exact="data.route == 'classInfo'"
+          >
             <v-list-item-icon>
               <v-icon size="26">
                 {{ data.icon }}
