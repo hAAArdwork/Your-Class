@@ -1,13 +1,22 @@
 <template>
-  <v-container class="px-8" fill-height fluid>
-    <v-row>
+  <v-container class="px-4 px-sm-6 px-md-8 px-xl-16" fill-height fluid>
+    <v-row style="height: 100%;">
       <v-col cols="12">
-        <p class="text-h4 font-weight-bold">
+        <p class="text-h4 font-weight-bold mb-0">
           공지사항
         </p>
+      </v-col>
+
+      <v-col cols="6" class="py-0">
         <p class="text-h6 hidden-xs-only">
           중요한 공지사항을 확인하고, 학습 일정에 반영하세요!
         </p>
+      </v-col>
+
+      <v-col cols="6" class="d-flex justify-end align-end">
+        <v-btn v-if="!userData.isStudent" class="accent" large>
+          <strong>새글쓰기</strong>
+        </v-btn>
       </v-col>
 
       <v-col cols="12" style="height: 325px;">
@@ -183,6 +192,9 @@ export default {
     ]
   }),
   computed: {
+    userData() {
+      return this.$store.getters["user/userData"];
+    },
     itemPerPage() {
       switch (this.$vuetify.breakpoint.name) {
         case "xs":

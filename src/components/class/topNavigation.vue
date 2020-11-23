@@ -4,7 +4,7 @@
     <v-row class="px-6" align="center" justify="space-around">
       <!-- 회원 프로필 사진 -->
       <v-col cols="2" class="d-flex justify-center">
-        <v-avatar class="accent" size="46">
+        <v-avatar :color="userData.isStudent ? 'accent' : 'error'" size="46">
           <v-img
             class="elevation-6"
             alt="User Avatar"

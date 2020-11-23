@@ -3,7 +3,11 @@
     <v-list>
       <!-- 회원 프로필 사진 -->
       <v-list-item>
-        <v-list-item-avatar class="mx-auto" color="accent" size="64">
+        <v-list-item-avatar
+          class="mx-auto"
+          :color="userData.isStudent ? 'accent' : 'error'"
+          size="64"
+        >
           <v-img
             class="elevation-6"
             alt="User Avatar"

@@ -13,7 +13,7 @@
               class="d-flex justify-space-between headline text--primary"
             >
               <div>{{ ass.name }}</div>
-              <div class=" red--text">
+              <div class="red--text">
                 {{ ass.startdate }} ~ {{ ass.enddate }}
               </div>
             </v-card-subtitle>
@@ -28,7 +28,7 @@
           </v-card>
         </v-col>
       </v-card>
-      <v-card-actions class=" text-center ml-auto">
+      <v-card-actions class="text-center ml-auto">
         <v-btn class="blue lighten-1 white--text" width="180px" height="50px">
           <h3>+ 신규 과제 등록</h3>
         </v-btn>

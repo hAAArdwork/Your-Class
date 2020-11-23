@@ -1,7 +1,7 @@
 <template>
   <!-- {{ $route.params.classId }} 를 통해 URI에서 라우트 매개변수를 가져올 수 있다. -->
-  <v-container class="px-8" fill-height fluid>
-    <v-row style="height: 100%;">
+  <v-container class="px-4 px-sm-6 px-md-8 px-xl-16" fill-height fluid>
+    <v-row style="height: 100%;" justify="start">
       <!-- 과목에 대한 간략한 정보 렌더링 -->
       <v-col cols="12">
         <p class="class-info text-h4">
@@ -9,10 +9,13 @@
         </p>
       </v-col>
 
-      <v-col cols="12">
+      <v-col cols="12" class="py-0">
         <p class="class-info text-h6">
           {{ classInfo.teacher }}
         </p>
+      </v-col>
+
+      <v-col cols="12" class="py-0">
         <p class="text-subtitle-1">
           {{ classInfo.time }}
         </p>
