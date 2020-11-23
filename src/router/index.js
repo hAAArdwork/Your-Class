@@ -90,11 +90,39 @@ const routes = [
         meta: { title: "공지사항" }
       },
       {
+        path: "notice/detail",
+        name: "classNoticeDetail",
+        component: () =>
+          import("../components/class/classNotice/classNoticeDetail.vue"),
+        meta: { title: "공지세부" }
+      },
+      {
         path: "assignment",
         name: "classAssignment",
         component: () =>
           import("../components/class/classAssignment/classAssignment.vue"),
         meta: { title: "과제" }
+      },
+      {
+        path: "assignment/register",
+        name: "classAssignmentRegister",
+        component: () =>
+          import("../components/class/classAssignment/classAssignmentRegister.vue"),
+        meta: { title: "과제제출" }
+      },
+      {
+        path: "assignment/register/info",
+        name: "classAssignmentRegisterInfo",
+        component: () =>
+          import("../components/class/classAssignment/classAssignmentRegisterInfo.vue"),
+        meta: { title: "과제제출정보" }
+      },
+      {
+        path: "assignment/write",
+        name: "classAssignmentWrite",
+        component: () =>
+          import("../components/class/classAssignment/classAssignmentWrite.vue"),
+        meta: { title: "과제등록" }
       },
       {
         path: "ask",

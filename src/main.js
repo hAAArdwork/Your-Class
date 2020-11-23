@@ -36,6 +36,7 @@ axios.interceptors.response.use(
   }
 );
 
+
 Vue.prototype.$axios = axios;
 Vue.config.productionTip = false;
 
