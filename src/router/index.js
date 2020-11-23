@@ -70,6 +70,9 @@ const routes = [
     ],
     meta: { title: "마이페이지", requiresAuth: true }
   },
+  /*
+   *  강좌 관련 라우터 집합
+   */
   {
     path: "/class/:classId", // URI 매개변수 설정을 통해, 각 과목 식별 가능하도록 설정한다.
     props: true, // props를 true로 설정하면, params를 props의 형태로 받을 수 있다.
@@ -82,20 +85,34 @@ const routes = [
         component: () => import("../components/class/classInfo/classInfo.vue"),
         meta: { title: "교과정보" }
       },
+      /*
+       *  강좌 공지사항 관련 라우터
+       */
       {
         path: "notice",
-        name: "classNotice",
         component: () =>
           import("../components/class/classNotice/classNotice.vue"),
-        meta: { title: "공지사항" }
+        meta: { title: "공지사항" },
+        children: [
+          {
+            path: "",
+            name: "classNotice",
+            component: () =>
+              import("../components/class/classNotice/noticeBoard.vue"),
+            meta: { title: "공지사항" }
+          },
+          {
+            path: "detail",
+            name: "noticeDetail",
+            component: () =>
+              import("../components/class/classNotice/noticeDetail.vue"),
+            meta: { title: "공지세부" }
+          }
+        ]
       },
-      {
-        path: "notice/detail",
-        name: "classNoticeDetail",
-        component: () =>
-          import("../components/class/classNotice/classNoticeDetail.vue"),
-        meta: { title: "공지세부" }
-      },
+      /*
+       *  강좌 과제 관련 라우터
+       */
       {
         path: "assignment",
         name: "classAssignment",
@@ -107,30 +124,58 @@ const routes = [
         path: "assignment/register",
         name: "classAssignmentRegister",
         component: () =>
-          import("../components/class/classAssignment/classAssignmentRegister.vue"),
+          import(
+            "../components/class/classAssignment/classAssignmentRegister.vue"
+          ),
         meta: { title: "과제제출" }
       },
       {
         path: "assignment/register/info",
         name: "classAssignmentRegisterInfo",
         component: () =>
-          import("../components/class/classAssignment/classAssignmentRegisterInfo.vue"),
+          import(
+            "../components/class/classAssignment/classAssignmentRegisterInfo.vue"
+          ),
         meta: { title: "과제제출정보" }
       },
       {
         path: "assignment/write",
         name: "classAssignmentWrite",
         component: () =>
-          import("../components/class/classAssignment/classAssignmentWrite.vue"),
+          import(
+            "../components/class/classAssignment/classAssignmentWrite.vue"
+          ),
         meta: { title: "과제등록" }
       },
+
+      /*
+       *  질의응답 (QnA) 관련 라우터
+       */
       {
         path: "ask",
-        name: "classQuestion",
         component: () =>
           import("../components/class/classQuestion/classQuestion.vue"),
-        meta: { title: "질의응답" }
+        meta: { title: "질의응답" },
+        children: [
+          {
+            path: "",
+            name: "classQuestion",
+            component: () =>
+              import("../components/class/classQuestion/questionBoard.vue"),
+            meta: { title: "질의응답" }
+          },
+          {
+            path: "detail",
+            name: "questionDetail",
+            component: () =>
+              import("../components/class/classQuestion/questionDetail.vue"),
+            meta: { title: "질의응답" }
+          }
+        ]
       },
+      /*
+       *  괴목 관리 관련 라우터
+       */
       {
         path: "manage",
         name: "classManage",

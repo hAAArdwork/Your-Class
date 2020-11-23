@@ -66,8 +66,6 @@ export default {
     }
   },
   data: () => ({
-    dialog: false,
-
     valid: false,
     passwordShow: false,
     confirmShow: false,

@@ -23,7 +23,7 @@
           :icon="$vuetify.breakpoint.name == 'xs'"
           :to="{ name: data.route }"
           text
-          exact
+          :exact="data.route == 'classInfo'"
         >
           <v-icon size="24" :left="$vuetify.breakpoint.name != 'xs'">
             {{ data.icon }}
