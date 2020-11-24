@@ -1,7 +1,7 @@
 <template>
   <v-row style="height: 100%;">
     <v-col cols="8">
-      <p class="text-h4 font-weight-bold">
+      <p class="class-info text-h4">
         질의응답
       </p>
       <p class="text-h6 hidden-xs-only mb-0">
@@ -216,4 +216,12 @@ export default {
 };
 </script>
 
-<style></style>
+<style scoped>
+.class-info {
+  font-weight: 600;
+}
+.card-text-title {
+  font-size: 20px;
+  margin-bottom: 0px;
+}
+</style>
