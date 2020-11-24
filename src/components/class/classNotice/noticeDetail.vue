@@ -18,7 +18,7 @@
       <v-row>
         <v-card class="mx-auto" width="100%" outlined>
           <v-card-title>
-            <span>공지사항 제목</span>
+            <span>{{ $route.query.post }}번째 글 - 공지사항 제목</span>
           </v-card-title>
 
           <v-card-subtitle>

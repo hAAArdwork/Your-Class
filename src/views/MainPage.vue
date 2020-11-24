@@ -1,11 +1,16 @@
 <template>
   <!-- 반응형 UI 설정 -->
   <v-container
-    style="height: 90vh;"
     class="d-flex flex-column align-center justify-center"
+    fill-height
+    fluid
   >
     <!-- 강좌 목록 렌더링 영역, 콘텐츠 오버플로우 시 스크롤 적용 -->
-    <v-responsive class="overflow-y-auto px-5" max-height="55vh" width="75vw">
+    <v-responsive
+      class="overflow-y-auto px-5"
+      :max-height="$vuetify.breakpoint.name == 'xs' ? '75vh' : '55vh'"
+      :max-width="$vuetify.breakpoint.name == 'xs' ? '95vw' : '85vw'"
+    >
       <!-- 각 과목에 해당하는 카드 렌더링 -->
       <v-row>
         <v-col
@@ -22,22 +27,73 @@
     </v-responsive>
 
     <!-- 신규 과목 개설 및 등록 버튼 영역 -->
-    <v-responsive class="d-flex align-end" max-height="100px">
-      <v-btn class="accent ma-2" x-large>
-        신규 과목 등록하기
-      </v-btn>
+    <v-responsive
+      class="d-flex align-end py-2"
+      :max-height="$vuetify.breakpoint.name == 'xs' ? '10vh' : '15vh'"
+    >
     </v-responsive>
+
+    <v-dialog
+      v-model="newClassDialog"
+      transition="scroll-y-reverse-transition"
+      max-width="650px"
+      persistent
+    >
+      <template v-slot:activator="{ on, attrs }">
+        <!-- 교사 View -->
+        <v-btn
+          v-if="!userData.isStudent"
+          @click="newClassDialog = true"
+          color="accent"
+          v-bind="attrs"
+          v-on="on"
+          large
+        >
+          <v-icon left size="25">
+            mdi-plus
+          </v-icon>
+          <span style="font-size: 20px;">
+            신규 과목 개설
+          </span>
+        </v-btn>
+
+        <!-- 학생 View -->
+        <v-btn v-else color="accent" v-bind="attrs" v-on="on" large>
+          <v-icon left size="25">
+            mdi-plus
+          </v-icon>
+          <span style="font-size: 20px;">
+            수강 강의 등록
+          </span>
+        </v-btn>
+      </template>
+
+      <!-- Form Component -->
+      <create-class-form
+        v-if="!userData.isStudent"
+        @closeDialog="newClassDialog = false"
+      />
+    </v-dialog>
   </v-container>
 </template>
 
 <script>
 import classCard from "../components/mainPage/classCard.vue";
+import createClassForm from "../components/mainPage/createClassForm.vue";
 
 export default {
   components: {
-    classCard
+    classCard,
+    createClassForm
+  },
+  computed: {
+    userData() {
+      return this.$store.getters["user/userData"];
+    }
   },
   data: () => ({
+    newClassDialog: false,
+
     classCardData: [
       {
         id: 0,

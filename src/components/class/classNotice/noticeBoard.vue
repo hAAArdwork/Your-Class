@@ -237,9 +237,13 @@ export default {
     }
   },
   methods: {
-    onClick(item) {
-      console.log(item);
-      this.$router.push({ name: "noticeDetail" });
+    onClick({ number }) {
+      this.$router.push({
+        name: "noticeDetail",
+        query: {
+          post: number
+        }
+      });
     }
   }
 };

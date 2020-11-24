@@ -19,7 +19,7 @@
         <template v-slot:activator="{ on, attrs }">
           <v-btn
             color="accent"
-            v-if="!userData.isStudent"
+            v-if="userData.isStudent"
             v-bind="attrs"
             v-on="on"
           >
@@ -208,9 +208,13 @@ export default {
     }
   },
   methods: {
-    onClick(item) {
-      console.log(item);
-      this.$router.push({ name: "questionDetail" });
+    onClick({ number }) {
+      this.$router.push({
+        name: "questionDetail",
+        query: {
+          post: number
+        }
+      });
     }
   }
 };

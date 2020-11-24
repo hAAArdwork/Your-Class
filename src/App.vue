@@ -47,7 +47,7 @@
       <v-btn
         active-class="accent"
         :to="{ name: 'Calendar' }"
-        v-if="isLoggedIn"
+        v-if="isLoggedIn && userData.isStudent"
         icon
         dark
       >
@@ -97,6 +97,9 @@ export default {
   computed: {
     isLoggedIn() {
       return this.$store.getters["auth/hasAccessToken"];
+    },
+    userData() {
+      return this.$store.getters["user/userData"];
     }
   },
 
