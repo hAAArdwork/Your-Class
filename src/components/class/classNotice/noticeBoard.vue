@@ -1,7 +1,7 @@
 <template>
   <v-row style="height: 100%;">
     <v-col cols="8">
-      <p class="text-h4 font-weight-bold">
+      <p class="class-info text-h4">
         공지사항
       </p>
       <p class="text-h6 hidden-xs-only mb-0">
@@ -245,7 +245,7 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 .v-data-table > .v-data-table__wrapper > table > tbody > tr > td,
 .v-data-table > .v-data-table__wrapper > table > tbody > tr > th,
 .v-data-table > .v-data-table__wrapper > table > thead > tr > td,
@@ -253,5 +253,13 @@ export default {
 .v-data-table > .v-data-table__wrapper > table > tfoot > tr > td,
 .v-data-table > .v-data-table__wrapper > table > tfoot > tr > th {
   padding: 0px 10px;
+}
+
+.class-info {
+  font-weight: 600;
+}
+.card-text-title {
+  font-size: 20px;
+  margin-bottom: 0px;
 }
 </style>
