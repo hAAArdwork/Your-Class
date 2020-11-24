@@ -1,5 +1,5 @@
 <template>
-  <v-container class="px-3 px-md-10 px-lg-12" fill-height fluid>
+  <v-container class="px-3 px-md-6 px-lg-9" fill-height fluid>
     <v-responsive class="pa-2" height="90vh">
       <v-row>
         <!-- MD 이상의 Breakpoint에서 렌더링되는 좌측 네비게이션 창 -->

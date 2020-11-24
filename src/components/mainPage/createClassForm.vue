@@ -9,11 +9,13 @@
     <v-card-text v-if="$vuetify.breakpoint.name === 'xs'">
       <!-- 모바일 기기인 경우, 관리자 페이지 렌더링 중지 -->
       <v-row>
-        <v-col cols="12" class="d-flex flex-column">
-          <v-icon x-large color="error" class="ma-2">mdi-cancel</v-icon>
+        <v-col cols="12" class="text-center">
+          <v-icon large color="error" class="ma-2">mdi-cancel</v-icon>
 
-          <span class="px-12 text-center">
-            모바일 화면에서는 새로운 과목을 등록할 수 없습니다.
+          <v-spacer></v-spacer>
+
+          <span>
+            모바일 기기에선 사용할 수 없는 기능입니다.
           </span>
         </v-col>
       </v-row>

@@ -102,10 +102,12 @@
 
     <!-- 모바일 기기인 경우, 관리자 페이지 렌더링 중지 -->
     <v-row v-else>
-      <v-col cols="12" class="d-flex flex-column">
+      <v-col cols="12" class="text-center">
         <v-icon x-large color="error" class="ma-2">mdi-cancel</v-icon>
 
-        <span class="text-h6 px-10 text-center">
+        <v-spacer></v-spacer>
+
+        <span>
           모바일 기기에선 사용할 수 없는 기능입니다.
         </span>
       </v-col>

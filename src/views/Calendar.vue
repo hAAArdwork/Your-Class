@@ -1,104 +1,96 @@
 <template>
-  <v-row class="fill-height" align="center">
-    <v-col>
-      <v-sheet height="64">
-        <v-toolbar flat>
-          <v-btn outlined class="mr-4" color="grey darken-2" @click="setToday">
-            Today
-          </v-btn>
+  <v-container fill-height fluid>
+    <v-row v-if="$vuetify.breakpoint.name === 'xs'">
+      <v-col cols="12" class="text-center">
+        <v-icon x-large color="error" class="ma-2">mdi-cancel</v-icon>
 
-          <v-btn fab text small color="grey darken-2" @click="prev">
-            <v-icon small>
-              mdi-chevron-left
-            </v-icon>
-          </v-btn>
+        <v-spacer></v-spacer>
 
-          <v-btn fab text small color="grey darken-2" @click="next">
-            <v-icon small>
-              mdi-chevron-right
-            </v-icon>
-          </v-btn>
+        <span>
+          모바일 기기에선 사용할 수 없는 기능입니다.
+        </span>
+      </v-col>
+    </v-row>
 
-          <v-toolbar-title v-if="$refs.calendar">
-            {{ $refs.calendar.title }}
-          </v-toolbar-title>
+    <v-row v-else>
+      <v-col>
+        <v-sheet height="75px">
+          <v-toolbar flat>
+            <v-btn
+              outlined
+              class="mr-4"
+              color="grey darken-2"
+              @click="setToday"
+            >
+              Today
+            </v-btn>
 
-          <v-spacer></v-spacer>
+            <v-btn fab text small color="grey darken-2" @click="prev">
+              <v-icon>
+                mdi-chevron-left
+              </v-icon>
+            </v-btn>
 
-          <v-menu bottom right>
-            <template v-slot:activator="{ on, attrs }">
-              <v-btn outlined color="grey darken-2" v-bind="attrs" v-on="on">
-                <span>{{ typeToLabel[type] }}</span>
+            <v-btn fab text small color="grey darken-2" @click="next">
+              <v-icon>
+                mdi-chevron-right
+              </v-icon>
+            </v-btn>
 
-                <v-icon right>
-                  mdi-menu-down
-                </v-icon>
-              </v-btn>
-            </template>
+            <v-toolbar-title v-if="$refs.calendar">
+              {{ $refs.calendar.title }}
+            </v-toolbar-title>
+          </v-toolbar>
+        </v-sheet>
 
-            <v-list>
-              <v-list-item @click="type = 'month'">
-                <v-list-item-title>Month</v-list-item-title>
-              </v-list-item>
+        <v-sheet height="75vh">
+          <v-calendar
+            ref="calendar"
+            color="accent"
+            v-model="focus"
+            :events="events"
+            :event-color="getEventColor"
+            :type="type"
+            @click:event="showEvent"
+            @click:more="viewDay"
+            @click:date="viewDay"
+          ></v-calendar>
 
-              <v-list-item @click="type = 'week'">
-                <v-list-item-title>Week</v-list-item-title>
-              </v-list-item>
-            </v-list>
+          <v-menu
+            v-model="selectedOpen"
+            :close-on-content-click="false"
+            :activator="selectedElement"
+            offset-x
+          >
+            <v-card min-width="350px">
+              <v-toolbar :color="selectedEvent.color" flat dark>
+                <v-toolbar-title v-html="selectedEvent.name"></v-toolbar-title>
+              </v-toolbar>
+
+              <v-card-text>
+                <span v-html="selectedEvent.details"></span>
+              </v-card-text>
+
+              <v-card-actions>
+                <v-btn text color="primary" @click="selectedOpen = false">
+                  닫기
+                </v-btn>
+              </v-card-actions>
+            </v-card>
           </v-menu>
-        </v-toolbar>
-      </v-sheet>
-
-      <v-sheet height="600">
-        <v-calendar
-          ref="calendar"
-          color="accent"
-          v-model="focus"
-          :events="events"
-          :event-color="getEventColor"
-          :type="type"
-          @click:event="showEvent"
-          @click:more="viewDay"
-          @click:date="viewDay"
-        ></v-calendar>
-
-        <v-menu
-          v-model="selectedOpen"
-          :close-on-content-click="false"
-          :activator="selectedElement"
-          offset-x
-        >
-          <v-card color="grey lighten-4" min-width="350px" flat>
-            <v-toolbar :color="selectedEvent.color" dark>
-              <v-btn icon>
-                <v-icon>mdi-pencil</v-icon>
-              </v-btn>
-              <v-toolbar-title v-html="selectedEvent.name"></v-toolbar-title>
-              <v-spacer></v-spacer>
-              <v-btn icon>
-                <v-icon>mdi-heart</v-icon>
-              </v-btn>
-              <v-btn icon>
-                <v-icon>mdi-dots-vertical</v-icon>
-              </v-btn>
-            </v-toolbar>
-            <v-card-text>
-              <span v-html="selectedEvent.details"></span>
-            </v-card-text>
-            <v-card-actions>
-              <v-btn text color="secondary" @click="selectedOpen = false">
-                Cancel
-              </v-btn>
-            </v-card-actions>
-          </v-card>
-        </v-menu>
-      </v-sheet>
-    </v-col>
-  </v-row>
+        </v-sheet>
+      </v-col>
+    </v-row>
+  </v-container>
 </template>
 
 <script>
 export default {
+  mounted() {
+    if (this.$vuetify.breakpoint.name !== "xs")
+      this.$refs.calendar.checkChange();
+  },
+
   data: () => ({
     focus: "",
     type: "month",
@@ -139,9 +131,7 @@ export default {
     colors: [],
     names: []
   }),
-  mounted() {
-    this.$refs.calendar.checkChange();
-  },
+
   methods: {
     prev() {
       this.$refs.calendar.prev();

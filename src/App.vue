@@ -47,7 +47,7 @@
       <v-btn
         active-class="accent"
         :to="{ name: 'Calendar' }"
-        v-if="isLoggedIn && userData.isStudent"
+        v-if="isLoggedIn"
         icon
         dark
       >
