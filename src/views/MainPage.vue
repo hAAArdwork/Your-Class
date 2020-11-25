@@ -8,15 +8,15 @@
     <!-- 강좌 목록 렌더링 영역, 콘텐츠 오버플로우 시 스크롤 적용 -->
     <v-responsive
       class="overflow-y-auto px-5"
-      :max-height="$vuetify.breakpoint.name == 'xs' ? '75vh' : '55vh'"
-      :max-width="$vuetify.breakpoint.name == 'xs' ? '95vw' : '85vw'"
+      :max-height="$vuetify.breakpoint.name == 'xs' ? '80vh' : '55vh'"
+      :width="$vuetify.breakpoint.name == 'xs' ? '95vw' : '75vw'"
     >
       <!-- 각 과목에 해당하는 카드 렌더링 -->
       <v-row>
         <v-col
           cols="12"
           sm="6"
-          md="4"
+          lg="4"
           v-for="(data, index) in classCardData"
           :key="index"
         >
@@ -28,63 +28,87 @@
 
     <!-- 신규 과목 개설 및 등록 버튼 영역 -->
     <v-responsive
-      class="d-flex align-end py-2"
+      class="d-flex align-center"
       :max-height="$vuetify.breakpoint.name == 'xs' ? '10vh' : '15vh'"
     >
-    </v-responsive>
+      <!-- 교사 View -->
+      <v-dialog
+        v-model="newClassDialog"
+        transition="scroll-y-reverse-transition"
+        max-width="650px"
+        persistent
+      >
+        <!-- 신규 과목 개설 버튼 -->
+        <template v-slot:activator="{ on, attrs }">
+          <v-btn
+            v-if="!userData.isStudent"
+            @click="newClassDialog = true"
+            color="accent"
+            v-bind="attrs"
+            v-on="on"
+            large
+          >
+            <v-icon left size="25">
+              mdi-plus
+            </v-icon>
+            <span style="font-size: 20px;">
+              신규 과목 개설
+            </span>
+          </v-btn>
+        </template>
 
-    <v-dialog
-      v-model="newClassDialog"
-      transition="scroll-y-reverse-transition"
-      max-width="650px"
-      persistent
-    >
-      <template v-slot:activator="{ on, attrs }">
-        <!-- 교사 View -->
-        <v-btn
+        <!-- 과목 생성 Form Component -->
+        <create-class-form
           v-if="!userData.isStudent"
-          @click="newClassDialog = true"
-          color="accent"
-          v-bind="attrs"
-          v-on="on"
-          large
-        >
-          <v-icon left size="25">
-            mdi-plus
-          </v-icon>
-          <span style="font-size: 20px;">
-            신규 과목 개설
-          </span>
-        </v-btn>
+          @closeDialog="newClassDialog = false"
+        />
+      </v-dialog>
 
-        <!-- 학생 View -->
-        <v-btn v-else color="accent" v-bind="attrs" v-on="on" large>
-          <v-icon left size="25">
-            mdi-plus
-          </v-icon>
-          <span style="font-size: 20px;">
-            수강 강의 등록
-          </span>
-        </v-btn>
-      </template>
+      <!-- 학생 View -->
+      <v-dialog
+        v-model="enrollDialog"
+        transition="scroll-y-reverse-transition"
+        max-width="450px"
+        persistent
+      >
+        <template v-slot:activator="{ on, attrs }">
+          <v-btn
+            v-if="userData.isStudent"
+            @click="enrollDialog = true"
+            color="accent"
+            v-bind="attrs"
+            v-on="on"
+            large
+          >
+            <v-icon left size="25">
+              mdi-plus
+            </v-icon>
+            <span style="font-size: 20px;">
+              수강 과목 등록
+            </span>
+          </v-btn>
+        </template>
 
-      <!-- Form Component -->
-      <create-class-form
-        v-if="!userData.isStudent"
-        @closeDialog="newClassDialog = false"
-      />
-    </v-dialog>
+        <!-- 과목 등록 Form Component -->
+        <enroll-form
+          v-if="userData.isStudent"
+          @closeDialog="enrollDialog = false"
+        />
+      </v-dialog>
+    </v-responsive>
   </v-container>
 </template>
 
 <script>
 import classCard from "../components/mainPage/classCard.vue";
 import createClassForm from "../components/mainPage/createClassForm.vue";
+import enrollForm from "../components/mainPage/enrollFrom.vue";
 
 export default {
   components: {
     classCard,
-    createClassForm
+    createClassForm,
+    enrollForm
   },
   computed: {
     userData() {
@@ -93,6 +117,7 @@ export default {
   },
   data: () => ({
     newClassDialog: false,
+    enrollDialog: false,
 
     classCardData: [
       {

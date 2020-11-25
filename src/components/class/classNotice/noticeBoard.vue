@@ -59,7 +59,7 @@
             :class="
               $vuetify.breakpoint.name == 'sm' || 'xs' ? 'text-truncate' : ''
             "
-            :style="`max-width: ${truncateLength};`"
+            :style="`max-width: ${truncateLength}; margin: auto;`"
           >
             <span @click="onClick(item)">{{ item.title }}</span>
           </div>
