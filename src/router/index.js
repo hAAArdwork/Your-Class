@@ -121,26 +121,35 @@ const routes = [
         meta: { title: "과제" }
       },
       {
-        path: "assignment/register",
-        name: "classAssignmentRegister",
+        path: "assignment/submit",
+        name: "AssignmentSubmit",
         component: () =>
           import(
-            "../components/class/classAssignment/classAssignmentRegister.vue"
+            "../components/class/classAssignment/classAssignmentSubmit.vue"
           ),
         meta: { title: "과제제출" }
       },
       {
-        path: "assignment/register/info",
-        name: "classAssignmentRegisterInfo",
+        path: "assignment/submit/detail",
+        name: "AssignmentSubmitDetail",
         component: () =>
           import(
-            "../components/class/classAssignment/classAssignmentRegisterInfo.vue"
+            "../components/class/classAssignment/classAssignmentSubmitDetail.vue"
           ),
         meta: { title: "과제제출정보" }
       },
       {
+        path: "assignment/submit/check",
+        name: "AssignmnetSubmitCheck",
+        component: () =>
+          import(
+            "../components/class/classAssignment/classAssignmnetSubmitCheck.vue"
+          ),
+        meta: { title: "제출과제정보" }
+      },
+      {
         path: "assignment/write",
-        name: "classAssignmentWrite",
+        name: "AssignmentWrite",
         component: () =>
           import(
             "../components/class/classAssignment/classAssignmentWrite.vue"
