@@ -3,7 +3,7 @@
     <v-toolbar flat>
       <v-toolbar-title>
         <span class="class-info text-h5">
-          {{ isWaitingList ? "승인 대기 목록" : "수강 학생 목록" }}
+          수강 학생 목록
         </span>
       </v-toolbar-title>
     </v-toolbar>
@@ -14,24 +14,18 @@
       <v-row>
         <v-col
           cols="12"
-          class="d-flex align-center pa-2"
+          md="6"
+          class="d-flex align-center"
           v-for="student in studentList"
           :key="student.id"
         >
           <span class="flex-grow-1">
-            <strong>{{ student.name }}</strong> ( {{ student.mail }} )
+            <strong>{{ student.name }}</strong>
           </span>
 
-          <v-btn
-            v-if="isWaitingList"
-            @click="onAccept(student.mail)"
-            color="success"
-            small
-            icon
-          >
-            <v-icon>mdi-check</v-icon>
-          </v-btn>
-          <v-btn color="error" @click="onReject(student.mail)" small icon>
+          <span class="flex-grow-1">{{ student.mail }}</span>
+
+          <v-btn @click="onAccept(student.mail)" color="error" small icon>
             <v-icon>mdi-close</v-icon>
           </v-btn>
         </v-col>
@@ -43,24 +37,25 @@
 <script>
 export default {
   props: {
-    isWaitingList: Boolean,
     studentList: Array
   },
   methods: {
-    onAccept(email) {
-      console.log(email);
-      this.$emit("onAccept", email);
-    },
     onReject(email) {
       // 리스트의 종류에 따라 다른 이벤트를 Emit 한다.
-      if (this.isWaitingList) {
-        this.$emit("onDecline", email);
-      } else {
-        this.$emit("onRemove", email);
-      }
+      this.$emit("onRemove", email);
     }
   }
 };
 </script>
 
-<style></style>
+<style scoped>
+.class-info {
+  margin-bottom: 0px;
+  font-weight: 600;
+}
+
+.card-text-title {
+  font-size: 20px;
+  margin-bottom: 0px;
+}
+</style>
