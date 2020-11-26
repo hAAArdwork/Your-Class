@@ -59,6 +59,7 @@
             "
             :style="`max-width: ${truncateLength}; margin: auto;`"
             @click="onClick(item)"
+            @
           >
             <span>{{ item.title }}</span>
           </div>

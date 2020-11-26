@@ -1,90 +1,108 @@
-<template> 
-  <v-container fluid>
+<template>
+  <v-row style="height: 100%;">
+    <v-col cols="8">
+      <p class="class-info text-h4">
+        과제 제출 내역 확인
+      </p>
+    </v-col>
+
+    <v-col cols="4" class="d-flex justify-end">
+      <v-btn color="accent" @click="$router.go(-1)">
+        <v-icon>mdi-arrow-left</v-icon>
+      </v-btn>
+    </v-col>
+
+    <!-- 강좌 목록 렌더링 영역, 콘텐츠 오버플로우 시 스크롤 적용 -->
+    <v-responsive class="overflow-y-auto px-2" height="85%" width="100%">
       <v-row>
-          <v-col>
-      <v-card class="mx-auto" height="340px" width="90%" >
-          <v-card-title>
-              {{ assignmentName }} 
-          </v-card-title>
-          <v-card-subtitle>
-               ~ {{ assignmentDueDate }}
-          </v-card-subtitle>
-          <v-divider></v-divider>
-          <v-card-text style="">
+        <v-col cols="12">
+          <v-card class="mx-auto" width="100%" outlined>
+            <v-card-title>
+              {{ assignmentName }}
+
+              <v-spacer></v-spacer>
+
+              <small>마감일 : {{ assignmentDueDate }}</small>
+            </v-card-title>
+
+            <v-divider></v-divider>
+
+            <v-card-text>
               {{ AssignmentDetail }}
-          </v-card-text>
-      </v-card>
-          </v-col>
-      </v-row>
+            </v-card-text>
+          </v-card>
+        </v-col>
 
-      <v-row>
-          <v-col>
-      <v-card class="mx-auto" height="270px"  width="90%" >
-          <v-card-title>
+        <v-col cols="12">
+          <v-card class="mx-auto" width="100%" outlined>
+            <v-card-title>
               제출 정보
-          </v-card-title>
-          <v-card-subtitle>
-              제출일자 {{ submitUpdateDate }}
-          </v-card-subtitle>
-          <v-card-text>
-              <v-col>
-              제출명 : {{ submitTitle }}
+
               <v-spacer></v-spacer>
-              코멘트 : {{ submitDetail }}
-              </v-col>
-          </v-card-text>
-          <v-divider></v-divider>
-          <v-card-text>
-              <v-col>
-              첨부파일 
+
+              <small>제출일 : {{ submitUpdateDate }}</small>
+            </v-card-title>
+
+            <v-divider></v-divider>
+
+            <v-card-text>
+              <p>제출명 : {{ submitTitle }}</p>
+              <span>코멘트 : {{ submitDetail }}</span>
+            </v-card-text>
+
+            <v-divider></v-divider>
+
+            <v-card-actions>
+              <v-chip @click="download" pill outlined>
+                <v-icon left>mdi-file-outline</v-icon> {{ submitFile }}
+              </v-chip>
+
               <v-spacer></v-spacer>
-              <v-btn icon x-small color="indigo" @click="download">
-                  <v-icon>mdi-file</v-icon>
+
+              <v-btn
+                @click="$router.push({ name: 'AssignmentSubmit' })"
+                outlined
+              >
+                <v-icon left> mdi-pencil </v-icon>
+                수정하기
               </v-btn>
-              {{ submitFile }}
-              </v-col>
-          </v-card-text>
-
-      </v-card>
-          </v-col>
+            </v-card-actions>
+          </v-card>
+        </v-col>
       </v-row>
-      <div class="text-center">
-          <v-btn class="mr-4" color="accent" @click="$router.push({name: 'AssignmentSubmit'})">
-              <v-icon left> mdi-pencil </v-icon>
-              수정
-          </v-btn>
-          <v-btn color="accent"  @click="$router.go(-1)">
-              <v-icon left> mdi-folder </v-icon>
-              목록
-          </v-btn>
-      </div>
-
-  </v-container>
-
+    </v-responsive>
+  </v-row>
 </template>
-
-
 
 <script>
 export default {
+  data: () => ({
+    assignmentName: "6장 연습문제",
+    AssignmentDetail:
+      "Lorem Ipsum s standard dummy text ever since the 1500s, when an unknown print dummy text ever since the 1500s, when an unknown print dummy text ever since the 1500s, when an unknown print dummy text ever since the 1500s, when an unknown print dummy text ever since the 1500s, when an unknown print dummy text ever since the 1500s, when an unknown print dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essent",
+    assignmentDueDate: "2020.10.30",
 
-    data: () => ({
-        assignmentName: '6장 연습문제',
-        AssignmentDetail: 'Lorem Ipsum s standard dummy text ever since the 1500s, when an unknown print dummy text ever since the 1500s, when an unknown print dummy text ever since the 1500s, when an unknown print dummy text ever since the 1500s, when an unknown print dummy text ever since the 1500s, when an unknown print dummy text ever since the 1500s, when an unknown print dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essent',
-        assignmentDueDate: "2020.10.30",
+    submitTitle: "과제 제출합니다.",
+    submitDetail: "안녕하세요 과제 제출합니다",
+    submitUpdateDate: "2020.10.27 17:34",
+    submitFile: "cache.zip"
+  }),
 
-        submitTitle: '과제 제출합니다.',
-        submitDetail: '안녕하세요 과제 제출합니다',
-        submitUpdateDate: "2020.10.27 17:34",
-        submitFile: "cache.zip"
-    }),
-
-    methods: {
-      download () {
-        alert('다운로드 중입니다.....')
-      },
-    },
-
-
-}
+  methods: {
+    download() {
+      alert("다운로드 중입니다.....");
+    }
+  }
+};
 </script>
+
+<style scoped>
+.class-info {
+  margin-bottom: 0px;
+  font-weight: 600;
+}
+.post-detail {
+  font-size: 15px;
+  margin-right: 15px;
+}
+</style>

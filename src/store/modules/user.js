@@ -3,7 +3,7 @@ import axios from "axios";
 
 const userAxios = axios.create();
 userAxios.defaults.baseURL =
-  "http://ec2-13-125-248-228.ap-northeast-2.compute.amazonaws.com:8000/api/";
+  "http://ec2-13-124-222-126.ap-northeast-2.compute.amazonaws.com:8000/api/";
 
 // HTTP Request 인터셉터
 userAxios.interceptors.request.use(

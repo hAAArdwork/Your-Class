@@ -7,7 +7,7 @@ import axios from "axios";
 
 // baseURL 기본값을 정의한다
 axios.defaults.baseURL =
-  "http://ec2-13-125-248-228.ap-northeast-2.compute.amazonaws.com:8000/api/";
+  "http://ec2-13-124-222-126.ap-northeast-2.compute.amazonaws.com:8000/api/";
 
 // HTTP Request 인터셉터
 axios.interceptors.request.use(

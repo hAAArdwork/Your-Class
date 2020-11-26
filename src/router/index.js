@@ -115,46 +115,54 @@ const routes = [
        */
       {
         path: "assignment",
-        name: "classAssignment",
         component: () =>
           import("../components/class/classAssignment/classAssignment.vue"),
-        meta: { title: "과제" }
-      },
-      {
-        path: "assignment/submit",
-        name: "AssignmentSubmit",
-        component: () =>
-          import(
-            "../components/class/classAssignment/classAssignmentSubmit.vue"
-          ),
-        meta: { title: "과제제출" }
-      },
-      {
-        path: "assignment/submit/detail",
-        name: "AssignmentSubmitDetail",
-        component: () =>
-          import(
-            "../components/class/classAssignment/classAssignmentSubmitDetail.vue"
-          ),
-        meta: { title: "과제제출정보" }
-      },
-      {
-        path: "assignment/submit/check",
-        name: "AssignmnetSubmitCheck",
-        component: () =>
-          import(
-            "../components/class/classAssignment/classAssignmnetSubmitCheck.vue"
-          ),
-        meta: { title: "제출과제정보" }
-      },
-      {
-        path: "assignment/write",
-        name: "AssignmentWrite",
-        component: () =>
-          import(
-            "../components/class/classAssignment/classAssignmentWrite.vue"
-          ),
-        meta: { title: "과제등록" }
+        meta: { title: "과제" },
+        children: [
+          {
+            path: "",
+            name: "classAssignment",
+            component: () =>
+              import("../components/class/classAssignment/assignmentList.vue"),
+            meta: { title: "과제제출" }
+          },
+          {
+            path: "submit",
+            name: "AssignmentSubmit",
+            component: () =>
+              import(
+                "../components/class/classAssignment/classAssignmentSubmit.vue"
+              ),
+            meta: { title: "과제제출" }
+          },
+          {
+            path: "detail",
+            name: "AssignmentSubmitDetail",
+            component: () =>
+              import(
+                "../components/class/classAssignment/classAssignmentSubmitDetail.vue"
+              ),
+            meta: { title: "과제제출정보" }
+          },
+          {
+            path: "check",
+            name: "AssignmnetSubmitCheck",
+            component: () =>
+              import(
+                "../components/class/classAssignment/classAssignmnetSubmitCheck.vue"
+              ),
+            meta: { title: "제출과제정보" }
+          },
+          {
+            path: "write",
+            name: "AssignmentWrite",
+            component: () =>
+              import(
+                "../components/class/classAssignment/classAssignmentWrite.vue"
+              ),
+            meta: { title: "과제등록" }
+          }
+        ]
       },
 
       /*
