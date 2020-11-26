@@ -6,6 +6,12 @@
 
     <v-divider></v-divider>
 
+    <v-progress-linear
+      :active="isLoading"
+      :indeterminate="isLoading"
+      color="accent"
+    ></v-progress-linear>
+
     <v-card-text v-if="$vuetify.breakpoint.name === 'xs'">
       <!-- 모바일 기기인 경우, 관리자 페이지 렌더링 중지 -->
       <v-row>
@@ -38,6 +44,7 @@
                 v-model="classGrade"
                 :items="grades"
                 label="담당 학년"
+                suffix="학년"
                 :rules="[rules.required()]"
               ></v-select>
             </v-col>
@@ -65,8 +72,9 @@
           </v-row>
         </v-form>
 
-        <small>
-          * 강의일, 강의시간은 순서대로 조합되어 최종적으로 반영됩니다.
+        <small style="color: green;">
+          * 과목 개설 후 '과목 상세 - 과목 관리'에서 발급된 초대 코드를 확인할
+          수 있습니다.
         </small>
       </v-container>
     </v-card-text>
@@ -85,6 +93,11 @@
 
 <script>
 export default {
+  computed: {
+    isLoading() {
+      return this.$store.getters["classes/isLoading"];
+    }
+  },
   data() {
     return {
       valid: false,
@@ -94,7 +107,7 @@ export default {
       classNumber: null,
       classTimeTable: new Array(),
 
-      grades: ["1학년", "2학년", "3학년"],
+      grades: ["1", "2", "3"],
       days: ["월요일", "화요일", "수요일", "목요일", "금요일"],
       times: ["1교시", "2교시", "3교시", "4교시", "5교시", "6교시", "7교시"],
 
@@ -114,6 +127,12 @@ export default {
   },
   methods: {
     closeDialog() {
+      // Form Input 초기화
+      this.classTitle = null;
+      this.classGrade = null;
+      this.classNumber = null;
+      this.classTimeTable = new Array();
+
       // 부모 컴포넌트로 이벤트 Emit
       this.$emit("closeDialog");
     },
@@ -133,18 +152,13 @@ export default {
 
       const formData = {
         title: this.classTitle,
-        timeTable: timeTable,
-        grade: this.classGrade,
-        classNumber: this.classNumber
+        timeTable: timeTable.join(","),
+        grade: Number(this.classGrade),
+        classNumber: Number(this.classNumber)
       };
 
-      console.log(formData);
-
-      // Form Input 초기화
-      this.classTitle = null;
-      this.classGrade = null;
-      this.classNumber = null;
-      this.classTimeTable = new Array();
+      // Vuex Store에서 Axios 호출을 위한 Actions 호출
+      this.$store.dispatch("classes/createClass", formData);
 
       this.closeDialog();
     }

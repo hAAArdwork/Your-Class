@@ -24,7 +24,7 @@ axios.interceptors.request.use(
 // HTTP Response 인터셉터
 axios.interceptors.response.use(
   function(response) {
-    console.log(response);
+    // console.log(response);
     // 응답 데이터를 가공
     // ...
     return response;

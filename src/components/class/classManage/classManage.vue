@@ -20,15 +20,21 @@
           <v-card-title>
             과목 삭제
           </v-card-title>
+
           <v-card-text>
             삭제하신 과목은 복구할 수 없습니다. 정말 삭제하길 원하십니까?
           </v-card-text>
+
           <v-card-actions>
             <v-spacer></v-spacer>
             <v-btn color="primary" text @click="checkDialog = false">
               돌아가기
             </v-btn>
-            <v-btn color="error" text @click="doubleDialog = !doubleDialog">
+            <v-btn
+              color="error"
+              text
+              @click="doubleCheckDialog = !doubleCheckDialog"
+            >
               확인
             </v-btn>
           </v-card-actions>
@@ -36,17 +42,18 @@
       </v-dialog>
 
       <!-- 2차 삭제 확인 Dialog -->
-      <v-dialog v-model="doubleDialog" max-width="450px">
+      <v-dialog v-model="doubleCheckDialog" max-width="450px">
         <v-card>
           <v-card-title class="red--text font-weight-bold">
             과목을 영구히 삭제합니다
           </v-card-title>
+
           <v-card-actions>
             <v-spacer></v-spacer>
             <v-btn color="primary" text @click="closeAll">
               취소
             </v-btn>
-            <v-btn color="error" text>
+            <v-btn color="error" text @click="deleteClass">
               삭제하기
             </v-btn>
           </v-card-actions>
@@ -54,32 +61,91 @@
       </v-dialog>
 
       <v-col cols="12" class="py-0">
-        <p class="class-info text-h6">
-          {{ classInfo.teacher }}
-        </p>
+        <p class="class-info text-h6">{{ classInfo.instructor }} 선생님</p>
       </v-col>
 
       <!-- 과목 관련 정보 수정 항목 (과목 시간표) -->
-      <v-col cols="8" sm="6" md="5" class="py-0 d-flex align-center">
-        <span> <strong>수업 시간 :</strong> {{ classInfo.time }} </span>
-      </v-col>
+      <v-col cols="12" class="py-0 d-flex align-center">
+        <span> <strong>수업 시간 :</strong> {{ classInfo.timeTable }} </span>
 
-      <v-col cols="4" sm="6" md="7" class="py-0 d-flex align-center">
-        <v-btn color="cyan" small outlined>
+        <v-btn
+          class="mx-2"
+          color="cyan"
+          small
+          outlined
+          @click="timeChangeDialog = true"
+        >
           <strong>시간 변경</strong>
         </v-btn>
       </v-col>
 
-      <!-- 과목 관련 정보 수정 항목 (과목코드) -->
-      <v-col cols="8" sm="6" md="5" class="py-0 d-flex align-center">
-        <span> <strong>초대 코드 :</strong> {{ classInfo.code }} </span>
-      </v-col>
+      <!-- 시간표 수정 Dialog -->
+      <v-dialog v-model="timeChangeDialog" max-width="550px">
+        <v-card>
+          <v-card-title>
+            과목 시간표 변경
+          </v-card-title>
 
-      <v-col cols="4" sm="6" md="7" class="py-0 d-flex align-center">
-        <v-btn color="cyan" small outlined>
+          <v-card-text>
+            <v-row>
+              <v-col v-for="index in 5" :key="index">
+                <v-select
+                  placeholder="없음"
+                  v-model="classTimeTable[index - 1]"
+                  :label="days[index - 1]"
+                  :items="times"
+                  :menu-props="{ top: true, offsetY: true, maxHeight: 355 }"
+                ></v-select>
+              </v-col>
+            </v-row>
+          </v-card-text>
+
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn color="primary" @click="timeChangeDialog = false" text>
+              취소
+            </v-btn>
+            <v-btn color="error" @click="updateTimeTable" text>
+              확인
+            </v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
+
+      <!-- 과목 관련 정보 수정 항목 (과목코드) -->
+      <v-col cols="12" class="py-0 d-flex align-center">
+        <span>
+          <strong>초대 코드 :</strong> {{ classInfo.invitationCode }}
+        </span>
+
+        <v-btn
+          class="mx-2"
+          color="cyan"
+          small
+          outlined
+          @click="refreshDialog = true"
+        >
           <strong>코드 갱신</strong>
         </v-btn>
       </v-col>
+
+      <!-- 코드 갱신 확인 Dialog -->
+      <v-dialog v-model="refreshDialog" max-width="350px">
+        <v-card>
+          <v-card-title>
+            초대 코드를 재발급 하시겠습니까?
+          </v-card-title>
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn color="primary" @click="refreshDialog = false" text>
+              취소
+            </v-btn>
+            <v-btn color="error" @click="refreshCode" text>
+              확인
+            </v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
 
       <!-- 승인 대기, 수강 학생 리스트 렌더링 컴포넌트 -->
       <v-col cols="12" sm="6">
@@ -122,20 +188,30 @@ export default {
   components: {
     ListCoponent
   },
+  computed: {
+    classInfo() {
+      return this.$store.getters["classes/classDetail"];
+    }
+  },
   data: () => ({
     // 시간표 변경 관련 Flag
     isEditing: false,
 
     // 과목 삭제 관련 Flags
     checkDialog: false,
-    doubleDialog: false,
+    doubleCheckDialog: false,
 
-    classInfo: {
-      title: "물리",
-      teacher: "이정우 선생님",
-      time: "화 1교시, 수 3교시, 목 2교시, 금 7교시",
-      code: "dkssud32Wmt"
-    },
+    // 초대 코드 재발급 Flag
+    refreshDialog: false,
+
+    // 시간표 변경 Flag
+    timeChangeDialog: false,
+
+    // 시간표 관련 Form Data
+    days: ["월요일", "화요일", "수요일", "목요일", "금요일"],
+    times: ["1교시", "2교시", "3교시", "4교시", "5교시", "6교시", "7교시"],
+    classTimeTable: new Array(),
+
     studentList: [
       {
         id: 1,
@@ -190,11 +266,6 @@ export default {
 
       return index;
     },
-    // 모든 Dialog 창을 닫는다.
-    closeAll() {
-      this.checkDialog = false;
-      this.doubleDialog = false;
-    },
     // 대기 학생의 요청을 수락한다.
     acceptRequest(email) {
       const targetIndex = this.findUser(email, this.waitingList);
@@ -232,6 +303,53 @@ export default {
       this.studentList.splice(targetIndex - 1, 1);
 
       // TODO: axios 요청을 통해 실제 DB에서 제거.
+    },
+
+    // Vuex로 초대 코드 재발급 요청을 전달하고 Dialog를 닫는다.
+    refreshCode() {
+      this.$store.dispatch(
+        "classes/refreshInvitationCode",
+        this.$route.params.classId
+      );
+
+      this.refreshDialog = false;
+    },
+
+    // Vuex로 과목 시간표 변경 요청을 전달하고 Dialog를 닫는다.
+    updateTimeTable() {
+      let timeTable = new Array();
+
+      // Server로 전송하기 위해 Data Parsing
+      for (let index in this.classTimeTable) {
+        const time = this.classTimeTable[index];
+
+        if (time === "") {
+          continue;
+        } else {
+          timeTable.push(this.days[index] + " " + time);
+        }
+      }
+
+      // JSON 객체 생성
+      const payload = {
+        classId: this.$route.params.classId,
+        timeTable: timeTable.join(",")
+      };
+
+      this.$store.dispatch("classes/updateTimeTable", payload);
+
+      this.timeChangeDialog = false;
+    },
+
+    // Vuex로 과목 삭제 요청을 전달한다.
+    deleteClass() {
+      this.$store.dispatch("classes/deleteClass", this.$route.params.classId);
+    },
+
+    // 모든 Dialog 창을 닫는다.
+    closeAll() {
+      this.checkDialog = false;
+      this.doubleCheckDialog = false;
     }
   }
 };

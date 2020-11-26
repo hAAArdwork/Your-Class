@@ -10,14 +10,12 @@
       </v-col>
 
       <v-col cols="12" class="py-0">
-        <p class="class-info text-h6">
-          {{ classInfo.teacher }}
-        </p>
+        <p class="class-info text-h6">{{ classInfo.instructor }} 선생님</p>
       </v-col>
 
       <v-col cols="12" class="py-0">
         <p class="text-subtitle-1">
-          {{ classInfo.time }}
+          {{ classInfo.timeTable }}
         </p>
       </v-col>
 
@@ -91,16 +89,14 @@ export default {
     "classId" // classData: Object
   ],
   computed: {
-    today: function() {
+    toda() {
       return new Date();
+    },
+    classInfo() {
+      return this.$store.getters["classes/classDetail"];
     }
   },
   data: () => ({
-    classInfo: {
-      title: "물리",
-      teacher: "이정우 선생님",
-      time: "화요일 1교시, 수요일 3교시, 목요일 2교시, 금요일 7교시"
-    },
     recentPosts: [
       {
         id: 0,

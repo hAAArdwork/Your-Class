@@ -9,21 +9,34 @@
     <v-responsive
       class="overflow-y-auto px-5"
       :max-height="$vuetify.breakpoint.name == 'xs' ? '80vh' : '55vh'"
-      :width="$vuetify.breakpoint.name == 'xs' ? '95vw' : '75vw'"
+      :width="$vuetify.breakpoint.name == 'xs' ? '95vw' : '85vw'"
     >
       <!-- 각 과목에 해당하는 카드 렌더링 -->
-      <v-row>
+      <v-row v-if="classList.length > 0">
         <v-col
           cols="12"
           sm="6"
           lg="4"
-          v-for="(data, index) in classCardData"
+          v-for="(data, index) in classList"
           :key="index"
         >
           <!-- 과목 카드 컴포넌트에 과목 정보를 Props로 전달한다. -->
           <class-card :class-data="data" />
         </v-col>
       </v-row>
+
+      <!-- 등록된 과목이 없는 경우, 메세지 렌더링 -->
+      <v-container v-else fill-height>
+        <v-row class="flex-column">
+          <v-col class="text-center">
+            <v-icon large>mdi-exclamation-thick</v-icon>
+          </v-col>
+
+          <v-col class="text-center">
+            <span class="text-h6">앗! 아직 등록된 과목이 없습니다.</span>
+          </v-col>
+        </v-row>
+      </v-container>
     </v-responsive>
 
     <!-- 신규 과목 개설 및 등록 버튼 영역 -->
@@ -105,6 +118,9 @@ import createClassForm from "../components/mainPage/createClassForm.vue";
 import enrollForm from "../components/mainPage/enrollFrom.vue";
 
 export default {
+  created() {
+    this.$store.dispatch("classes/retrieveClasses");
+  },
   components: {
     classCard,
     createClassForm,
@@ -113,11 +129,16 @@ export default {
   computed: {
     userData() {
       return this.$store.getters["user/userData"];
+    },
+    classList() {
+      return this.$store.getters["classes/classList"];
     }
   },
   data: () => ({
     newClassDialog: false,
     enrollDialog: false,
+
+    isLoading: false,
 
     classCardData: [
       {

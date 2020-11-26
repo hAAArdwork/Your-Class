@@ -42,6 +42,15 @@ export default {
     leftNavigation,
     topNavigation
   },
+  beforeCreate() {
+    this.$store.dispatch(
+      "classes/retrieveClassDetail",
+      this.$route.params.classId
+    );
+  },
+  beforeDestroy() {
+    this.$store.commit("classes/clearClassDetail");
+  },
   computed: {
     userData() {
       return this.$store.getters["user/userData"];

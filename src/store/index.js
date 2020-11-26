@@ -3,6 +3,7 @@ import Vuex from "vuex";
 
 import auth from "./modules/auth.js";
 import user from "./modules/user.js";
+import classes from "./modules/classes.js";
 
 Vue.use(Vuex);
 
@@ -17,7 +18,8 @@ const store = new Vuex.Store({
 
   modules: {
     auth,
-    user
+    user,
+    classes
   }
 });
 
