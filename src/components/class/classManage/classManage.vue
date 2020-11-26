@@ -81,8 +81,8 @@
         </v-btn>
       </v-col>
 
-      <!-- 승인 대기, 수강 학생 리스트 렌더링 컴포넌트 -->
-      <v-col cols="12" sm="6">
+      <!-- 수강 학생 리스트 렌더링 컴포넌트 -->
+      <v-col cols="12">
         <list-coponent
           :studentList="studentList"
           :isWaitingList="false"
@@ -90,14 +90,14 @@
         />
       </v-col>
 
-      <v-col cols="12" sm="6">
+      <!-- <v-col cols="12" sm="6">
         <list-coponent
           :studentList="waitingList"
           :isWaitingList="true"
           @onAccept="acceptRequest"
           @onDecline="declineRequest"
         />
-      </v-col>
+      </v-col> -->
     </v-row>
 
     <!-- 모바일 기기인 경우, 관리자 페이지 렌더링 중지 -->
@@ -141,6 +141,7 @@ export default {
         id: 1,
         name: "이정우",
         mail: "dwd4791@gmail.com"
+
       },
       {
         id: 2,
@@ -153,28 +154,6 @@ export default {
         mail: "dwd4793@gmail.com"
       }
     ],
-    waitingList: [
-      {
-        id: 1,
-        name: "정우",
-        mail: "dwd4796@gmail.com"
-      },
-      {
-        id: 2,
-        name: "우정",
-        mail: "dwd4797@gmail.com"
-      },
-      {
-        id: 3,
-        name: "정정정우",
-        mail: "dwd4798@gmail.com"
-      },
-      {
-        id: 4,
-        name: "정정우",
-        mail: "dwd4799@gmail.com"
-      }
-    ]
   }),
   methods: {
     // 대기자 항목에서 동일한 이메일을 가진 학생을 찾아 반환한다.
