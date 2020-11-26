@@ -118,7 +118,7 @@ import createClassForm from "../components/mainPage/createClassForm.vue";
 import enrollForm from "../components/mainPage/enrollFrom.vue";
 
 export default {
-  created() {
+  beforeCreate() {
     this.$store.dispatch("classes/retrieveClasses");
   },
   components: {

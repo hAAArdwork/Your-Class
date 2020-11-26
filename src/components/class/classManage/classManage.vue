@@ -188,6 +188,12 @@ export default {
   components: {
     ListCoponent
   },
+  beforeCreate() {
+    this.$store.dispatch(
+      "classes/retrieveStudentList",
+      this.$route.params.classId
+    );
+  },
   computed: {
     classInfo() {
       return this.$store.getters["classes/classDetail"];

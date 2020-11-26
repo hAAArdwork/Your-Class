@@ -129,6 +129,7 @@ const actions = {
       .get(`subject/detail/${classId}`)
       .then(({ data }) => {
         console.log(data);
+
         // 서버로부터 전송받은 데이터 Parsign
         const classDetail = {
           title: data.subjectName,
@@ -158,6 +159,15 @@ const actions = {
           alert("HTTP 404 - 연결이 원활하지 못합니다. 잠시 후 시도해주세요.");
         }
       });
+  },
+
+  retrieveStudentList: (getters, classId) => {
+    axios
+      .get("subject/subjectenroll", { params: { Id: classId } })
+      .then(({ data }) => {
+        console.log(data);
+      })
+      .catch(() => {});
   },
 
   createClass: ({ commit, dispatch }, formData) => {
