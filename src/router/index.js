@@ -131,7 +131,7 @@ const routes = [
             name: "AssignmentSubmit",
             component: () =>
               import(
-                "../components/class/classAssignment/classAssignmentSubmit.vue"
+                "../components/class/classAssignment/assignmentSubmit.vue"
               ),
             meta: { title: "과제제출" }
           },
@@ -139,9 +139,7 @@ const routes = [
             path: "detail",
             name: "AssignmentSubmitDetail",
             component: () =>
-              import(
-                "../components/class/classAssignment/classAssignmentSubmitDetail.vue"
-              ),
+              import("../components/class/classAssignment/assignmentCheck.vue"),
             meta: { title: "과제제출정보" }
           },
           {
@@ -149,7 +147,7 @@ const routes = [
             name: "AssignmnetSubmitCheck",
             component: () =>
               import(
-                "../components/class/classAssignment/classAssignmnetSubmitCheck.vue"
+                "../components/class/classAssignment/assignmentSubmitList.vue"
               ),
             meta: { title: "제출과제정보" }
           },
@@ -158,7 +156,7 @@ const routes = [
             name: "AssignmentWrite",
             component: () =>
               import(
-                "../components/class/classAssignment/classAssignmentWrite.vue"
+                "../components/class/classAssignment/assignmentCreate.vue"
               ),
             meta: { title: "과제등록" }
           }
