@@ -4,6 +4,12 @@
       <span class="headline">수강 과목 등록</span>
     </v-card-title>
 
+    <v-progress-linear
+      :active="isLoading"
+      :indeterminate="isLoading"
+      color="accent"
+    ></v-progress-linear>
+
     <v-card-text>
       <v-container>
         <v-form v-model="valid">
@@ -13,7 +19,6 @@
             hint="선생님께 전달받은 과목코드를 입력하세요."
             prepend-inner-icon="mdi-form-textbox-password"
             :rules="[rules.isCorrectCode()]"
-            :loading="loading"
             persistent-hint
             counter="16"
           >
@@ -32,30 +37,113 @@
 
     <v-card-actions>
       <v-spacer></v-spacer>
-      <v-btn color="blue darken-1" text @click="closeDialog">
+      <v-btn color="error" @click="closeDialog" text>
         취소
       </v-btn>
       <v-btn
-        color="blue darken-1"
+        :disabled="!valid || invitationCode.length == 0 || isLoading"
+        @click="searchSubject"
         text
-        :disabled="!valid || invitationCode.length == 0 || loading"
-        @click="onSubmit"
       >
         과목 등록
       </v-btn>
     </v-card-actions>
+
+    <v-dialog
+      v-model="resultDialog"
+      transition="scroll-y-reverse-transition"
+      max-width="350px"
+      persistent
+    >
+      <v-card>
+        <v-card-title>
+          과목 정보 확인
+        </v-card-title>
+
+        <v-card-subtitle>
+          등록하려는 과목 정보를 확인해주세요
+        </v-card-subtitle>
+
+        <v-divider></v-divider>
+
+        <v-card-text class="pb-0">
+          <v-list two-line dense>
+            <v-list-item>
+              <v-list-item-content>
+                <v-list-item-title>과목명</v-list-item-title>
+
+                <v-list-item-subtitle
+                  >{{ searchedClass.title }}
+                </v-list-item-subtitle>
+              </v-list-item-content>
+            </v-list-item>
+
+            <v-list-item>
+              <v-list-item-content>
+                <v-list-item-title>학급 정보</v-list-item-title>
+
+                <v-list-item-subtitle>
+                  {{ searchedClass.classGrade }}학년
+                  {{ searchedClass.classNumber }}반
+                </v-list-item-subtitle>
+              </v-list-item-content>
+            </v-list-item>
+
+            <v-list-item>
+              <v-list-item-content>
+                <v-list-item-title>교사 정보</v-list-item-title>
+
+                <v-list-item-subtitle>
+                  {{ searchedClass.instructor }} 선생님 ({{
+                    searchedClass.instructorEmail
+                  }})
+                </v-list-item-subtitle>
+              </v-list-item-content>
+            </v-list-item>
+
+            <v-list-item>
+              <v-list-item-content>
+                <v-list-item-title>시간표</v-list-item-title>
+
+                <v-list-item-subtitle>
+                  {{ searchedClass.timeTable }}
+                </v-list-item-subtitle>
+              </v-list-item-content>
+            </v-list-item>
+          </v-list>
+        </v-card-text>
+
+        <v-card-actions>
+          <v-spacer></v-spacer>
+
+          <v-btn color="error" @click="resultDialog = false" text>취소</v-btn>
+          <v-btn @click="confirmEnroll" text>등록하기</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </v-card>
 </template>
 
 <script>
 export default {
+  computed: {
+    searchedClass() {
+      return this.$store.getters["classes/searchedClass"];
+    },
+    isFound() {
+      return this.$store.getters["classes/isFound"];
+    },
+    isLoading() {
+      return this.$store.getters["classes/isLoading"];
+    }
+  },
   data() {
     return {
       valid: false,
 
-      loading: false,
-      success: false,
-      fail: false,
+      // isLoading: false,
+
+      resultDialog: false,
 
       invitationCode: "",
 
@@ -79,19 +167,45 @@ export default {
   },
   methods: {
     closeDialog() {
+      this.invitationCode = "";
+
       // 부모 컴포넌트로 이벤트 Emit
       this.$emit("closeDialog");
     },
-    async onSubmit() {
-      console.log(this.invitationCode);
 
-      this.loading = true;
+    // 입력받은 초대 코드로 과목을 검색하기 위해 Vuex 이용.
+    async searchSubject() {
+      // Loading Flag Trigger
+      this.$store.commit("classes/fetchLoading", true);
+      // this.isLoading = true;
 
-      await setTimeout(() => {
-        this.loading = false;
+      this.$store.dispatch("classes/searchClass", this.invitationCode);
 
-        this.closeDialog();
-      }, 3000);
+      // Vuex Store 업데이트를 위해 2초간 대기.
+      setTimeout(() => {
+        // 일치하는 과목이 발견된 경우,
+        if (this.isFound) {
+          // 검색된 과목 정보를 보여주는 Dialog를 활성화한다.
+          this.resultDialog = true;
+        }
+        // 일치하는 과목이 발견되지 않은 경우,
+        else {
+          // 경고창 출력 후, 모든 Dialog를 닫는다.
+          alert("입력하신 과목 코드에 알맞는 과목을 찾을 수 없습니다.");
+
+          this.closeDialog();
+        }
+
+        // 최종적으로 Loading Flag를 종료한다.
+        this.$store.commit("classes/fetchLoading", false);
+        // this.isLoading = false;
+      }, 2000);
+    },
+
+    confirmEnroll() {
+      this.$store.dispatch("classes/enroll", this.invitationCode);
+
+      this.closeDialog();
     }
   }
 };
