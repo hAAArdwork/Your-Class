@@ -19,8 +19,6 @@
       </v-btn>
     </v-col>
 
-    {{ submitList }}
-
     <v-col cols="12" style="height: 350px;">
       <v-data-table
         :headers="headers"
