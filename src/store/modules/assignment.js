@@ -46,11 +46,6 @@ const mutations = {
 
 const actions = {
   createAssignment: (nothing, assignmentData) => {
-    // 전달받은 Form Data 내용을 확인하기 위한 로직
-    for (let key of assignmentData.entries()) {
-      console.log(`${key}`);
-    }
-
     axios
       .post("assignment/create", assignmentData, {
         // File 객체가 포함된 FormData를 전송하기 위한 Option 설정

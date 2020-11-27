@@ -160,8 +160,10 @@ export default {
 
   methods: {
     createAssignment() {
-      if (this.assignmentFiles !== null) {
-        formData.append("assignmentFile", this.assignmentFiles[0]);
+      console.log(this.assignmentFiles);
+
+      if (this.assignmentFiles) {
+        console.log("1");
       }
 
       // 파일 형식을 백엔드 서버에 전송하기 위하여, FormData 객체를 사용한다.
@@ -169,6 +171,7 @@ export default {
       formData.append("classId", this.$route.params.classId);
       formData.append("assignmentName", this.assignmentTitle);
       formData.append("assignmentDetail", this.assignmentDescription);
+      formData.append("assignmentFile", this.assignmentFiles[0]);
       formData.append("assignmentDueDate", this.assignmentDueDate);
 
       this.$store.dispatch("assignment/createAssignment", formData);
