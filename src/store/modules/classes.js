@@ -48,6 +48,9 @@ const state = {
     timeTable: null,
     invitationCode: null
   },
+ 
+
+  studentList: new Array(),
 
   searchedClass: {
     title: null,
@@ -109,10 +112,14 @@ const mutations = {
   updateTimeTable: (state, newTimeTable) => {
     state.classDetail.timeTable = newTimeTable;
   },
-  // Loading Flag Mutation
+  fetchStudentList: (state, studentList) => {
+    state.studentList = studentList;
+  },
+    // Loading Flag Mutation
   fetchLoading(state, payload) {
     state.isLoading = payload;
   },
+  
   // Found Flag Mutation
   fetchFound(state, payload) {
     state.isFound = payload;
@@ -193,12 +200,22 @@ const actions = {
       });
   },
 
-  retrieveStudentList: (nothing, classId) => {
+  retrieveStudentList: ({ commit }, classId) => {
     axios
       .get("subject/subjectenroll", { params: { Id: classId } })
       .then(({ data }) => {
         console.log(data);
+        //console.log(data[0].userId.name);
+        let studentList = new Array();
+
+        for (let item of data) {
+          const studentInfo = item.userId;
+          studentList.push(studentInfo);
+        }
+        
+        commit("fetchStudentList", studentList);
       })
+
       .catch(() => {});
   },
 
@@ -344,6 +361,9 @@ const actions = {
 const getters = {
   classList(state) {
     return state.classList;
+  },
+  studentList(state) {
+    return state.studentList;
   },
   classDetail(state) {
     let classDetail = state.classDetail;

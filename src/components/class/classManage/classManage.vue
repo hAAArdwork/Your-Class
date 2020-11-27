@@ -151,19 +151,9 @@
       <v-col cols="12">
         <list-coponent
           :studentList="studentList"
-          :isWaitingList="false"
           @onRemove="removeFromStudentList"
         />
       </v-col>
-
-      <!-- <v-col cols="12" sm="6">
-        <list-coponent
-          :studentList="waitingList"
-          :isWaitingList="true"
-          @onAccept="acceptRequest"
-          @onDecline="declineRequest"
-        />
-      </v-col> -->
     </v-row>
 
     <!-- 모바일 기기인 경우, 관리자 페이지 렌더링 중지 -->
@@ -197,6 +187,9 @@ export default {
   computed: {
     classInfo() {
       return this.$store.getters["classes/classDetail"];
+    },
+    studentList() {
+      return this.$store.getters.["classes/studentList"];
     }
   },
   data: () => ({
@@ -218,23 +211,23 @@ export default {
     times: ["1교시", "2교시", "3교시", "4교시", "5교시", "6교시", "7교시"],
     classTimeTable: new Array(),
 
-    studentList: [
-      {
-        id: 1,
-        name: "이정우",
-        mail: "dwd4791@gmail.com"
-      },
-      {
-        id: 2,
-        name: "김정우",
-        mail: "dwd4792@gmail.com"
-      },
-      {
-        id: 3,
-        name: "정우",
-        mail: "dwd4793@gmail.com"
-      }
-    ]
+    // studentList: [
+    //   {
+    //     id: 1,
+    //     name: "이정우",
+    //     mail: "dwd4791@gmail.com"
+    //   },
+    //   {
+    //     id: 2,
+    //     name: "김정우",
+    //     mail: "dwd4792@gmail.com"
+    //   },
+    //   {
+    //     id: 3,
+    //     name: "정우",
+    //     mail: "dwd4793@gmail.com"
+    //   }
+    // ]
   }),
   methods: {
     // 대기자 항목에서 동일한 이메일을 가진 학생을 찾아 반환한다.

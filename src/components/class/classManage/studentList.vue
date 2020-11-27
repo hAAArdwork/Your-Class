@@ -23,9 +23,9 @@
             <strong>{{ student.name }}</strong>
           </span>
 
-          <span class="flex-grow-1">{{ student.mail }}</span>
+          <span class="flex-grow-1">{{ student.email }}</span>
 
-          <v-btn @click="onAccept(student.mail)" color="error" small icon>
+          <v-btn @click="onReject(student.email)" color="error" small icon>
             <v-icon>mdi-close</v-icon>
           </v-btn>
         </v-col>
