@@ -125,9 +125,12 @@ export default {
       { text: "파일", value: "submitFile", sortable: false },
       { text: "", value: "data-table-expand" }
     ],
-    submit: []
-  }),
 
+    submit: []
+
+  }),
+  computed: {
+  },
   methods: {
     downloadAll() {
       alert("전체 다운로드");

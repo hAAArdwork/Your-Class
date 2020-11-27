@@ -19,15 +19,6 @@
           <v-form v-model="valid">
             <v-row>
               <v-col cols="12">
-                <v-text-field
-                  v-model="submitTitle"
-                  label="과제명"
-                  placeholder="제출하려는 과제의 이름을 적어주세요."
-                  :rules="[rules.required]"
-                ></v-text-field>
-              </v-col>
-
-              <v-col cols="12">
                 <v-textarea
                   v-model="submitDetail"
                   label="과제 내용"
@@ -39,7 +30,7 @@
 
               <v-col cols="12">
                 <v-file-input
-                  v-model="submitFiles"
+                  v-model="submitFile"
                   label="첨부 파일"
                   placeholder="첨부 파일을 추가해주세요."
                   truncate-length="15"
@@ -56,7 +47,7 @@
 
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn :disabled="!valid" @click="submit" outlined>
+          <v-btn :disabled="!valid" @click="submitAssignment" outlined>
             <v-icon left> mdi-checkbox-marked-circle </v-icon>
             제출하기
           </v-btn>
@@ -72,11 +63,9 @@ export default {
     valid: false,
 
     assignmentId: "",
-    submitted: "",
-    submitTitle: "",
     submitDetail: "",
     submitUpdateDate: "",
-    submitFiles: null,
+    submitFile: null,
 
     rules: {
       required: value => !!value || "입력해주세요",
@@ -91,6 +80,20 @@ export default {
       if (confirm("등록하시겠습니까?")) {
         this.submitted = true;
       }
+    },
+    submitAssignment() {
+      //console.log(this.assignmentFile);
+
+      // 파일 형식을 백엔드 서버에 전송하기 위하여, FormData 객체를 사용한다.
+      let formData = new FormData();
+
+      formData.append("assignId", this.$route.params.assignmentId);
+      formData.append("submitDetail", this.submitDetail);
+      if (this.submitFile !== null) {
+        formData.append("submitFile", this.submitFile[0]);
+      }
+
+      this.$store.dispatch("assignment/submitAssignment", formData);
     }
   }
 };

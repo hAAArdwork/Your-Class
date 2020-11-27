@@ -37,14 +37,14 @@
                   </strong>
 
                   <small
-                    v-if="assignment.submitted && userData.isStudent"
+                    v-if="assignment.isSubmitted == 1 && userData.isStudent"
                     style="color: green;"
                   >
-                    제출완료
+                    제출완료 
                   </small>
 
                   <small
-                    v-if="!assignment.submitted && userData.isStudent"
+                    v-if="assignment.isSubmitted == 0 && userData.isStudent"
                     style="color: red;"
                   >
                     미제출
@@ -84,15 +84,15 @@
 
                   <!-- 학생용 과제 제출 및 확인 버튼 -->
                   <v-btn
-                    v-if="assignment.submitted == true && userData.isStudent"
-                    @click="$router.push({ name: 'AssignmentSubmitDetail' })"
+                    v-if="assignment.isSubmitted == 1 && userData.isStudent"
+                    @click="$router.push({ name: 'AssignmentSubmitDetail', params: { assignmentId: assignment.id } })"
                     outlined
                     >제출 내용 확인
                   </v-btn>
 
                   <v-btn
-                    v-if="assignment.submitted == false && userData.isStudent"
-                    @click="$router.push({ name: 'AssignmentSubmit' })"
+                    v-if="assignment.isSubmitted == 0 && userData.isStudent"
+                    @click="$router.push({ name: 'AssignmentSubmit', params: { assignmentId: assignment.id } })"
                     outlined
                     >과제 제출
                   </v-btn>
@@ -101,6 +101,7 @@
                   <v-btn
                     v-if="!userData.isStudent"
                     outlined
+
                     :to="{
                       name: 'AssignmnetSubmitCheck',
                       params: { assignmentId: assignment.id }
@@ -149,7 +150,6 @@ export default {
       this.$route.params.classId
     );
   },
-
   computed: {
     userData() {
       return this.$store.getters["user/userData"];
