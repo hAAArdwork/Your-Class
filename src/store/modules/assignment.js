@@ -38,6 +38,8 @@ axios.interceptors.response.use(
 const state = {
   assignmentList: new Array(),
 
+  submitList: new Array(),
+
   // 단일 과제 세부 내역
   assignmentName: "",
   assignmentDetail: "",
@@ -53,6 +55,11 @@ const mutations = {
     state.assignmentList = assignmentList;
   },
 
+  // 과제 제출자 목록을 Vuex Store에 반영한다.
+  fetchSubmitList(state, submitList) {
+    state.submitList = submitList;
+  },
+
   fetchAssignmentDetail(state, assignemntData) {
     state.assignmentName = assignemntData.assignmentName;
     state.assignmentDetail = assignemntData.assignmentDetail;
@@ -64,6 +71,78 @@ const mutations = {
 };
 
 const actions = {
+  // 전체 제출자 명단 및 제출 여부 확인
+  retrieveSubmitterList: ({ commit }, payload) => {
+    axios
+      .get("subject/subjectenroll", { params: { Id: payload.classId } })
+      .then(async ({ data }) => {
+        let submitList = new Array();
+        let index = 0;
+
+        for (let item of data) {
+          // 첫번째 유저(=선생님)을 제외한다.
+          if (index === 0) {
+            index++;
+            continue;
+          }
+
+          const studentInfo = item.userId;
+          // 제출자 및 과제 정보 데이터
+          const submitter = {
+            name: studentInfo.name,
+            email: studentInfo.email,
+            number: index,
+            assignmentId: null,
+            submitId: null,
+            submitDetail: "-",
+            submitFile: null,
+            submitFileName: null,
+            submitDate: "-"
+          };
+
+          const userId = studentInfo.id; // 학생 Primary ID
+
+          await axios
+            .get(`assignment/isSubmit/${payload.assignmentId}/${userId}`)
+            .then(async ({ data }) => {
+              submitter.isSubmitted = data.isSubmitted;
+
+              if (data.isSubmitted === 0) {
+                return;
+              }
+
+              await axios
+                .get(
+                  `assignment/isSubmit/detail/${userId}/${payload.assignmentId}`
+                )
+                .then(({ data }) => {
+                  console.log(data);
+                  submitter.number = index;
+                  submitter.assignmentId = data.assignmentId.id;
+                  submitter.submitId = data.id;
+                  submitter.submitDetail = data.submitDetail;
+                  submitter.submitFile = data.submitFile;
+                  submitter.submitFileName = data.submitFileName;
+                  submitter.submitDate =
+                    data.submitUpdateDate.substring(0, 10) +
+                    " " +
+                    data.submitUpdateDate.substring(11, 16);
+                });
+            });
+
+          submitList.push(submitter);
+
+          index++;
+        }
+
+        console.log(submitList);
+
+        commit("fetchSubmitList", submitList);
+      })
+
+      .catch(() => {});
+  },
+
   // 과제 리스트
   retrieveAssignmentList: ({ commit }, classId) => {
     axios
@@ -86,6 +165,8 @@ const actions = {
 
           assignmentList.push(assignmentInfo);
         }
+
+        console.log(assignmentList);
 
         commit("fetchAssignmentList", assignmentList);
       })
@@ -159,11 +240,17 @@ const actions = {
       confirm("과제가 삭제되었습니다.");
     });
   }
+
+  //
 };
 
 const getters = {
   assignmentList(state) {
     return state.assignmentList;
+  },
+
+  submitList(state) {
+    return state.submitList;
   },
 
   assignmentDetail(state) {

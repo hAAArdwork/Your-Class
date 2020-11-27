@@ -101,7 +101,10 @@
                   <v-btn
                     v-if="!userData.isStudent"
                     outlined
-                    @click="$router.push({ name: 'AssignmnetSubmitCheck' })"
+                    :to="{
+                      name: 'AssignmnetSubmitCheck',
+                      params: { assignmentId: assignment.id }
+                    }"
                   >
                     제출자 확인
                   </v-btn>

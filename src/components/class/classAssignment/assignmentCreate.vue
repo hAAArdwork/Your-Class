@@ -165,7 +165,7 @@ export default {
       let formData = new FormData();
 
       if (this.assignmentFile !== null) {
-        formData.append("assignmentFile", this.assignmentFile[0]);
+        formData.append("assignmentFile", this.assignmentFile);
       }
 
       formData.append("classId", this.$route.params.classId);

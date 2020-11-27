@@ -144,7 +144,7 @@ const routes = [
             meta: { title: "과제제출정보" }
           },
           {
-            path: "check",
+            path: "check/:assignmentId",
             name: "AssignmnetSubmitCheck",
             component: () =>
               import(
