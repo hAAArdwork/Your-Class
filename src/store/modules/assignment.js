@@ -1,5 +1,4 @@
-// import axios from "axios";
-// import router from "@/router";
+import router from "@/router";
 import axios from "axios";
 
 // HTTP Request 인터셉터
@@ -75,6 +74,33 @@ const actions = {
       confirm("과제가 삭제되었습니다.");
     });
   },
+
+  createAssignment: (nothing, assignmentData) => {
+    axios
+      .post("assignment/create", assignmentData, {
+        // File 객체가 포함된 FormData를 전송하기 위한 Option 설정
+        headers: {
+          "Content-Type": "multipart/form-data"
+        }
+      })
+      .then(() => {
+        confirm(
+          "과제 등록이 완료되었습니다. '확인'을 누르시면 이전 화면으로 돌아갑니다."
+        );
+
+        // 과제 목록 화면으로 돌아간다.
+        router.go(-1);
+      })
+      .catch(({ response }) => {
+        console.log(response);
+
+        // 경고 문구 출력
+        alert(
+          `[${response.status}] 과제 등록에 실패했습니다. 다시 시도해주세요.`
+        );
+      });
+  }
+};
 
 };
 

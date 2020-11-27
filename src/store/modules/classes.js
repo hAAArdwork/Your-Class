@@ -354,9 +354,9 @@ const actions = {
     axios
       .post(`subject/invite/enroll/${invitationCode}/`)
       .then(({ data }) => {
-        console.log(data);
-
-        confirm(`${data} 과목이 성공적으로 등록되었습니다.`);
+        confirm(
+          `${data.subjectId.subjectName} 과목이 성공적으로 등록되었습니다.`
+        );
 
         // 과목 생성 성공 시, 과목 리스트를 갱신한다.
         dispatch("retrieveClasses");
