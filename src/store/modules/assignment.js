@@ -70,6 +70,11 @@ const actions = {
       })
       .catch(() => {});
   },
+  removeAssignment: (getters, assignmentId) => {
+    axios.delete(`assignment/detail/${assignmentId}`).then(() => {
+      confirm("과제가 삭제되었습니다.");
+    });
+  },
 
 };
 

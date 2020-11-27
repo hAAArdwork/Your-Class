@@ -100,7 +100,7 @@
                     v-if="!userData.isStudent"
                     color="error"
                     outlined
-                    @click="deleteAssignment(item)"
+                    @click="deleteAssignment(assignment.id)"
                   >
                     <v-icon left> mdi-delete</v-icon>
                     삭제하기
@@ -137,8 +137,26 @@ export default {
   },
   
   methods: {
-    deleteAssignment() {
-      confirm("정말 삭제하겠습니까?");
+    findAssignment(id, list) {
+      let index = 0;
+
+      for (let assignment of list) {
+        if (id == assignment.id) {
+          break;
+        }
+        index++;
+      }
+
+      return index;
+    },
+    deleteAssignment(id) {
+      alert("과제를 삭제하겠습니까?");
+      const targetIndex = this.findAssignment(id, this.assignmentList);
+
+      // 대기자 항목에서 해당 학생 제거.
+      this.assignmentList.splice(targetIndex, 1);
+
+      this.$store.dispatch("assignment/removeAssignment", id);
     }
   }
 };
