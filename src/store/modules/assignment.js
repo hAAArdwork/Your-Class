@@ -49,6 +49,7 @@ const state = {
   submit: {
     id: "",
     submitDetail: "",
+    submitUpdateDate: "",
     submitFile: "",
     submitFileName: "",
     assignmentName: "",
@@ -74,6 +75,7 @@ const mutations = {
   fetchSubmit(state, submit){
     state.submit.id = submit.id;
     state.submit.submitDetail = submit.submitDetail;
+    state.submit.submitUpdateDate = submit.submitUpdateDate;
     state.submit.submitFile = submit.submitFile;
     state.submit.submitFileName = submit.submitFileName;
     state.submit.assignmentName = submit.assignmentName;
@@ -147,16 +149,17 @@ const actions = {
     axios
       .get(`assignment/submit/detail/${assignmentId}`)
       .then(({ data }) => {
-
+        console.log(data);
         const submit = {
           id: data.id,
+          submitUpdateDate: data.submitUpdateDate.substring(0,10) + ' ' + data.submitUpdateDate.substring(11,16),
           submitDetail: data.submitDetail,
           submitFile: data.submitFile,
           submitFileName: data.submitFileName,
           assignmentName: data.assignmentId.assignmentName,
           assignmentDetail: data.assignmentId.assignmentDetail,
           assignmentfile: data.assignmentId.assignmentFile,
-          assignmentDueDate: data.assignmentId.assignmentDueDate
+          assignmentDueDate: data.assignmentId.assignmentDueDate.substring(0,10) + ' ' + data.assignmentId.assignmentDueDate.substring(11,16)
         };
 
         console.log(submit);
