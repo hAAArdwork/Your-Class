@@ -48,7 +48,7 @@ const state = {
     timeTable: null,
     invitationCode: null
   },
-
+  studentList: new Array(),
   isLoading: false
 };
 
@@ -84,6 +84,9 @@ const mutations = {
   // Loading Flag Mutation
   fetchLoading(state, payload) {
     state.isLoading = payload;
+  },
+  fetchStudentList: (state, studentList) => {
+    state.studentList = studentList;
   }
 };
 
@@ -161,12 +164,22 @@ const actions = {
       });
   },
 
-  retrieveStudentList: (getters, classId) => {
+  retrieveStudentList: ({ commit }, classId) => {
     axios
       .get("subject/subjectenroll", { params: { Id: classId } })
       .then(({ data }) => {
         console.log(data);
+        //console.log(data[0].userId.name);
+        let studentList = new Array();
+
+        for (let item of data) {
+          const studentInfo = item.userId;
+          studentList.push(studentInfo);
+        }
+        
+        commit("fetchStudentList", studentList);
       })
+
       .catch(() => {});
   },
 
@@ -278,6 +291,9 @@ const getters = {
     }
 
     return classDetail;
+  },
+  studentList(state) {
+    return state.studentList;
   },
   // 로딩 여부 반환
   isLoading(state) {
