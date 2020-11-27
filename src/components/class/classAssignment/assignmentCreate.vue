@@ -118,7 +118,7 @@
           <v-spacer></v-spacer>
           <v-btn outlined :disabled="!valid" @click="createAssignment">
             <v-icon left> mdi-checkbox-marked-circle </v-icon>
-            제출하기
+            과제 등록
           </v-btn>
         </v-card-actions>
       </v-card>
@@ -160,7 +160,15 @@ export default {
 
   methods: {
     createAssignment() {
-      confirm("등록하시겠습니까?");
+      // 파일 형식을 백엔드 서버에 전송하기 위하여, FormData 객체를 사용한다.
+      let formData = new FormData();
+      formData.append("classId", this.$route.params.classId);
+      formData.append("assignmentName", this.assignmentTitle);
+      formData.append("assignmentDetail", this.assignmentDescription);
+      formData.append("assignmentFile", this.assignmentFiles[0]);
+      formData.append("assignmentDueDate", this.assignmentDueDate);
+
+      this.$store.dispatch("assignment/createAssignment", formData);
     }
   }
 };
