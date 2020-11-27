@@ -212,7 +212,7 @@ const actions = {
           const studentInfo = item.userId;
           studentList.push(studentInfo);
         }
-        
+
         commit("fetchStudentList", studentList);
       })
 
@@ -355,6 +355,17 @@ const actions = {
       .catch(({ response }) => {
         console.log(response);
       });
+  },
+
+  removeStudent: ( getters, payload) => {
+    const subjectId = payload.classId;
+    const userId = payload.studentId;
+    
+    axios
+    .delete(`subject/enroll/delete/${subjectId}/${userId}`)
+    .then(() => {
+      confirm("학생이 성공적으로 삭제되었습니다.");
+    })
   }
 };
 
