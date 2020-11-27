@@ -37,7 +37,6 @@ axios.interceptors.response.use(
 
 const state = {
   assignmentList: new Array(),
-  submitList: new Array()
 };
 
 const mutations = {
@@ -48,9 +47,6 @@ const mutations = {
   fetchAssignmentList(state, assignmentList) {
     state.assignmentList = assignmentList;
   },
-  fetchSubmitList(state, submitList) {
-    state.submitList = submitList;
-  }
 };
 
 const actions = {
@@ -58,17 +54,27 @@ const actions = {
   retrieveAssignmentList: ({ commit }, classId) => {
     axios
       .get(`assignment/list/${classId}`)
-      .then(({ data }) => {
+      .then(async ({ data }) => {
         console.log(data);
         let assignmentList = new Array();
         for (let item of data) {
-
           console.log(item);
           const assignmentInfo = item;
+
+          //제출 여부 get
+          await axios
+          .get(`assignment/isSubmit/${item.id}`)
+          .then(({ data }) => {
+            console.log(data);
+            assignmentInfo.isSubmitted = data.isSubmitted;
+          })
+          .catch(() => {});
+
           assignmentInfo.assignmentDueDate = assignmentInfo.assignmentDueDate.substring(0,10) + ' ' + assignmentInfo.assignmentDueDate.substring(11,16);
           assignmentInfo.assignmentUpdateDate = assignmentInfo.assignmentUpdateDate.substring(0,10) + ' ' + assignmentInfo.assignmentDueDate.substring(11,16);
           assignmentList.push(assignmentInfo);
         }
+        //console.log(assignmentList);
         commit("fetchAssignmentList", assignmentList);
       })
       .catch(() => {});
@@ -78,22 +84,6 @@ const actions = {
     axios.delete(`assignment/detail/${assignmentId}`).then(() => {
       confirm("과제가 삭제되었습니다.");
     });
-  },
-
-  //제출 학생 리스트
-  retrieveSubmitList: ( { commit } , assignmentId) =>{
-    axios
-    .get(`assignment/submit/list/${assignmentId}`)
-    .then(({ data }) => {
-      console.log(data);
-      let submitList = new Array();
-      for (let item of data) {
-        const submit = item;
-        submitList.push(submit);
-      }
-      commit("fetchSubmitList", submitList);
-    })
-    .catch(() => {});
   },
 
   createAssignment: (nothing, assignmentData) => {
@@ -122,15 +112,11 @@ const actions = {
       });
   }
 };
-};
 
 const getters = {
   assignmentList(state) {
     return state.assignmentList;
   },
-  submitList(state) {
-    return state.submitList;
-  }
 };
 
 export default {

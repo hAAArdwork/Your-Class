@@ -114,9 +114,6 @@ export default {
     ]
   }),
   computed: {
-    submitList() {
-      return this.$store.getters["assignment/submitList"];
-    }
   },
   methods: {
     downloadAll() {
