@@ -124,7 +124,7 @@ const routes = [
             name: "classAssignment",
             component: () =>
               import("../components/class/classAssignment/assignmentList.vue"),
-            meta: { title: "과제제출" }
+            meta: { title: "과제확인" }
           },
           {
             path: "submit",
@@ -135,6 +135,7 @@ const routes = [
               ),
             meta: { title: "과제제출" }
           },
+
           {
             path: "detail",
             name: "AssignmentSubmitDetail",
@@ -159,6 +160,14 @@ const routes = [
                 "../components/class/classAssignment/assignmentCreate.vue"
               ),
             meta: { title: "과제등록" }
+          },
+          {
+            path: "edit/:assignmentID",
+            props: true,
+            name: "AssignmentEdit",
+            component: () =>
+              import("../components/class/classAssignment/assignmentEdit.vue"),
+            meta: { title: "과제수정" }
           }
         ]
       },
