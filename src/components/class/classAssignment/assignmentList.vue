@@ -89,11 +89,23 @@
                   <!-- 교사용 제출물 확인 및 삭제 버튼 -->
                   <v-btn
                     v-if="!userData.isStudent"
-                    class="mx-2"
                     outlined
                     @click="$router.push({ name: 'AssignmnetSubmitCheck', params: { assignmentId: assignment.id }})"
                   >
                     제출자 확인
+                  </v-btn>
+
+                  <v-btn
+                    v-if="!userData.isStudent"
+                    class="mx-2"
+                    outlined
+                    :to="{
+                      name: 'AssignmentEdit',
+                      params: { assignmentID: 1 }
+                    }"
+                  >
+                    <v-icon left> mdi-pencil</v-icon>
+                    내용 수정
                   </v-btn>
 
                   <v-btn
