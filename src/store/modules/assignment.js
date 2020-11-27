@@ -36,18 +36,48 @@ axios.interceptors.response.use(
   }
 );
 
-const state = {};
+const state = {
+  assignmentList: new Array(),
+};
 
 const mutations = {
   // Loading Flag Mutation
   fetchLoading(state, payload) {
     state.isLoading = payload;
+  },
+  fetchAssignmentList(state, assignmentList) {
+    state.assignmentList = assignmentList;
   }
 };
 
-const actions = {};
+const actions = {
+  //과제 리스트
+  retrieveAssignmentList: ({ commit }, classId) => {
+    axios
+      .get(`assignment/list/${classId}`)
+      .then(({ data }) => {
+        console.log(data);
+        let assignmentList = new Array();
+        for (let item of data) {
 
-const getters = {};
+          console.log(item);
+          const assignmentInfo = item;
+          assignmentInfo.assignmentDueDate = assignmentInfo.assignmentDueDate.substring(0,10) + ' ' + assignmentInfo.assignmentDueDate.substring(11,16);
+          assignmentInfo.assignmentUpdateDate = assignmentInfo.assignmentUpdateDate.substring(0,10) + ' ' + assignmentInfo.assignmentDueDate.substring(11,16);
+          assignmentList.push(assignmentInfo);
+        }
+        commit("fetchAssignmentList", assignmentList);
+      })
+      .catch(() => {});
+  },
+
+};
+
+const getters = {
+  assignmentList(state) {
+    return state.assignmentList;
+  }
+};
 
 export default {
   // Vuex 저장소 네임스페이스 사용
