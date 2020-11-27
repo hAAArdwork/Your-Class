@@ -2,7 +2,7 @@
   <v-row style="height: 100%;">
     <v-col cols="8">
       <p class="class-info text-h4">
-        과제 제출 내역 확인
+        과제 제출 내역 확인 
       </p>
     </v-col>
 
@@ -18,17 +18,17 @@
         <v-col cols="12">
           <v-card class="mx-auto" width="100%" outlined>
             <v-card-title>
-              {{ assignmentName }}
+              {{ submit.assignmentName }}
 
               <v-spacer></v-spacer>
 
-              <small>마감일 : {{ assignmentDueDate }}</small>
+              <small>마감일 : {{ submit.assignmentDueDate }}</small>
             </v-card-title>
 
             <v-divider></v-divider>
 
             <v-card-text>
-              {{ AssignmentDetail }}
+              {{ submit.AssignmentDetail }}
             </v-card-text>
           </v-card>
         </v-col>
@@ -40,21 +40,20 @@
 
               <v-spacer></v-spacer>
 
-              <small>제출일 : {{ submitUpdateDate }}</small>
+              <small>제출일 : {{ submit.submitUpdateDate }}</small>
             </v-card-title>
 
             <v-divider></v-divider>
 
             <v-card-text>
-              <p>제출명 : {{ submitTitle }}</p>
-              <span>코멘트 : {{ submitDetail }}</span>
+              <span>코멘트 : {{ submit.submitDetail }}</span>
             </v-card-text>
 
             <v-divider></v-divider>
 
             <v-card-actions>
               <v-chip @click="download" pill outlined>
-                <v-icon left>mdi-file-outline</v-icon> {{ submitFile }}
+                <v-icon left>mdi-file-outline</v-icon> {{ submit.submitFileName }}
               </v-chip>
 
               <v-spacer></v-spacer>
@@ -76,18 +75,19 @@
 
 <script>
 export default {
+  beforeCreate() {
+    this.$store.dispatch(
+      "assignment/retrieveSubmit",
+      this.$route.params.assignmentId
+    );
+  },
   data: () => ({
-    assignmentName: "6장 연습문제",
-    AssignmentDetail:
-      "Lorem Ipsum s standard dummy text ever since the 1500s, when an unknown print dummy text ever since the 1500s, when an unknown print dummy text ever since the 1500s, when an unknown print dummy text ever since the 1500s, when an unknown print dummy text ever since the 1500s, when an unknown print dummy text ever since the 1500s, when an unknown print dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essent",
-    assignmentDueDate: "2020.10.30",
-
-    submitTitle: "과제 제출합니다.",
-    submitDetail: "안녕하세요 과제 제출합니다",
-    submitUpdateDate: "2020.10.27 17:34",
-    submitFile: "cache.zip"
   }),
-
+  computed: {
+    submit() {
+      return this.$store.getters["assignment/submitDetail"];
+    }
+  },
   methods: {
     download() {
       alert("다운로드 중입니다.....");

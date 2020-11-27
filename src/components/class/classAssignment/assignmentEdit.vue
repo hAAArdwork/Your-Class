@@ -2,7 +2,7 @@
   <v-row style="height: 100%;">
     <v-col cols="8">
       <p class="class-info text-h4">
-        과제 등록
+        과제 수정
       </p>
     </v-col>
 
@@ -99,11 +99,10 @@
 
               <v-col class="py-2" cols="12">
                 <v-file-input
-                  v-model="assignmentFiles"
+                  v-model="assignmentFile"
                   label="첨부 파일"
-                  truncate-length="15"
+                  truncate-length="30"
                   show-size
-                  multiple
                   counter
                   small-chips
                   :rules="[rules.limitedSize()]"
@@ -116,9 +115,12 @@
 
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn outlined :disabled="!valid" @click="createAssignment">
-            <v-icon left> mdi-checkbox-marked-circle </v-icon>
-            과제 등록
+          <v-btn outlined :to="{ name: 'classAssignment' }" exact>
+            취소
+          </v-btn>
+          <v-btn outlined :disabled="!valid" @click="updateAssignment">
+            <v-icon left> mdi-pencil </v-icon>
+            과제 수정
           </v-btn>
         </v-card-actions>
       </v-card>
@@ -128,29 +130,41 @@
 
 <script>
 export default {
-  data: () => ({
-    valid: false,
+  beforeCreate() {
+    const assignmentId = this.$route.params.assignmentId;
 
-    timePicker: false,
-    datePicker: false,
+    this.$axios
+      .get(`assignment/detail/${assignmentId}`)
+      .then(async ({ data }) => {
+        // 전송받은 데이터 'data'에 연결.
+        this.assignmentTitle = data.assignmentName;
+        this.assignmentDescription = data.assignmentDetail;
+        this.date = data.assignmentDueDate.substring(0, 10);
+        this.time = data.assignmentDueDate.substring(11, 16);
 
-    // 제출 마감일, 마감시간 초기값 설정
-    date: new Date().toISOString().substr(0, 10),
-    time: "23:59",
+        const originalFileName = data.assignmentFileName;
 
-    assignmentTitle: "",
-    assignmentDescription: "",
-    assignmentFiles: null,
+        // 서버로부터 기존에 제출된 파일을 다운로드 받고, File Object로 만든다.
+        await this.$axios({
+          url: `assignment/download/${assignmentId}`,
+          method: "GET",
+          responseType: "blob" // important
+        }).then(response => {
+          this.assignmentFile = new File(
+            [response.data],
+            `${originalFileName}`
+          );
 
-    rules: {
-      required: value => !!value || "필수 입력 항목입니다.",
-      // 제출 파일 용량 검사
-      limitedSize: value =>
-        !value || value.size < 50000000 || "첨부 파일 용량 제한은 50MB입니다.",
-      checkDueDate: value =>
-        new Date(value) > new Date() || "마감일이 오늘보다 이전일 수 없습니다."
-    }
-  }),
+          // const url = window.URL.createObjectURL(new Blob([response.data]));
+          // console.log(url);
+          // const link = document.createElement("a");
+          // link.href = url;
+          // link.setAttribute("download", "file.pdf");
+          // document.body.appendChild(link);
+          // link.click();
+        });
+      });
+  },
 
   computed: {
     assignmentDueDate() {
@@ -158,23 +172,55 @@ export default {
     }
   },
 
-  methods: {
-    createAssignment() {
-      console.log(this.assignmentFiles);
+  data() {
+    return {
+      valid: false,
 
-      if (this.assignmentFiles) {
-        console.log("1");
+      timePicker: false,
+      datePicker: false,
+
+      // 제출 마감일, 마감시간 초기값 설정
+      date: "",
+      time: "",
+
+      assignmentTitle: "",
+      assignmentDescription: "",
+      assignmentFile: null,
+
+      rules: {
+        required: value => !!value || "필수 입력 항목입니다.",
+        // 제출 파일 용량 검사
+        limitedSize: value =>
+          !value ||
+          value.size < 50000000 ||
+          "첨부 파일 용량 제한은 50MB입니다.",
+        checkDueDate: value =>
+          new Date(value) > new Date() ||
+          "마감일이 오늘보다 이전일 수 없습니다."
       }
+    };
+  },
+
+  methods: {
+    updateAssignment() {
+      console.log(this.assignmentFile);
 
       // 파일 형식을 백엔드 서버에 전송하기 위하여, FormData 객체를 사용한다.
       let formData = new FormData();
+
+      if (this.assignmentFile !== null) {
+        formData.append("assignmentFile", this.assignmentFile);
+      }
+
       formData.append("classId", this.$route.params.classId);
       formData.append("assignmentName", this.assignmentTitle);
       formData.append("assignmentDetail", this.assignmentDescription);
-      formData.append("assignmentFile", this.assignmentFiles[0]);
       formData.append("assignmentDueDate", this.assignmentDueDate);
 
-      this.$store.dispatch("assignment/createAssignment", formData);
+      this.$store.dispatch("assignment/updateAssignment", {
+        assignmentId: this.$route.params.assignmentId,
+        formData: formData
+      });
     }
   }
 };
