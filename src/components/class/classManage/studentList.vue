@@ -19,11 +19,11 @@
           v-for="student in studentList"
           :key="student.id"
         >
-          <span class="flex-grow-1">
+          <span>
             <strong>{{ student.name }}</strong>
           </span>
 
-          <span class="flex-grow-1">{{ student.email }}</span>
+          <span class="flex-grow-1 mx-2">{{ student.email }}</span>
 
           <v-btn @click="onReject(student.email)" color="error" small icon>
             <v-icon>mdi-close</v-icon>

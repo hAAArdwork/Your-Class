@@ -189,7 +189,7 @@ export default {
       return this.$store.getters["classes/classDetail"];
     },
     studentList() {
-      return this.$store.getters.["classes/studentList"];
+      return this.$store.getters["classes/studentList"];
     }
   },
   data: () => ({
@@ -206,28 +206,11 @@ export default {
     // 시간표 변경 Flag
     timeChangeDialog: false,
 
-    // 시간표 관련 Form Data
-    days: ["월요일", "화요일", "수요일", "목요일", "금요일"],
-    times: ["1교시", "2교시", "3교시", "4교시", "5교시", "6교시", "7교시"],
     classTimeTable: new Array(),
 
-    // studentList: [
-    //   {
-    //     id: 1,
-    //     name: "이정우",
-    //     mail: "dwd4791@gmail.com"
-    //   },
-    //   {
-    //     id: 2,
-    //     name: "김정우",
-    //     mail: "dwd4792@gmail.com"
-    //   },
-    //   {
-    //     id: 3,
-    //     name: "정우",
-    //     mail: "dwd4793@gmail.com"
-    //   }
-    // ]
+    // 시간표 관련 Form Data
+    days: ["월요일", "화요일", "수요일", "목요일", "금요일"],
+    times: ["1교시", "2교시", "3교시", "4교시", "5교시", "6교시", "7교시"]
   }),
   methods: {
     // 대기자 항목에서 동일한 이메일을 가진 학생을 찾아 반환한다.
@@ -235,7 +218,7 @@ export default {
       let index = 0;
 
       for (let student of list) {
-        if (email == student.mail) {
+        if (email == student.email) {
           break;
         }
         index++;
@@ -243,6 +226,7 @@ export default {
 
       return index;
     },
+
     // 대기 학생의 요청을 수락한다.
     acceptRequest(email) {
       const targetIndex = this.findUser(email, this.waitingList);
@@ -257,6 +241,7 @@ export default {
 
       // TODO: axios 요청을 통해 실제 DB에서 제거.
     },
+
     declineRequest(email) {
       const targetIndex = this.findUser(email, this.waitingList);
 
@@ -269,6 +254,7 @@ export default {
 
       // TODO: axios 요청을 통해 실제 DB에서 제거.
     },
+
     removeFromStudentList(email) {
       const targetIndex = this.findUser(email, this.studentList);
 

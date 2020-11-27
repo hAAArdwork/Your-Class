@@ -48,7 +48,6 @@ const state = {
     timeTable: null,
     invitationCode: null
   },
- 
 
   studentList: new Array(),
 
@@ -70,6 +69,7 @@ const mutations = {
   fetchClassList: (state, classList) => {
     state.classList = classList;
   },
+
   // 서버로부터 받아온 과목 세부 정보를 Vuex Store에 저장하는 Commit
   fetchClassDetail: (state, classDetail) => {
     state.classDetail.title = classDetail.title;
@@ -79,6 +79,7 @@ const mutations = {
     state.classDetail.timeTable = classDetail.timeTable;
     state.classDetail.invitationCode = classDetail.invitationCode;
   },
+
   // 초대 코드로 검색된 과목 정보를 Vuex Store에 저장하는 Commit
   fetchSearchedClass: (state, searchedClass) => {
     state.searchedClass.title = searchedClass.title;
@@ -88,6 +89,7 @@ const mutations = {
     state.searchedClass.classNumber = searchedClass.classNumber;
     state.searchedClass.timeTable = searchedClass.timeTable;
   },
+
   // 과목 세부 정보를 초기화하기 위한 Commit
   clearClassDetail: state => {
     state.classDetail.title = null;
@@ -97,6 +99,7 @@ const mutations = {
     state.classDetail.timeTable = null;
     state.classDetail.invitationCode = null;
   },
+
   // 검색된 과목 정보를 초기화하기 위한 Commit
   clearSearchedClass: state => {
     state.searchedClass.title = null;
@@ -106,20 +109,24 @@ const mutations = {
     state.searchedClass.classNumber = null;
     state.searchedClass.timeTable = null;
   },
+
   updateInvitationCode: (state, newCode) => {
     state.classDetail.invitationCode = newCode;
   },
+
   updateTimeTable: (state, newTimeTable) => {
     state.classDetail.timeTable = newTimeTable;
   },
+
   fetchStudentList: (state, studentList) => {
     state.studentList = studentList;
   },
-    // Loading Flag Mutation
+
+  // Loading Flag Mutation
   fetchLoading(state, payload) {
     state.isLoading = payload;
   },
-  
+
   // Found Flag Mutation
   fetchFound(state, payload) {
     state.isFound = payload;
@@ -212,7 +219,7 @@ const actions = {
           const studentInfo = item.userId;
           studentList.push(studentInfo);
         }
-        
+
         commit("fetchStudentList", studentList);
       })
 
@@ -296,7 +303,9 @@ const actions = {
         commit("updateTimeTable", newTimeTable);
       })
       .catch(({ response }) => {
-        console.log(response);
+        if (response.status == 400) {
+          alert("죄송합니다. 시간표를 빈 값으로 수정할 수 없습니다.");
+        }
       });
   },
 
@@ -353,7 +362,9 @@ const actions = {
         dispatch("retrieveClasses");
       })
       .catch(({ response }) => {
-        console.log(response);
+        if (response.status == 400) {
+          alert("해당 과목이 이미 등록되어있습니다!");
+        }
       });
   }
 };
