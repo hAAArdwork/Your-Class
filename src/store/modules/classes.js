@@ -48,8 +48,21 @@ const state = {
     timeTable: null,
     invitationCode: null
   },
+ 
+
   studentList: new Array(),
-  isLoading: false
+
+  searchedClass: {
+    title: null,
+    instructor: null,
+    instructorEmail: null,
+    classGrade: null,
+    classNumber: null,
+    timeTable: null
+  },
+
+  isLoading: false,
+  isFound: false
 };
 
 const mutations = {
@@ -66,6 +79,15 @@ const mutations = {
     state.classDetail.timeTable = classDetail.timeTable;
     state.classDetail.invitationCode = classDetail.invitationCode;
   },
+  // 초대 코드로 검색된 과목 정보를 Vuex Store에 저장하는 Commit
+  fetchSearchedClass: (state, searchedClass) => {
+    state.searchedClass.title = searchedClass.title;
+    state.searchedClass.instructor = searchedClass.instructor;
+    state.searchedClass.instructorEmail = searchedClass.instructorEmail;
+    state.searchedClass.classGrade = searchedClass.classGrade;
+    state.searchedClass.classNumber = searchedClass.classNumber;
+    state.searchedClass.timeTable = searchedClass.timeTable;
+  },
   // 과목 세부 정보를 초기화하기 위한 Commit
   clearClassDetail: state => {
     state.classDetail.title = null;
@@ -75,18 +97,32 @@ const mutations = {
     state.classDetail.timeTable = null;
     state.classDetail.invitationCode = null;
   },
+  // 검색된 과목 정보를 초기화하기 위한 Commit
+  clearSearchedClass: state => {
+    state.searchedClass.title = null;
+    state.searchedClass.instructor = null;
+    state.searchedClass.instructorEmail = null;
+    state.searchedClass.classGrade = null;
+    state.searchedClass.classNumber = null;
+    state.searchedClass.timeTable = null;
+  },
   updateInvitationCode: (state, newCode) => {
     state.classDetail.invitationCode = newCode;
   },
   updateTimeTable: (state, newTimeTable) => {
     state.classDetail.timeTable = newTimeTable;
   },
-  // Loading Flag Mutation
+  fetchStudentList: (state, studentList) => {
+    state.studentList = studentList;
+  },
+    // Loading Flag Mutation
   fetchLoading(state, payload) {
     state.isLoading = payload;
   },
-  fetchStudentList: (state, studentList) => {
-    state.studentList = studentList;
+  
+  // Found Flag Mutation
+  fetchFound(state, payload) {
+    state.isFound = payload;
   }
 };
 
@@ -264,7 +300,7 @@ const actions = {
       });
   },
 
-  deleteClass: (getters, classId) => {
+  deleteClass: (nothing, classId) => {
     axios
       .delete(`subject/detail/${classId}`)
       .then(() => {
@@ -273,8 +309,51 @@ const actions = {
         // 메인 페이지로 리다이렉트한다.
         router.replace({ name: "MainPage" });
       })
-      .catch(error => {
-        console.log(error);
+      .catch(({ response }) => {
+        console.log(response);
+      });
+  },
+
+  searchClass: ({ commit }, invitationCode) => {
+    commit("fetchFound", false);
+
+    axios
+      .get(`subject/invite/${invitationCode}`)
+      .then(({ data }) => {
+        commit("fetchFound", true);
+
+        // 검색된 과목 정보를 필요에 맞게 Parsing
+        const searchedClass = {
+          title: data.subjectName,
+          instructor: data.subjectInstructorId.name,
+          instructorEmail: data.subjectInstructorId.email,
+          classGrade: String(data.subjectGrade),
+          classNumber: String(data.subjectClass),
+          timeTable: data.subjectTimeList
+        };
+
+        commit("fetchSearchedClass", searchedClass);
+      })
+      .catch(({ response }) => {
+        if (response.status == 404) {
+          // alert("입력하신 과목 코드에 알맞는 과목이 없습니다.");
+        }
+      });
+  },
+
+  enroll: ({ dispatch }, invitationCode) => {
+    axios
+      .post(`subject/invite/enroll/${invitationCode}/`)
+      .then(({ data }) => {
+        console.log(data);
+
+        confirm(`${data} 과목이 성공적으로 등록되었습니다.`);
+
+        // 과목 생성 성공 시, 과목 리스트를 갱신한다.
+        dispatch("retrieveClasses");
+      })
+      .catch(({ response }) => {
+        console.log(response);
       });
   },
 
@@ -294,6 +373,9 @@ const getters = {
   classList(state) {
     return state.classList;
   },
+  studentList(state) {
+    return state.studentList;
+  },
   classDetail(state) {
     let classDetail = state.classDetail;
 
@@ -303,12 +385,22 @@ const getters = {
 
     return classDetail;
   },
-  studentList(state) {
-    return state.studentList;
+  searchedClass(state) {
+    let searchedClass = state.searchedClass;
+
+    if (searchedClass.timeTable !== null) {
+      searchedClass.timeTable = searchedClass.timeTable.split(",").join(", ");
+    }
+
+    return searchedClass;
   },
   // 로딩 여부 반환
   isLoading(state) {
     return state.isLoading;
+  },
+  // 검색 성공 여부 반환
+  isFound(state) {
+    return state.isFound;
   }
 };
 

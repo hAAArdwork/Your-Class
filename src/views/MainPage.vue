@@ -138,52 +138,7 @@ export default {
     newClassDialog: false,
     enrollDialog: false,
 
-    isLoading: false,
-
-    classCardData: [
-      {
-        id: 0,
-        title: "수학",
-        teacher: "이정우",
-        timeTable: "월요일 7교시, 화요일 3교시, 목요일 2교시, 금요일 1교시"
-      },
-      {
-        id: 1,
-        title: "물리",
-        teacher: "이슬기",
-        timeTable: "월요일 4교시, 화요일 2교시, 수요일 3교시, 금요일 5교시"
-      },
-      {
-        id: 2,
-        title: "과학",
-        teacher: "양준영",
-        timeTable: "화요일 4교시, 수요일 1교시, 목요일 3교시, 금요일 2교시"
-      },
-      {
-        id: 3,
-        title: "역사",
-        teacher: "이정우",
-        timeTable: "수요일 7교시, 목요일 1교시"
-      },
-      {
-        id: 4,
-        title: "바리스타",
-        teacher: "오세만",
-        timeTable: "금요일 방과후"
-      },
-      {
-        id: 5,
-        title: "생명과학 1",
-        teacher: "최한",
-        timeTable: "월요일 1교시, 화요일 6교시, 수요일 2교시, 금요일 3교시"
-      },
-      {
-        id: 6,
-        title: "사회",
-        teacher: "이정우",
-        timeTable: "수요일 7교시, 목요일 2교시"
-      }
-    ]
+    isLoading: false
   })
 };
 </script>
