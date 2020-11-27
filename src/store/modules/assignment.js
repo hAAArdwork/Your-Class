@@ -38,6 +38,7 @@ axios.interceptors.response.use(
 
 const state = {
   assignmentList: new Array(),
+  submitList: new Array()
 };
 
 const mutations = {
@@ -47,6 +48,9 @@ const mutations = {
   },
   fetchAssignmentList(state, assignmentList) {
     state.assignmentList = assignmentList;
+  },
+  fetchSubmitList(state, submitList) {
+    state.submitList = submitList;
   }
 };
 
@@ -70,10 +74,27 @@ const actions = {
       })
       .catch(() => {});
   },
+  //과제 삭제
   removeAssignment: (getters, assignmentId) => {
     axios.delete(`assignment/detail/${assignmentId}`).then(() => {
       confirm("과제가 삭제되었습니다.");
     });
+  },
+
+  //제출 학생 리스트
+  retrieveSubmitList: ( { commit } , assignmentId) =>{
+    axios
+    .get(`assignment/submit/list/${assignmentId}`)
+    .then(({ data }) => {
+      console.log(data);
+      let submitList = new Array();
+      for (let item of data) {
+        const submit = item;
+        submitList.push(submit);
+      }
+      commit("fetchSubmitList", submitList);
+    })
+    .catch(() => {});
   },
 
 };
@@ -81,6 +102,9 @@ const actions = {
 const getters = {
   assignmentList(state) {
     return state.assignmentList;
+  },
+  submitList(state) {
+    return state.submitList;
   }
 };
 

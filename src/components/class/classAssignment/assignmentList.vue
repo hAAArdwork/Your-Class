@@ -41,7 +41,7 @@
                     v-if="assignment.submitted && userData.isStudent"
                     style="color: green;"
                   >
-                    제출완료
+                    제출완료 
                   </small>
 
                   <small
@@ -91,7 +91,7 @@
                     v-if="!userData.isStudent"
                     class="mx-2"
                     outlined
-                    @click="$router.push({ name: 'AssignmnetSubmitCheck' })"
+                    @click="$router.push({ name: 'AssignmnetSubmitCheck', params: { assignmentId: assignment.id }})"
                   >
                     제출자 확인
                   </v-btn>

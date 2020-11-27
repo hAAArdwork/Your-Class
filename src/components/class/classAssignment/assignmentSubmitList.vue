@@ -68,6 +68,12 @@
 
 <script>
 export default {
+  beforeCreate() {
+     this.$store.dispatch(
+      "assignment/retrieveSubmitList",
+      this.$route.params.assignmentId
+    );
+  },
   data: () => ({
     singleExpand: true,
     expanded: [],
@@ -105,140 +111,13 @@ export default {
       { text: "", value: "data-table-expand" }
     ],
     submit: [
-      {
-        submitUserId: "1234",
-        submitUserName: "이정우",
-        number: "1",
-        submitted: true,
-        submitTitle: "6장 연습문제 제출합니다.",
-        submitDetail: "안녕하세요 과제를 제출하겠습니다.",
-        submitUpdateDate: "2020-11-10 10:30",
-        submitFile: "as.c"
-      },
-      {
-        submitUserId: "1212",
-        submitUserName: "이정우",
-        number: "2",
-        name: "정우",
-        submitted: true,
-        submitTitle: "6장 연습문제 제출합니다.",
-        submitDetail: "",
-        submitUpdateDate: "2020-11-10 10:30",
-        submitFile: ""
-      },
-      {
-        submitUserId: "1245",
-        submitUserName: "이정우",
-        number: "3",
-        submitted: false,
-        submitTitle: "",
-        submitDetail: "",
-        submitUpdateDate: "",
-        submitFile: ""
-      },
-      {
-        submitUserId: "2345",
-        submitUserName: "이정우",
-        number: "4",
-        submitted: true,
-        submitTitle: "6장 연습문제 제출합니다.",
-        submitDetail: "",
-        submitUpdateDate: "2020-11-10 10:30",
-        submitFile: "sofrtwarEngineering.pdf"
-      },
-      {
-        submitUserId: "3852",
-        submitUserName: "이정우",
-        number: "5",
-        submitted: true,
-        submitTitle: "6장 연습문제 제출합니다.",
-        submitDetail: "",
-        submitUpdateDate: "2020-11-10 10:30",
-        submitFile: ""
-      },
-      {
-        submitUserId: "2358",
-        submitUserName: "이정우",
-        number: "6",
-        submitted: true,
-        submitTitle: "6장 연습문제 제출합니다.",
-        submitDetail: "",
-        submitUpdateDate: "2020-11-10 10:30",
-        submitFile: ""
-      },
-      {
-        submitUserId: "5932",
-        submitUserName: "이정우",
-        number: "7",
-        submitted: true,
-        submitTitle: "6장 연습문제 제출합니다.",
-        submitDetail: "",
-        submitUpdateDate: "2020-11-10 10:30",
-        submitFile: ""
-      },
-      {
-        submitUserId: "3705",
-        submitUserName: "이정우",
-        number: "8",
-        submitted: true,
-        submitTitle: "6장 연습문제 제출합니다.",
-        submitDetail: "",
-        submitUpdateDate: "2020-11-10 10:30",
-        submitFile: ""
-      },
-      {
-        submitUserId: "2569",
-        submitUserName: "이정우",
-        number: "9",
-        submitted: true,
-        submitTitle: "6장 연습문제 제출합니다.",
-        submitDetail: "",
-        submitUpdateDate: "2020-11-10 10:30",
-        submitFile: ""
-      },
-      {
-        submitUserId: "3689",
-        submitUserName: "이정우",
-        number: "10",
-        submitted: true,
-        submitTitle: "6장 연습문제 제출합니다.",
-        submitDetail: "",
-        submitUpdateDate: "2020-11-10 10:30",
-        submitFile: ""
-      },
-      {
-        submitUserId: "7842",
-        submitUserName: "이정우",
-        number: "11",
-        submitted: true,
-        submitTitle: "6장 연습문제 제출합니다.",
-        submitDetail: "",
-        submitUpdateDate: "2020-11-10 10:30",
-        submitFile: ""
-      },
-      {
-        submitUserId: "1211",
-        submitUserName: "이정우",
-        number: "12",
-        submitted: true,
-        submitTitle: "6장 연습문제 제출합니다.",
-        submitDetail: "",
-        submitUpdateDate: "2020-11-10 10:30",
-        submitFile: ""
-      },
-      {
-        submitUserId: "1111",
-        submitUserName: "이정우",
-        number: "13",
-        submitted: true,
-        submitTitle: "6장 연습문제 제출합니다.",
-        submitDetail: "",
-        submitUpdateDate: "2020-11-10 10:30",
-        submitFile: ""
-      }
     ]
   }),
-
+  computed: {
+    submitList() {
+      return this.$store.getters["assignment/submitList"];
+    }
+  },
   methods: {
     downloadAll() {
       alert("전체 다운로드");
