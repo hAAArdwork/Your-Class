@@ -99,11 +99,10 @@
 
               <v-col class="py-2" cols="12">
                 <v-file-input
-                  v-model="assignmentFiles"
+                  v-model="assignmentFile"
                   label="첨부 파일"
-                  truncate-length="15"
+                  truncate-length="30"
                   show-size
-                  multiple
                   counter
                   small-chips
                   :rules="[rules.limitedSize()]"
@@ -140,7 +139,7 @@ export default {
 
     assignmentTitle: "",
     assignmentDescription: "",
-    assignmentFiles: null,
+    assignmentFile: null,
 
     rules: {
       required: value => !!value || "필수 입력 항목입니다.",
@@ -160,12 +159,15 @@ export default {
 
   methods: {
     createAssignment() {
-      if (this.assignmentFiles !== null) {
-        formData.append("assignmentFile", this.assignmentFiles[0]);
-      }
+      console.log(this.assignmentFile);
 
       // 파일 형식을 백엔드 서버에 전송하기 위하여, FormData 객체를 사용한다.
       let formData = new FormData();
+
+      if (this.assignmentFile !== null) {
+        formData.append("assignmentFile", this.assignmentFile[0]);
+      }
+
       formData.append("classId", this.$route.params.classId);
       formData.append("assignmentName", this.assignmentTitle);
       formData.append("assignmentDetail", this.assignmentDescription);

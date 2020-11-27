@@ -22,12 +22,11 @@
     <!-- 과제 목록 렌더링 영역, 콘텐츠 오버플로우 시 스크롤 적용 -->
     <v-responsive class="overflow-y-auto" height="70%" width="100%">
       <v-container fluid>
-
         <v-expansion-panels hover>
           <!-- 과제물 아이템 하나씩 렌더링 -->
-          <v-expansion-panel 
-          v-for="assignment in assignmentList" 
-          :key="assignment.id"
+          <v-expansion-panel
+            v-for="assignment in assignmentList"
+            :key="assignment.id"
           >
             <!-- 과제물 패널 헤더 영역 -->
             <v-expansion-panel-header>
@@ -62,15 +61,27 @@
 
             <v-expansion-panel-content color="grey lighten-4">
               <v-row>
-                <v-col cols="12" class="caption">
-                  등록일 : {{ assignment.assignmentUpdateDate }}
+                <v-col cols="12">
+                  <span class="caption">
+                    게시일 : {{ assignment.assignmentUpdateDate }}
+                  </span>
                 </v-col>
 
                 <v-col cols="12">
                   {{ assignment.assignmentDetail }}
                 </v-col>
 
-                <v-col cols="12" class="d-flex justify-end">
+                <v-col cols="12" class="d-flex align-center pb-0">
+                  <v-icon>mdi-download</v-icon>
+                  <span
+                    class="downloadable flex-grow-1 mx-2"
+                    @click="
+                      downloadFile(assignment.id, assignment.assignmentFileName)
+                    "
+                  >
+                    {{ assignment.assignmentFileName }}
+                  </span>
+
                   <!-- 학생용 과제 제출 및 확인 버튼 -->
                   <v-btn
                     v-if="assignment.submitted == true && userData.isStudent"
@@ -101,7 +112,7 @@
                     outlined
                     :to="{
                       name: 'AssignmentEdit',
-                      params: { assignmentID: 1 }
+                      params: { assignmentId: assignment.id }
                     }"
                   >
                     <v-icon left> mdi-pencil</v-icon>
@@ -135,10 +146,7 @@ export default {
       this.$route.params.classId
     );
   },
-  data: () => ({
-    show: false,
 
-  }),
   computed: {
     userData() {
       return this.$store.getters["user/userData"];
@@ -147,7 +155,13 @@ export default {
       return this.$store.getters["assignment/assignmentList"];
     }
   },
-  
+
+  data() {
+    return {
+      assignmentId: this.$route.params.classId
+    };
+  },
+
   methods: {
     findAssignment(id, list) {
       let index = 0;
@@ -161,6 +175,27 @@ export default {
 
       return index;
     },
+
+    // 업로드 된 과제 첨부 파일을 다운로드한다.
+    downloadFile(assignmentId, fileName) {
+      this.$axios({
+        url: `assignment/download/${assignmentId}`,
+        method: "GET",
+        responseType: "blob" // important
+      }).then(response => {
+        // 다운로드 URL 생성
+        const url = window.URL.createObjectURL(new Blob([response.data]));
+        // HTML 태그 생성
+        const link = document.createElement("a");
+        link.href = url;
+        link.setAttribute("download", fileName);
+
+        // Document에
+        document.body.appendChild(link);
+        link.click();
+      });
+    },
+
     deleteAssignment(id) {
       alert("과제를 삭제하겠습니까?");
       const targetIndex = this.findAssignment(id, this.assignmentList);
@@ -178,8 +213,8 @@ export default {
 .class-info {
   font-weight: 600;
 }
-.card-text-title {
-  font-size: 20px;
-  margin-bottom: 0px;
+.downloadable:hover {
+  cursor: pointer;
+  color: #516a99;
 }
 </style>

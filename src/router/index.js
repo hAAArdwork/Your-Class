@@ -162,7 +162,7 @@ const routes = [
             meta: { title: "과제등록" }
           },
           {
-            path: "edit/:assignmentID",
+            path: "edit/:assignmentId",
             props: true,
             name: "AssignmentEdit",
             component: () =>
