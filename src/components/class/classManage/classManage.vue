@@ -214,11 +214,11 @@ export default {
   }),
   methods: {
     // 대기자 항목에서 동일한 이메일을 가진 학생을 찾아 반환한다.
-    findUser(email, list) {
+    findUser(id, list) {
       let index = 0;
 
       for (let student of list) {
-        if (email == student.email) {
+        if (id == student.id) {
           break;
         }
         index++;
@@ -226,46 +226,23 @@ export default {
 
       return index;
     },
+    removeFromStudentList(id) {
+      const targetIndex = this.findUser(id, this.studentList);
 
-    // 대기 학생의 요청을 수락한다.
-    acceptRequest(email) {
-      const targetIndex = this.findUser(email, this.waitingList);
-      const targetStudent = this.waitingList[targetIndex];
-
-      alert(`${targetStudent.name} 학생의 요청을 수락하시겠습니까?`);
-
-      this.studentList.push(targetStudent);
-
-      // 대기자 항목에서 해당 학상 제거.
-      this.waitingList.splice(targetIndex - 1, 1);
-
-      // TODO: axios 요청을 통해 실제 DB에서 제거.
-    },
-
-    declineRequest(email) {
-      const targetIndex = this.findUser(email, this.waitingList);
-
-      alert(
-        `${this.waitingList[targetIndex].name} 학생의 요청을 거절하시겠습니까?`
-      );
-
-      // 대기자 항목에서 해당 학상 제거.
-      this.waitingList.splice(targetIndex - 1, 1);
-
-      // TODO: axios 요청을 통해 실제 DB에서 제거.
-    },
-
-    removeFromStudentList(email) {
-      const targetIndex = this.findUser(email, this.studentList);
+      let payload = {
+        studentId: id,
+        classId: this.$route.params.classId
+      };
 
       alert(
         `${this.studentList[targetIndex].name} 학생을 수강 목록에서 제외하겠습니까?`
       );
 
-      // 대기자 항목에서 해당 학상 제거.
-      this.studentList.splice(targetIndex - 1, 1);
+      // 대기자 항목에서 해당 학생 제거.
+      this.studentList.splice(targetIndex, 1);
 
       // TODO: axios 요청을 통해 실제 DB에서 제거.
+      this.$store.dispatch("classes/removeStudent", payload);
     },
 
     // Vuex로 초대 코드 재발급 요청을 전달하고 Dialog를 닫는다.

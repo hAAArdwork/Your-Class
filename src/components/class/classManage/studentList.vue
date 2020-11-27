@@ -25,7 +25,7 @@
 
           <span class="flex-grow-1 mx-2">{{ student.email }}</span>
 
-          <v-btn @click="onReject(student.email)" color="error" small icon>
+          <v-btn @click="onReject(student.id)" color="error" small icon>
             <v-icon>mdi-close</v-icon>
           </v-btn>
         </v-col>
@@ -40,9 +40,9 @@ export default {
     studentList: Array
   },
   methods: {
-    onReject(email) {
+    onReject(id) {
       // 리스트의 종류에 따라 다른 이벤트를 Emit 한다.
-      this.$emit("onRemove", email);
+      this.$emit("onRemove", id);
     }
   }
 };
