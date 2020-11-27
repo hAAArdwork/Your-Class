@@ -142,6 +142,11 @@ export default {
         this.date = data.assignmentDueDate.substring(0, 10);
         this.time = data.assignmentDueDate.substring(11, 16);
 
+        // 첨부 파일이 존재하지 않는 경우, 하위 로직을 실행하지 않는다.
+        if (data.assignmentFile == null) {
+          return;
+        }
+
         const originalFileName = data.assignmentFileName;
 
         // 서버로부터 기존에 제출된 파일을 다운로드 받고, File Object로 만든다.
@@ -154,14 +159,6 @@ export default {
             [response.data],
             `${originalFileName}`
           );
-
-          // const url = window.URL.createObjectURL(new Blob([response.data]));
-          // console.log(url);
-          // const link = document.createElement("a");
-          // link.href = url;
-          // link.setAttribute("download", "file.pdf");
-          // document.body.appendChild(link);
-          // link.click();
         });
       });
   },
@@ -203,7 +200,10 @@ export default {
 
   methods: {
     updateAssignment() {
-      console.log(this.assignmentFile);
+      // 기존 제출된 파일을 삭제하는 경우 undefined로 변경되는 것을 방지하기 위한 로직.
+      if (this.assignmentFile === undefined) {
+        this.assignmentFile = null;
+      }
 
       // 파일 형식을 백엔드 서버에 전송하기 위하여, FormData 객체를 사용한다.
       let formData = new FormData();

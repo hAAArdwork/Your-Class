@@ -22,7 +22,7 @@
     <v-col cols="12" style="height: 350px;">
       <v-data-table
         :headers="headers"
-        :items="submit"
+        :items="submitList"
         :items-per-page="itemsPerPage"
         :page.sync="page"
         @page-count="pageCount = $event"
@@ -41,7 +41,7 @@
         </template>
 
         <template v-slot:[`item.isSubmitted`]="{ item }">
-          <v-chip v-if="item.submitted == true" color="success" small>
+          <v-chip v-if="item.isSubmitted == 1" color="success" small>
             제출
           </v-chip>
           <v-chip v-else color="error" small>
@@ -50,7 +50,11 @@
         </template>
 
         <template v-slot:[`item.submitFile`]="{ item }">
-          <v-icon v-if="item.submitFile" @click="download(item)" small>
+          <v-icon
+            v-if="item.submitFile"
+            @click="downloadFile(item.submitId, item.submitFileName)"
+            small
+          >
             mdi-download
           </v-icon>
         </template>
@@ -69,35 +73,46 @@
 <script>
 export default {
   beforeCreate() {
-     this.$store.dispatch(
-      "assignment/retrieveSubmitList",
-      this.$route.params.assignmentId
-    );
+    const classId = this.$route.params.classId;
+    const assignmentId = this.$route.params.assignmentId;
+
+    this.$store.dispatch("assignment/retrieveSubmitterList", {
+      classId,
+      assignmentId
+    });
   },
+
+  computed: {
+    submitList() {
+      return this.$store.getters["assignment/submitList"];
+    }
+  },
+
   data: () => ({
     singleExpand: true,
     expanded: [],
     page: 1,
     pageCount: 0,
     itemsPerPage: 5,
+
     headers: [
       { text: "번호", value: "number", align: "center" },
       {
-        text: "제출자id",
-        value: "submitUserId",
-        align: "center",
-        sortable: false
-      },
-      {
         text: "제출자",
-        value: "submitUserName",
+        value: "name",
         align: "center",
         sortable: false
       },
-      { text: "제목", value: "submitTitle", align: "center", sortable: false },
       {
-        text: "제출일",
-        value: "submitUpdateDate",
+        text: "이메일",
+        value: "email",
+        align: "center",
+        sortable: false
+      },
+      { text: "설명", value: "submitDetail", align: "center", sortable: false },
+      {
+        text: "제출 시간",
+        value: "submitDate",
         align: "center",
         sortable: false
       },
@@ -110,8 +125,9 @@ export default {
       { text: "파일", value: "submitFile", sortable: false },
       { text: "", value: "data-table-expand" }
     ],
-    submit: [
-    ]
+
+    submit: []
+
   }),
   computed: {
   },
@@ -121,6 +137,25 @@ export default {
     },
     download() {
       alert("다운로드");
+    },
+    // 업로드 된 과제 첨부 파일을 다운로드한다.
+    downloadFile(submitId, submitFileName) {
+      this.$axios({
+        url: `assignment/submit/download/${submitId}`,
+        method: "GET",
+        responseType: "blob" // important
+      }).then(response => {
+        // 다운로드 URL 생성
+        const url = window.URL.createObjectURL(new Blob([response.data]));
+        // HTML 태그 생성
+        const link = document.createElement("a");
+        link.href = url;
+        link.setAttribute("download", submitFileName);
+
+        // Document에
+        document.body.appendChild(link);
+        link.click();
+      });
     }
   }
 };
