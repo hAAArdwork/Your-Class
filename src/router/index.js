@@ -76,12 +76,12 @@ const routes = [
     name: "Calendar",
     component: () => import("../views/Calendar.vue"),
     meta: { title: "일정", requiresAuth: true },
-    // 과목 리스트가 이미 Vuex에 있는 경우, 다시 요청하지 않는다.
+    // 과제 리스트가 이미 Vuex에 있는 경우, 다시 요청하지 않는다.
     beforeEnter: async (to, from, next) => {
       if (Store.getters["schedule/schedule"] !== null) {
         next();
       }
-      // Vuex에 과목 라스트가 아직 없는(=null) 경우,
+      // Vuex에 과제 라스트가 아직 없는(=null) 경우 요청한다.
       else {
         Store.dispatch("schedule/retrieveSchedule");
 
@@ -177,7 +177,7 @@ const routes = [
             meta: { title: "제출 정보 확인" }
           },
           {
-            path: ":assignmentId/edit",
+            path: ":assignmentId/detail/edit",
             props: true,
             name: "SubmitEdit",
             component: () =>
@@ -204,7 +204,7 @@ const routes = [
             meta: { title: "과제등록" }
           },
           {
-            path: "edit/:assignmentId",
+            path: "/:assignmentId/edit",
             props: true,
             name: "AssignmentEdit",
             component: () =>

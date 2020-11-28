@@ -5,17 +5,20 @@
       <!-- 과목에 대한 간략한 정보 렌더링 -->
       <v-col cols="12">
         <p class="class-info text-h4">
-          {{ classInfo.title }}
+          {{ classInfo.title == null ? "-" : classInfo.title }}
         </p>
       </v-col>
 
       <v-col cols="12" class="py-0">
-        <p class="class-info text-h6">{{ classInfo.instructor }} 선생님</p>
+        <p class="class-info text-h6">
+          {{ classInfo.instructor == null ? "-" : classInfo.instructor }}
+          선생님
+        </p>
       </v-col>
 
       <v-col cols="12" class="py-0">
         <p class="text-subtitle-1">
-          {{ classInfo.timeTable }}
+          {{ classInfo.timeTable == null ? "-" : classInfo.timeTable }}
         </p>
       </v-col>
 
@@ -30,58 +33,93 @@
         v-for="data in recentPosts"
         :key="`Post ${data.id}`"
       >
-        <v-card rounded="xl" class="pa-2">
-          <v-card-title class="py-2">
-            <!-- 게시글 제목이 긴 경우, ...로 잘라서 렌더링한다. -->
-            <div class="mx-auto font-weight-bold text-truncate">
-              {{ data.title }}
-            </div>
-          </v-card-title>
+        <v-hover v-slot="{ hover }">
+          <v-scroll-y-transition>
+            <v-card rounded="xl" class="pa-2" :elevation="hover ? 8 : 4">
+              <v-card-title class="py-2">
+                <!-- 게시글 제목이 긴 경우, ...로 잘라서 렌더링한다. -->
+                <div class="mx-auto font-weight-bold text-truncate">
+                  {{ data.title }}
+                </div>
+              </v-card-title>
 
-          <v-divider />
+              <v-divider />
 
-          <v-card-subtitle class="text-center">
-            <span class="d-block">{{ data.author }}</span>
-            <span>{{ data.dateCreated }}</span>
-          </v-card-subtitle>
+              <v-card-subtitle class="text-center">
+                <span class="d-block">{{ data.author }}</span>
+                <span>{{ data.dateCreated }}</span>
+              </v-card-subtitle>
 
-          <v-card-actions>
-            <v-btn class="mx-auto accent" width="100px" height="25px" rounded>
-              <span class="font-weight-bold">상세보기</span>
-            </v-btn>
-          </v-card-actions>
-        </v-card>
+              <v-card-actions>
+                <v-btn
+                  class="mx-auto accent"
+                  width="100px"
+                  height="25px"
+                  rounded
+                >
+                  <span class="font-weight-bold">상세보기</span>
+                </v-btn>
+              </v-card-actions>
+            </v-card>
+          </v-scroll-y-transition>
+        </v-hover>
       </v-col>
 
       <v-col cols="12" class="mt-6">
         <span class="text-h4 font-weight-bold">마감 임박 과제물</span>
       </v-col>
 
-      <!-- 마감 기한이 임박한 과제물 3개 또는 4개 렌더링 -->
       <v-col
+        v-if="assignments.length === 0"
+        cols="12"
+        style="height: 88px"
+        class="d-flex align-center justify-center"
+      >
+      </v-col>
+
+      <!-- 마감 기한이 임박한 과제물 3개 또는 4개 렌더링 -->
+
+      <v-col
+        v-else
         cols="12"
         sm="6"
         md="4"
         v-for="item of activeAssignments"
         :key="item.id"
       >
-        <v-card rounded="xl" width="100%">
-          <v-card-title>
-            <div class="font-weight-bold text-truncate">
-              {{ item.assignmentName }}
-            </div>
-
-            <v-spacer></v-spacer>
-
-            <v-chip
-              small
-              class="font-weight-bold"
-              :color="getDueDate(item.assignmentDueDate) < 3 ? 'error' : ''"
+        <v-hover v-slot="{ hover }">
+          <v-scroll-y-transition>
+            <v-card
+              class="assignmentLink"
+              rounded="xl"
+              width="100%"
+              :elevation="hover ? 8 : 4"
+              @click="
+                $router.push({
+                  name: 'AssignmentSubmit',
+                  params: { assignmentId: item.id }
+                })
+              "
+              tr
             >
-              {{ getDueDate(item.assignmentDueDate) }}일
-            </v-chip>
-          </v-card-title>
-        </v-card>
+              <v-card-title>
+                <div class="font-weight-bold text-truncate">
+                  {{ item.assignmentName }}
+                </div>
+
+                <v-spacer></v-spacer>
+
+                <v-chip
+                  small
+                  class="font-weight-bold"
+                  :color="getDueDate(item.assignmentDueDate) < 3 ? 'error' : ''"
+                >
+                  {{ getDueDate(item.assignmentDueDate) }}일
+                </v-chip>
+              </v-card-title>
+            </v-card>
+          </v-scroll-y-transition>
+        </v-hover>
       </v-col>
     </v-row>
   </v-container>
@@ -96,13 +134,22 @@ export default {
   beforeCreate() {
     this.$axios
       .get(`assignment/list/${this.$route.params.classId}`)
-      .then(({ data }) => {
+      .then(async ({ data }) => {
         const now = new Date();
         let activeAssignments = new Array();
 
         for (let item of data) {
+          await this.$axios
+            .get(`assignment/isSubmit/${item.id}`)
+            .then(({ data }) => {
+              item.isSubmitted = data.isSubmitted;
+            })
+            .catch(({ response }) => {
+              console.log(response);
+            });
+
           // 과제 마감일이 현재보다 미래인 과제에 대해서,
-          if (now < new Date(item.assignmentDueDate)) {
+          if (!item.isSubmitted && now < new Date(item.assignmentDueDate)) {
             item.assignmentDueDate = new Date(item.assignmentDueDate);
             activeAssignments.push(item);
           }
@@ -122,6 +169,8 @@ export default {
         }
 
         this.assignments = activeAssignments;
+
+        this.isLoading = false;
       });
   },
 
@@ -141,6 +190,8 @@ export default {
   },
 
   data: () => ({
+    isLoading: true,
+
     recentPosts: [
       {
         id: 0,
@@ -161,8 +212,10 @@ export default {
         dateCreated: "2020/10/26"
       }
     ],
+
     assignments: []
   }),
+
   methods: {
     getDueDate(dueDate) {
       // 오늘과 마감일을 각각 millisecond 단위로 변환한다.
@@ -189,5 +242,9 @@ export default {
 .card-text-title {
   font-size: 20px;
   margin-bottom: 0px;
+}
+
+.assignmentLink:hover {
+  cursor: pointer;
 }
 </style>

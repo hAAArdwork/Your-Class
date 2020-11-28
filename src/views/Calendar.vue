@@ -22,7 +22,7 @@
               color="grey darken-2"
               @click="setToday"
             >
-              Today
+              이번 달 보기
             </v-btn>
 
             <v-btn fab text small color="grey darken-2" @click="prev">
@@ -58,10 +58,11 @@
             v-model="selectedOpen"
             :close-on-content-click="false"
             :activator="selectedElement"
-            offset-x
+            transition="slide-y-reverse-transition"
+            top
           >
             <v-card min-width="350px">
-              <v-toolbar :color="selectedEvent.color" flat dark>
+              <v-toolbar :color="selectedEvent.color" flat dark dense>
                 <v-toolbar-title v-html="selectedEvent.name"></v-toolbar-title>
               </v-toolbar>
 
@@ -71,6 +72,30 @@
 
               <v-card-actions>
                 <v-spacer></v-spacer>
+                <v-btn
+                  text
+                  color="blue"
+                  @click="
+                    $router.push({
+                      name: 'AssignmentSubmit',
+                      params: {
+                        classId: selectedEvent.subjectId,
+                        assignmentId: selectedEvent.assignmentId
+                      }
+                    })
+                  "
+                  :disabled="
+                    selectedEvent.isSubmitted == 1 || selectedEvent.isExpired
+                  "
+                >
+                  {{
+                    selectedEvent.isSubmitted
+                      ? "제출완료"
+                      : selectedEvent.isExpired
+                      ? "제출하기"
+                      : "기한만료"
+                  }}
+                </v-btn>
                 <v-btn text color="primary" @click="selectedOpen = false">
                   닫기
                 </v-btn>
@@ -90,6 +115,10 @@ export default {
   // },
 
   computed: {
+    /*
+     *  이벤트 인스턴스에는 name, start, end, color가 필요하며,
+     *  시작, 종료일의 포맷은 YYYY-MM-DD hh:mm 이다.
+     */
     schedule() {
       return this.$store.getters["schedule/schedule"];
     },
@@ -115,32 +144,6 @@ export default {
     selectedEvent: {},
     selectedElement: null,
     selectedOpen: false,
-    /*
-     *  이벤트 인스턴스에는 name, start, end, color가 필요하며,
-     *  시작, 종료일의 포맷은 YYYY-MM-DD hh:mm 이다.
-     */
-    events: [
-      {
-        name: "동억이형 결혼식",
-        start: "2020-11-06",
-        end: "2020-11-07 13:00",
-        color: "blue",
-        details: "dasdasd"
-      },
-      {
-        name: "기업사회 미팅",
-        start: "2020-11-06 13:05",
-        end: "2020-11-06 14:00",
-        color: "blue",
-        allday: true
-      },
-      {
-        name: "창업 캡스톤 중간발표",
-        start: "2020-11-11 18:30",
-        end: "2020-11-11 21:00",
-        color: "blue"
-      }
-    ],
 
     colors: [],
     names: []

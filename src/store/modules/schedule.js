@@ -60,6 +60,7 @@ const actions = {
       .get("schedule/getEnroll")
       .then(async ({ data }) => {
         // 모든 과목의 과제 정보를 담기위한 배열 초기화
+        const color = ["grey", "success", "error"];
         let schedule = new Array();
 
         for (let enroll of data) {
@@ -67,20 +68,41 @@ const actions = {
 
           await axios
             .get(`schedule/getAssignment/${subjectId}`)
-            .then(({ data }) => {
+            .then(async ({ data }) => {
               // 각 과목의 모든 과제물에 대해...
               for (let item of data) {
+                const now = new Date();
                 let event = new Object();
+
+                // 해당 과제물의 제출 여부를 확인한다.
+                await axios
+                  .get(`assignment/isSubmit/${item.id}`)
+                  .then(({ data }) => {
+                    event.isSubmitted = data.isSubmitted;
+                  })
+                  .catch(({ response }) => {
+                    console.log(response);
+                  });
+
+                if (now > new Date(item.assignmentDueDate)) {
+                  event.isExpired = true;
+                } else {
+                  event.isExpired = false;
+                }
 
                 // 과제 확인 URL을 특정하기 위한 ID
                 event.assignmentId = item.id;
                 event.subjectId = item.subjectId.id;
 
                 // 이벤트 정보
-                event.name = `[${item.subjectId.subjectName}] ${item.assignmentName}`;
+                event.name = `${item.subjectId.subjectName} - ${item.assignmentName}`;
                 event.start = item.assignmentDueDate.substring(0, 10);
                 event.end = item.assignmentDueDate.substring(0, 10);
-                event.color = "blue";
+                event.color = event.isSubmitted
+                  ? color[0]
+                  : event.isExpired
+                  ? color[2]
+                  : color[1];
                 event.details = item.assignmentDetail;
 
                 schedule.push(event);

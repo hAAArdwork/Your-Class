@@ -18,7 +18,9 @@
         <v-col cols="12">
           <v-card class="mx-auto" width="100%" outlined>
             <v-card-title>
-              {{ assignmentInfo === null ? "" : assignmentInfo.assignmentName }}
+              {{
+                assignmentInfo === null ? "-" : assignmentInfo.assignmentName
+              }}
 
               <v-spacer></v-spacer>
 
@@ -26,7 +28,7 @@
                 마감일 :
                 {{
                   assignmentInfo === null
-                    ? ""
+                    ? "-"
                     : assignmentInfo.assignmentDueDate
                 }}
               </small>
@@ -37,7 +39,9 @@
             <v-card-text>
               <span class="subtitle-1">
                 {{
-                  assignmentInfo === null ? "" : assignmentInfo.assignmentDetail
+                  assignmentInfo === null
+                    ? "-"
+                    : assignmentInfo.assignmentDetail
                 }}
               </span>
             </v-card-text>

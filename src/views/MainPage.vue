@@ -7,6 +7,27 @@
   >
     <!-- 강좌 목록 렌더링 영역, 콘텐츠 오버플로우 시 스크롤 적용 -->
     <v-responsive
+      v-if="isLoading"
+      class="overflow-y-auto px-5"
+      :max-height="$vuetify.breakpoint.name == 'xs' ? '80vh' : '55vh'"
+      :width="$vuetify.breakpoint.name == 'xs' ? '95vw' : '85vw'"
+    >
+      <!-- 등록된 과목이 없는 경우, 메세지 렌더링 -->
+      <v-container fill-height>
+        <v-row justify="center">
+          <v-progress-circular
+            :size="70"
+            :width="7"
+            color="accent"
+            indeterminate
+          ></v-progress-circular>
+        </v-row>
+      </v-container>
+    </v-responsive>
+
+    <!-- 강좌 목록 렌더링 영역, 콘텐츠 오버플로우 시 스크롤 적용 -->
+    <v-responsive
+      v-else
       class="overflow-y-auto px-5"
       :max-height="$vuetify.breakpoint.name == 'xs' ? '80vh' : '55vh'"
       :width="$vuetify.breakpoint.name == 'xs' ? '95vw' : '85vw'"
@@ -28,6 +49,7 @@
       </v-container>
 
       <!-- 각 과목에 해당하는 카드 렌더링 -->
+
       <v-row v-else>
         <v-col
           cols="12"
@@ -137,13 +159,16 @@ export default {
     },
     classList() {
       return this.$store.getters["classes/classList"];
+    },
+    isLoading() {
+      return this.$store.getters["classes/isLoading"];
     }
   },
   data: () => ({
     newClassDialog: false,
-    enrollDialog: false,
+    enrollDialog: false
 
-    isLoading: false
+    // isLoading: false
   })
 };
 </script>
