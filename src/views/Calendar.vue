@@ -74,7 +74,7 @@
                 <v-spacer></v-spacer>
                 <v-btn
                   text
-                  color="blue"
+                  color="success darken-2"
                   @click="
                     $router.push({
                       name: 'AssignmentSubmit',
@@ -92,8 +92,8 @@
                     selectedEvent.isSubmitted
                       ? "제출완료"
                       : selectedEvent.isExpired
-                      ? "제출하기"
-                      : "기한만료"
+                      ? "기한만료"
+                      : "제출하기"
                   }}
                 </v-btn>
                 <v-btn text color="primary" @click="selectedOpen = false">
