@@ -57,24 +57,28 @@
         <span class="text-h4 font-weight-bold">마감 임박 과제물</span>
       </v-col>
 
-      <!-- 마감 기한이 임박한 3개의 과제물 렌더링 -->
+      <!-- 마감 기한이 임박한 과제물 3개 또는 4개 렌더링 -->
       <v-col
         cols="12"
         sm="6"
         md="4"
-        v-for="data in assignments"
-        :key="`Assignment ${data.id}`"
+        v-for="item of activeAssignments"
+        :key="item.id"
       >
         <v-card rounded="xl" width="100%">
           <v-card-title>
             <div class="font-weight-bold text-truncate">
-              {{ data.title }}
+              {{ item.assignmentName }}
             </div>
 
             <v-spacer></v-spacer>
 
-            <v-chip class="font-weight-bold">
-              {{ getDueDate(data.dueDate) }}일
+            <v-chip
+              small
+              class="font-weight-bold"
+              :color="getDueDate(item.assignmentDueDate) < 3 ? 'error' : ''"
+            >
+              {{ getDueDate(item.assignmentDueDate) }}일
             </v-chip>
           </v-card-title>
         </v-card>
@@ -88,14 +92,54 @@ export default {
   props: [
     "classId" // classData: Object
   ],
+
+  beforeCreate() {
+    this.$axios
+      .get(`assignment/list/${this.$route.params.classId}`)
+      .then(({ data }) => {
+        const now = new Date();
+        let activeAssignments = new Array();
+
+        for (let item of data) {
+          // 과제 마감일이 현재보다 미래인 과제에 대해서,
+          if (now < new Date(item.assignmentDueDate)) {
+            item.assignmentDueDate = new Date(item.assignmentDueDate);
+            activeAssignments.push(item);
+          }
+        }
+
+        // 배열의 길이가 2보다 작은 경우, sort() 함수 사용 불가.
+        if (activeAssignments.length > 1) {
+          // Object 배열 정렬 (기준 - assignmentDueDate)
+          activeAssignments.sort((itemA, itemB) => {
+            // itemA(prev)와 itemB(next)의 값을 비교한다.
+            return itemA.assignmentDueDate - itemB.assignmentDueDate > 0
+              ? 1
+              : itemA.assignmentDueDate - itemB.assignmentDueDate < 0
+              ? -1
+              : 0;
+          });
+        }
+
+        this.assignments = activeAssignments;
+      });
+  },
+
   computed: {
-    toda() {
-      return new Date();
+    // Display Breakpoint 값에 따라 3개 또는 4개의 배열 항목만 반환한다.
+    activeAssignments() {
+      switch (this.$vuetify.breakpoint.name) {
+        case "sm":
+          return this.assignments.slice(0, 4);
+        default:
+          return this.assignments.slice(0, 3);
+      }
     },
     classInfo() {
       return this.$store.getters["classes/classDetail"];
     }
   },
+
   data: () => ({
     recentPosts: [
       {
@@ -117,27 +161,17 @@ export default {
         dateCreated: "2020/10/26"
       }
     ],
-    assignments: [
-      {
-        id: 0,
-        title: "1장 연습문제",
-        author: "이정우 선생님",
-        dueDate: "2020/11/10"
-      },
-      {
-        id: 1,
-        title: "2장 연습문제",
-        author: "이정우 선생님",
-        dueDate: "2020/11/16"
-      }
-    ]
+    assignments: []
   }),
   methods: {
     getDueDate(dueDate) {
+      // 오늘과 마감일을 각각 millisecond 단위로 변환한다.
       const today = new Date().getTime();
       const due = new Date(dueDate).getTime();
 
       const distance = due - today;
+      // 두 시간의 차이는 마감일까지 남은 시간을 millisecond 단위로 나타낸것이다.
+      // 즉, 1000 * 60 * 60 * 24로 나누면 '일' 단위로 변환할 수 있다.
       const result = Math.floor(distance / (1000 * 60 * 60 * 24));
 
       return result;

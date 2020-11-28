@@ -2,7 +2,7 @@
   <v-row style="height: 100%;">
     <v-col cols="8">
       <p class="class-info text-h4">
-        과제 제출
+        과제 수정
       </p>
     </v-col>
 
@@ -51,7 +51,7 @@
                 <v-row align="center">
                   <v-col cols="12">
                     <v-textarea
-                      v-model="submitDetail"
+                      v-model="detail"
                       label="과제 내용"
                       hint="제출물관 관련된 설명을 간략하게 적어주세요."
                       rows="3"
@@ -63,7 +63,7 @@
 
                   <v-col cols="7" sm="10">
                     <v-file-input
-                      v-model="submitFile"
+                      v-model="file"
                       label="첨부 파일"
                       truncate-length="30"
                       hint="파일명은 '과제명_이름_학년반'과 같이 제출해주세요."
@@ -76,13 +76,9 @@
                   </v-col>
 
                   <v-col class="d-flex justify-end">
-                    <v-btn
-                      :disabled="!valid"
-                      @click="submitAssignment"
-                      outlined
-                    >
+                    <v-btn :disabled="!valid" @click="updateSubmit" outlined>
                       <v-icon left> mdi-checkbox-marked-circle </v-icon>
-                      제출
+                      수정
                     </v-btn>
                   </v-col>
                 </v-row>
@@ -108,52 +104,80 @@ export default {
   beforeCreate() {
     const assignmentId = this.$route.params.assignmentId;
 
+    // Component 생성 이전, Route Param에 알맞는 제출정보 요청
     this.$axios
-      .get(`assignment/detail/${assignmentId}`)
+      .get(`assignment/submit/detail/${assignmentId}`)
       .then(async ({ data }) => {
-        data.assignmentDueDate = parseDateTime(data.assignmentDueDate);
+        // 과제 상세 내역
+        this.assignmentInfo = data.assignmentId;
+        data.assignmentId.assignmentDueDate = parseDateTime(
+          data.assignmentId.assignmentDueDate
+        );
 
-        this.assignmentInfo = data;
+        // 제출물 상세 내역
+        const submitId = data.id;
+
+        this.detail = data.submitDetail;
+
+        // 첨부 파일이 존재하지 않는 경우, 하위 로직을 실행하지 않는다.
+        if (data.submitFile == null) {
+          return;
+        }
+
+        const originalFileName = data.submitFileName;
+
+        // 업로드 된 과제 첨부 파일을 다운로드한다.
+        await this.$axios({
+          url: `assignment/submit/download/${submitId}`,
+          method: "GET",
+          responseType: "blob" // important
+        })
+          .then(response => {
+            this.file = new File([response.data], `${originalFileName}`);
+          })
+          .catch(({ response }) => {
+            console.log(response);
+          });
       });
   },
 
-  data: () => ({
-    valid: false,
+  data() {
+    return {
+      valid: false,
 
-    // 현재 과제 정보
-    assignmentInfo: null,
+      assignmentInfo: null,
 
-    // 제출물 Form Data
-    submitDetail: "",
-    submitFile: null,
+      detail: "",
+      file: null,
 
-    rules: {
-      required: value => !!value || "입력해주세요",
-      // 제출 파일 용량 검사
-      limitedSize: value =>
-        !value || value.size < 50000000 || "첨부 파일 용량 제한은 50MB입니다."
-    }
-  }),
+      rules: {
+        required: value => !!value || "필수 입력 항목입니다.",
+        // 제출 파일 용량 검사
+        limitedSize: value =>
+          !value || value.size < 50000000 || "첨부 파일 용량 제한은 50MB입니다."
+      }
+    };
+  },
 
   methods: {
-    submit() {
-      if (confirm("등록하시겠습니까?")) {
-        this.submitted = true;
+    updateSubmit() {
+      // 기존 제출된 파일을 삭제하는 경우 undefined로 변경되는 것을 방지하기 위한 로직.
+      if (this.file === undefined) {
+        this.file = null;
       }
-    },
-    submitAssignment() {
-      //console.log(this.assignmentFile);
 
       // 파일 형식을 백엔드 서버에 전송하기 위하여, FormData 객체를 사용한다.
       let formData = new FormData();
 
-      formData.append("assignId", this.$route.params.assignmentId);
-      formData.append("submitDetail", this.submitDetail);
-      if (this.submitFile !== null) {
-        formData.append("submitFile", this.submitFile);
+      formData.append("submitDetail", this.detail);
+      if (this.file !== null) {
+        formData.append("submitFile", this.file);
       }
 
-      this.$store.dispatch("assignment/createSubmit", formData);
+      this.$store.dispatch("assignment/updateSubmit", {
+        assignId: this.$route.params.assignmentId,
+        formData: formData
+      });
     }
   }
 };

@@ -105,7 +105,7 @@
                   show-size
                   counter
                   small-chips
-                  :rules="[rules.limitedSize()]"
+                  :rules="[rules.limitedSize]"
                 >
                 </v-file-input>
               </v-col>

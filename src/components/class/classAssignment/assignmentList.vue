@@ -40,7 +40,7 @@
                     v-if="assignment.isSubmitted == 1 && userData.isStudent"
                     style="color: green;"
                   >
-                    제출완료 
+                    제출완료
                   </small>
 
                   <small
@@ -84,15 +84,25 @@
 
                   <!-- 학생용 과제 제출 및 확인 버튼 -->
                   <v-btn
-                    v-if="assignment.isSubmitted == 1 && userData.isStudent"
-                    @click="$router.push({ name: 'AssignmentSubmitDetail', params: { assignmentId: assignment.id } })"
+                    v-if="assignment.isSubmitted && userData.isStudent"
+                    @click="
+                      $router.push({
+                        name: 'AssignmentSubmitDetail',
+                        params: { assignmentId: assignment.id }
+                      })
+                    "
                     outlined
                     >제출 내용 확인
                   </v-btn>
 
                   <v-btn
-                    v-if="assignment.isSubmitted == 0 && userData.isStudent"
-                    @click="$router.push({ name: 'AssignmentSubmit', params: { assignmentId: assignment.id } })"
+                    v-if="!assignment.isSubmitted && userData.isStudent"
+                    @click="
+                      $router.push({
+                        name: 'AssignmentSubmit',
+                        params: { assignmentId: assignment.id }
+                      })
+                    "
                     outlined
                     >과제 제출
                   </v-btn>
@@ -101,7 +111,6 @@
                   <v-btn
                     v-if="!userData.isStudent"
                     outlined
-
                     :to="{
                       name: 'AssignmnetSubmitCheck',
                       params: { assignmentId: assignment.id }

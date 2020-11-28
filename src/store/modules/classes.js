@@ -16,7 +16,7 @@ axios.interceptors.request.use(
     return config;
   },
   function(error) {
-    console.log(error);
+    // console.log(error);
     return Promise.reject(error);
   }
 );
@@ -147,14 +147,10 @@ const actions = {
           classList.push(classInfo);
         }
 
-        console.log(classList);
-
         commit("fetchClassList", classList);
       })
       // 오류 발생 시, 서버로부터 반환 된 에러 데이터를 가져온다.
       .catch(({ response }) => {
-        console.log(response);
-
         // Bad Request (400) 에러 처리
         if (response.status == 400) {
           alert("HTTP 400 - 잘못된 요정입니다.");
@@ -174,9 +170,7 @@ const actions = {
     axios
       .get(`subject/detail/${classId}`)
       .then(({ data }) => {
-        console.log(data);
-
-        // 서버로부터 전송받은 데이터 Parsign
+        // 서버로부터 전송받은 데이터 Parsing
         const classDetail = {
           title: data.subjectName,
           instructor: data.subjectInstructorId.name,
@@ -190,8 +184,6 @@ const actions = {
       })
       // 오류 발생 시, 서버로부터 반환 된 에러 데이터를 가져온다.
       .catch(({ response }) => {
-        console.log(response);
-
         // Bad Request (400) 에러 처리
         if (response.status == 400) {
           alert("HTTP 400 - 잘못된 요정입니다.");
@@ -211,8 +203,6 @@ const actions = {
     axios
       .get("subject/subjectenroll", { params: { Id: classId } })
       .then(({ data }) => {
-        console.log(data);
-        //console.log(data[0].userId.name);
         let studentList = new Array();
 
         for (let item of data) {
@@ -243,28 +233,6 @@ const actions = {
       })
       .catch(({ response }) => {
         console.log(response);
-        // 로그인 오류 시, 서버로부터 반환 된 에러 데이터를 가져온다.
-
-        // Bad Request (400) 에러 처리
-        if (response.status == 400) {
-          if (response.data["email"] && response.data["password"]) {
-            alert("이메일, 비밀번호를 입력해주세요.");
-          } else if (response.data["email"]) {
-            alert("이메일을 입력해주세요.");
-          } else if (response.data["password"]) {
-            alert("비밀번호를 입력해주세요.");
-          } else {
-            alert("HTTP 400 - 잘못된 요정입니다.");
-          }
-        }
-        // Unauthorized (401) 에러 처리
-        else if (response.status == 401) {
-          alert("이메일 또는 비밀번호가 옳지 않습니다. 다시 확인해주세요.");
-        }
-        // Not Found(404) 에러 처리
-        else if (response.status == 404) {
-          alert("HTTP 404 - 연결이 원활하지 못합니다. 잠시 후 시도해주세요.");
-        }
       })
       .finally(() => {
         // Loading Flag를 false로 설정한다.
@@ -372,9 +340,14 @@ const actions = {
     const subjectId = payload.classId;
     const userId = payload.studentId;
 
-    axios.delete(`subject/enroll/delete/${subjectId}/${userId}`).then(() => {
-      confirm("학생이 성공적으로 삭제되었습니다.");
-    });
+    axios
+      .delete(`subject/enroll/delete/${subjectId}/${userId}`)
+      .then(() => {
+        confirm("학생이 성공적으로 삭제되었습니다.");
+      })
+      .catch(({ response }) => {
+        console.log(response);
+      });
   }
 };
 

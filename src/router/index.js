@@ -126,8 +126,9 @@ const routes = [
               import("../components/class/classAssignment/assignmentList.vue"),
             meta: { title: "과제확인" }
           },
+          // [학생] 관런 페이지
           {
-            path: "submit/:assignmentId",
+            path: ":assignmentId/submit",
             props: true,
             name: "AssignmentSubmit",
             component: () =>
@@ -136,14 +137,22 @@ const routes = [
               ),
             meta: { title: "과제제출" }
           },
-
           {
-            path: "detail/:assignmentId",
+            path: ":assignmentId/detail",
             name: "AssignmentSubmitDetail",
             component: () =>
               import("../components/class/classAssignment/assignmentCheck.vue"),
-            meta: { title: "과제제출정보" }
+            meta: { title: "제출 정보 확인" }
           },
+          {
+            path: ":assignmentId/edit",
+            props: true,
+            name: "SubmitEdit",
+            component: () =>
+              import("../components/class/classAssignment/submitEdit.vue"),
+            meta: { title: "제출 정보 수정" }
+          },
+          // [교사] 관련 페이지
           {
             path: "check/:assignmentId",
             name: "AssignmnetSubmitCheck",
@@ -151,7 +160,7 @@ const routes = [
               import(
                 "../components/class/classAssignment/assignmentSubmitList.vue"
               ),
-            meta: { title: "제출과제정보" }
+            meta: { title: "제출 현황 확인" }
           },
           {
             path: "write",

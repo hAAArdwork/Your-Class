@@ -35,12 +35,16 @@ axios.interceptors.response.use(
   }
 );
 
+function parseDateTime(fullDate) {
+  return fullDate.substring(0, 10) + " " + fullDate.substring(11, 16);
+}
+
 const state = {
   assignmentList: new Array(),
 
   submitList: new Array(),
 
-  // 단일 과제 세부 내역
+  // (교사) 과제물 수정을 위한 단일 과제 세부 내역 저장소
   assignmentName: "",
   assignmentDetail: "",
   assignmentDate: "",
@@ -48,17 +52,9 @@ const state = {
   assignmentFile: "",
   assignmentFileName: "",
 
-  submit: {
-    id: "",
-    submitDetail: "",
-    submitUpdateDate: "",
-    submitFile: "",
-    submitFileName: "",
-    assignmentName: "",
-    assignmentDetail: "",
-    assignmentfile: "",
-    assignmentDueDate:""
-  }
+  // (학생) 과제물 제출 내역을 확인하기 위한 저장소
+  assignmentInfo: null,
+  submitInfo: null
 };
 
 const mutations = {
@@ -80,16 +76,9 @@ const mutations = {
     state.assignmentFile = assignemntData.assignmentFile;
     state.assignmentFileName = assignemntData.assignmentFileName;
   },
-  fetchSubmit(state, submit){
-    state.submit.id = submit.id;
-    state.submit.submitDetail = submit.submitDetail;
-    state.submit.submitUpdateDate = submit.submitUpdateDate;
-    state.submit.submitFile = submit.submitFile;
-    state.submit.submitFileName = submit.submitFileName;
-    state.submit.assignmentName = submit.assignmentName;
-    state.submit.assignmentDetail = submit.assignmentDetail;
-    state.submit.assignmentfile = submit.assignmentfile;
-    state.submit.assignmentDueDate = submit.assignmentDueDate;
+  fetchSubmit(state, payload) {
+    state.assignmentInfo = payload.assignmentInfo;
+    state.submitInfo = payload.submitInfo;
   }
 };
 
@@ -166,40 +155,91 @@ const actions = {
       .catch(() => {});
   },
 
-  // 과제 리스트
-  retrieveAssignmentList: ({ commit }, classId) => {
+  // [힉생] 과제 제출 (Create)
+  createSubmit: (nothing, submitData) => {
     axios
-      .get(`assignment/list/${classId}`)
-      .then(async ({ data }) => {
-        console.log(data);
-        let assignmentList = new Array();
-        for (let item of data) {
-          console.log(item);
-          const assignmentInfo = item;
-
-          //제출 여부 get
-          await axios
-          .get(`assignment/isSubmit/${item.id}`)
-          .then(({ data }) => {
-            console.log(data);
-            assignmentInfo.isSubmitted = data.isSubmitted;
-          })
-          .catch(() => {});
-
-          assignmentInfo.assignmentDueDate = assignmentInfo.assignmentDueDate.substring(0,10) + ' ' + assignmentInfo.assignmentDueDate.substring(11,16);
-          assignmentInfo.assignmentUpdateDate = assignmentInfo.assignmentUpdateDate.substring(0,10) + ' ' + assignmentInfo.assignmentUpdateDate.substring(11,16);
-          assignmentList.push(assignmentInfo);
+      .post("assignment/submit/create", submitData, {
+        // File 객체가 포함된 FormData를 전송하기 위한 Option 설정
+        headers: {
+          "Content-Type": "multipart/form-data"
         }
-        //console.log(assignmentList);
-
-        console.log(assignmentList);
-
-        commit("fetchAssignmentList", assignmentList);
       })
-      .catch(() => {});
+      .then(() => {
+        confirm(
+          "과제 제출이 완료되었습니다. '확인'을 누르시면 이전 화면으로 돌아갑니다."
+        );
+
+        // 과제 목록 화면으로 돌아간다.
+        router.go(-1);
+      })
+      .catch(({ response }) => {
+        console.log(response);
+
+        // 경고 문구 출력
+        alert(
+          `[${response.status}] 과제 등록에 실패했습니다. 다시 시도해주세요.`
+        );
+      });
   },
 
-  // 과제 생성
+  // [학생] 과제 제출 내역 확인 (Read)
+  retrieveSubmit: ({ commit }, assignmentId) => {
+    axios
+      .get(`assignment/submit/detail/${assignmentId}`)
+      .then(({ data }) => {
+        // 과제 상세 내역
+        const assignmentInfo = data.assignmentId;
+        assignmentInfo.assignmentDueDate = parseDateTime(
+          assignmentInfo.assignmentDueDate
+        );
+
+        // 제출물 상세 내역
+        const submitInfo = {
+          id: data.id,
+          updateDate: parseDateTime(data.submitUpdateDate),
+          detail: data.submitDetail,
+          file: data.submitFile,
+          fileName: data.submitFileName
+        };
+
+        commit("fetchSubmit", { submitInfo, assignmentInfo });
+      })
+      .catch(({ response }) => {
+        // 경고 문구 출력
+        alert(
+          `[${response.status}] 과제 내용을 불러오는데 실패했습니다. 다시 시도해주세요.`
+        );
+      });
+  },
+
+  // [학생] 제출물 내용 수정
+  updateSubmit: (nothing, payload) => {
+    axios
+      .put(`assignment/submit/detail/${payload.assignId}`, payload.formData, {
+        // File 객체가 포함된 FormData를 전송하기 위한 Option 설정
+        headers: {
+          "Content-Type": "multipart/form-data"
+        }
+      })
+      .then(() => {
+        confirm(
+          "제출물 내용 수정이 완료되었습니다. '확인'을 누르시면 이전 화면으로 돌아갑니다."
+        );
+
+        // 과제 목록 화면으로 돌아간다.
+        router.go(-1);
+      })
+      .catch(({ response }) => {
+        console.log(response);
+
+        // 경고 문구 출력
+        alert(
+          `[${response.status}] 제출물 내용 수정에 실패했습니다. 다시 시도해주세요.`
+        );
+      });
+  },
+
+  // [교사] 과제 생성
   createAssignment: (nothing, assignmentData) => {
     axios
       .post("assignment/create", assignmentData, {
@@ -226,66 +266,14 @@ const actions = {
       });
   },
 
-  // 과제 제출 내역
-  retrieveSubmit: ({ commit }, assignmentId) => {
-    axios
-      .get(`assignment/submit/detail/${assignmentId}`)
-      .then(({ data }) => {
-        console.log(data);
-        const submit = {
-          id: data.id,
-          submitUpdateDate: data.submitUpdateDate.substring(0,10) + ' ' + data.submitUpdateDate.substring(11,16),
-          submitDetail: data.submitDetail,
-          submitFile: data.submitFile,
-          submitFileName: data.submitFileName,
-          assignmentName: data.assignmentId.assignmentName,
-          assignmentDetail: data.assignmentId.assignmentDetail,
-          assignmentfile: data.assignmentId.assignmentFile,
-          assignmentDueDate: data.assignmentId.assignmentDueDate.substring(0,10) + ' ' + data.assignmentId.assignmentDueDate.substring(11,16)
-        };
-
-        console.log(submit);
-        
-      commit("fetchSubmit", submit);
-      })
-      .catch(() => {});
-  },
-
-   // 과제 생성
-  submitAssignment: (nothing, submitData) => {
-    axios
-      .post("assignment/submit/create", submitData, {
-        // File 객체가 포함된 FormData를 전송하기 위한 Option 설정
-        headers: {
-          "Content-Type": "multipart/form-data"
-        }
-      })
-      .then(() => {
-        confirm(
-          "과제 제출이 완료되었습니다. '확인'을 누르시면 이전 화면으로 돌아갑니다."
-        );
-
-        // 과제 목록 화면으로 돌아간다.
-        router.go(-1);
-      })
-      .catch(({ response }) => {
-        console.log(response);
-
-        // 경고 문구 출력
-        alert(
-          `[${response.status}] 과제 등록에 실패했습니다. 다시 시도해주세요.`
-        );
-      });
-  },
-
-  // 단일 과제 획득
+  // [교사] 단일 과제 획득
   retrieveAssignment: ({ commit }, assignmentId) => {
     axios.get(`assignment/detail/${assignmentId}`).then(({ data }) => {
       commit("fetchAssignmentDetail", data);
     });
   },
 
-  // 과제 생성
+  // [교사] 등록 과제 내역 수정
   updateAssignment: (nothing, payload) => {
     axios
       .put(`assignment/detail/${payload.assignmentId}`, payload.formData, {
@@ -307,28 +295,57 @@ const actions = {
 
         // 경고 문구 출력
         alert(
-          `[${response.status}] 과제 등록에 실패했습니다. 다시 시도해주세요.`
+          `[${response.status}] 과제 수정에 실패했습니다. 다시 시도해주세요.`
         );
       });
   },
 
-  // 과제 삭제
+  // [교사] 과제 삭제
   removeAssignment: (getters, assignmentId) => {
     axios.delete(`assignment/detail/${assignmentId}`).then(() => {
       confirm("과제가 삭제되었습니다.");
     });
-  }
+  },
 
-  //
+  // [학생] 과제 리스트
+  retrieveAssignmentList: ({ commit }, classId) => {
+    axios
+      .get(`assignment/list/${classId}`)
+      .then(async ({ data }) => {
+        let assignmentList = new Array();
+
+        for (let item of data) {
+          const assignmentInfo = item;
+
+          //제출 여부 get
+          await axios
+            .get(`assignment/isSubmit/${item.id}`)
+            .then(({ data }) => {
+              assignmentInfo.isSubmitted = data.isSubmitted;
+            })
+            .catch(() => {});
+
+          assignmentInfo.assignmentDueDate =
+            assignmentInfo.assignmentDueDate.substring(0, 10) +
+            " " +
+            assignmentInfo.assignmentDueDate.substring(11, 16);
+          assignmentInfo.assignmentUpdateDate =
+            assignmentInfo.assignmentUpdateDate.substring(0, 10) +
+            " " +
+            assignmentInfo.assignmentUpdateDate.substring(11, 16);
+
+          assignmentList.push(assignmentInfo);
+        }
+
+        commit("fetchAssignmentList", assignmentList);
+      })
+      .catch(() => {});
+  }
 };
 
 const getters = {
   assignmentList(state) {
     return state.assignmentList;
-  },
-
-  submitList(state) {
-    return state.submitList;
   },
 
   assignmentDetail(state) {
@@ -342,8 +359,15 @@ const getters = {
     };
   },
 
+  submitList(state) {
+    return state.submitList;
+  },
+
   submitDetail(state) {
-    return state.submit;
+    return {
+      assignmentInfo: state.assignmentInfo,
+      submitInfo: state.submitInfo
+    };
   }
 };
 

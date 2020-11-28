@@ -127,10 +127,8 @@ export default {
     ],
 
     submit: []
-
   }),
-  computed: {
-  },
+
   methods: {
     downloadAll() {
       alert("전체 다운로드");
