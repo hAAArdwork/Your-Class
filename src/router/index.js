@@ -10,7 +10,15 @@ const routes = [
     path: "/",
     name: "LandingPage",
     component: LandingPage,
-    meta: { title: "Your Class" }
+    meta: { title: "Your Class" },
+    // 이미 로그인 한 사용자가 로그인 페이지에 접근하지 못하도록 하는 Router Guard
+    beforeEnter: (to, from, next) => {
+      if (!Store.getters["auth/hasAccessToken"]) {
+        next(); // 토큰이 없다면, 로그인 화면으로 이동한다.
+      } else {
+        next("/main"); // 토큰이 있다면, 목적 Route로 이동한다.
+      }
+    }
   },
   {
     path: "/auth",
@@ -49,13 +57,37 @@ const routes = [
     path: "/main",
     name: "MainPage",
     component: () => import("../views/MainPage.vue"),
-    meta: { title: "메인", requiresAuth: true }
+    meta: { title: "메인페이지", requiresAuth: true },
+    // 과목 리스트가 이미 Vuex에 있는 경우, 다시 요청하지 않는다.
+    beforeEnter: async (to, from, next) => {
+      if (Store.getters["classes/classList"] !== null) {
+        next();
+      }
+      // Vuex에 과목 라스트가 아직 없는(=null) 경우,
+      else {
+        Store.dispatch("classes/retrieveClasses");
+
+        next();
+      }
+    }
   },
   {
     path: "/calendar",
     name: "Calendar",
     component: () => import("../views/Calendar.vue"),
-    meta: { title: "일정", requiresAuth: true }
+    meta: { title: "일정", requiresAuth: true },
+    // 과목 리스트가 이미 Vuex에 있는 경우, 다시 요청하지 않는다.
+    beforeEnter: async (to, from, next) => {
+      if (Store.getters["schedule/schedule"] !== null) {
+        next();
+      }
+      // Vuex에 과목 라스트가 아직 없는(=null) 경우,
+      else {
+        Store.dispatch("schedule/retrieveSchedule");
+
+        next();
+      }
+    }
   },
   {
     path: "/mypage",

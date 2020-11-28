@@ -48,12 +48,10 @@
             ref="calendar"
             color="accent"
             v-model="focus"
-            :events="events"
+            :events="schedule == null ? [] : schedule"
             :event-color="getEventColor"
             :type="type"
             @click:event="showEvent"
-            @click:more="viewDay"
-            @click:date="viewDay"
           ></v-calendar>
 
           <v-menu
@@ -72,6 +70,7 @@
               </v-card-text>
 
               <v-card-actions>
+                <v-spacer></v-spacer>
                 <v-btn text color="primary" @click="selectedOpen = false">
                   닫기
                 </v-btn>
@@ -86,6 +85,19 @@
 
 <script>
 export default {
+  // beforeCreate() {
+  //   this.$store.dispatch("schedule/retrieveSchedule");
+  // },
+
+  computed: {
+    schedule() {
+      return this.$store.getters["schedule/schedule"];
+    },
+    isLoading() {
+      return this.$store.getters["schedule/isLoading"];
+    }
+  },
+
   mounted() {
     if (this.$vuetify.breakpoint.name !== "xs")
       this.$refs.calendar.checkChange();
@@ -110,15 +122,17 @@ export default {
     events: [
       {
         name: "동억이형 결혼식",
-        start: "2020-11-07 11:30",
+        start: "2020-11-06",
         end: "2020-11-07 13:00",
-        color: "blue"
+        color: "blue",
+        details: "dasdasd"
       },
       {
         name: "기업사회 미팅",
         start: "2020-11-06 13:05",
         end: "2020-11-06 14:00",
-        color: "blue"
+        color: "blue",
+        allday: true
       },
       {
         name: "창업 캡스톤 중간발표",
@@ -139,10 +153,7 @@ export default {
     next() {
       this.$refs.calendar.next();
     },
-    viewDay({ date }) {
-      this.focus = date;
-      this.type = "day";
-    },
+
     getEventColor(event) {
       return event.color;
     },

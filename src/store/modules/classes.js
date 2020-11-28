@@ -38,7 +38,7 @@ axios.interceptors.response.use(
 );
 
 const state = {
-  classList: new Array(),
+  classList: null,
 
   classDetail: {
     title: null,
