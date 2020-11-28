@@ -18,28 +18,59 @@
       <v-row>
         <v-card class="mx-auto" width="100%" outlined>
           <v-card-title>
-            <span>{{ $route.query.post }}번째 글 - 공지사항 제목</span>
+            <span> {{ noticeDetail.postName }}</span>
           </v-card-title>
 
           <v-card-subtitle>
-            <span class="post-detail"> <strong>작성자 : </strong>양준영 </span>
+            <span class="post-detail"> <strong>작성자 : </strong>{{ noticeDetail.postAuthor }} </span>
             <span class="post-detail">
-              <strong>작성일 : </strong>2020-11-10
+              <strong>작성일 : </strong>{{ noticeDetail.postUpdateDate }}
             </span>
+              
+            
           </v-card-subtitle>
 
           <v-divider></v-divider>
 
           <v-card-text>
             <div>
-              Lorem Ipsum is simply dummy text of the printing and typesetting
-              industry. Lorem Ipsum has been the industry's standard dummy text
-              ever since the 1500s, when an unknown printer took a galley of
-              type and scrambled it to make a type specimen book. It has surviv4
-              3not only five centuries, but also the leap into electronic
-              types0tting, remaining essentially unchanged. It was popularised
-              in the 1960s with the release of Letraset sheets containing Lorem
-              Ipsum passages,
+              {{ noticeDetail.postDetail }}
+            </div>
+            <div 
+            class="text-center mt-10"
+            v-if="userData.email == noticeDetail.postAuthorEmail"
+            >
+
+
+              <v-dialog
+                max-width="700"
+                v-model="isEdit"
+                persistent
+                transition="scroll-x-reverse-transition"
+              >
+                <template v-slot:activator="{ on, attrs }">
+                  <v-btn
+                  class="mx-2"
+                  small
+                  color="accent"
+                  v-bind="attrs"
+                  v-on="on"    
+                  >
+                  수정하기
+                  </v-btn>
+                </template>
+                <!-- Form Component -->
+                <edit-form @closeDialog="isEdit = false" />
+              </v-dialog>
+              
+              
+              <v-btn 
+                class="mx-2"
+                small
+                @click="removeNotice(noticeDetail.postId)"
+              >
+                삭제하기
+              </v-btn>
             </div>
           </v-card-text>
 
@@ -64,7 +95,10 @@
               </v-col>
 
               <v-col class="flex-grow-0">
-                <v-btn small :disabled="!valid">{{
+                <v-btn 
+                small 
+                :disabled="!valid"
+                @click="enterComment">{{
                   responsiveButtonText
                 }}</v-btn>
               </v-col>
@@ -118,9 +152,26 @@
 
 <script>
 import ModifyForm from "../commentModifyForm.vue";
+import EditForm from "../classNotice/EditForm.vue";
 
 export default {
+  components: {
+    ModifyForm: ModifyForm,
+    EditForm: EditForm
+  },
+  beforeCreate() {
+    this.$store.dispatch(
+      "post/retrieveNoticeDetail",
+      this.$route.params.postId
+    );
+    this.$store.dispatch(
+      "post/retrieveComment",
+      this.$route.params.postId
+    );
+  },
+  
   data: () => ({
+    isEdit: false,
     valid: false,
     isWriting: false,
 
@@ -135,8 +186,24 @@ export default {
         `${propertyType}은 최소 ${limit}글자 이상이어야 합니다.`;
     }
   }),
-  components: {
-    ModifyForm: ModifyForm
+  methods: {
+    //공지 삭제
+    removeNotice(id) {
+      alert("공지를 삭제하겠습니까?");
+      this.$store.dispatch("post/deleteNotice", id);
+    },
+    //공지 수정
+    editNotice() {
+
+    },
+    enterComment() {
+      let formData = new FormData();
+
+      formData.append("postId", this.$route.params.postId);
+      formData.append("commentDetail", this.comment);
+
+      this.$store.dispatch("post/enterComment", formData);
+    }
   },
   computed: {
     responsiveButtonText() {
@@ -147,6 +214,12 @@ export default {
         default:
           return "등록하기";
       }
+    },
+    userData() {
+      return this.$store.getters["user/userData"];
+    },
+    noticeDetail() {
+      return this.$store.getters["post/noticeDetail"];
     }
   }
 };

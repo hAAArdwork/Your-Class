@@ -90,6 +90,7 @@ const routes = [
        */
       {
         path: "notice",
+        name: "noticeList",
         component: () =>
           import("../components/class/classNotice/classNotice.vue"),
         meta: { title: "공지사항" },
@@ -102,7 +103,7 @@ const routes = [
             meta: { title: "공지사항" }
           },
           {
-            path: "detail",
+            path: "detail/:postId",
             name: "noticeDetail",
             component: () =>
               import("../components/class/classNotice/noticeDetail.vue"),
