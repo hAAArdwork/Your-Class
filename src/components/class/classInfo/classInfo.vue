@@ -186,7 +186,6 @@ export default {
     this.$axios
       .get(`post/postList/${this.$route.params.classId}`)
       .then(({ data }) => {
-        console.log(data);
         for (let item of data) {
           item.postAuthor = item.postUserId.name;
           item.postUpdateDate = item.postUpdateDate.substring(0, 10);

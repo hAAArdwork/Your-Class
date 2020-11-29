@@ -251,6 +251,12 @@ const routes = [
       }
     ],
     meta: { requiresAuth: true }
+  },
+  {
+    path: "*",
+    name: "404NotFound",
+    component: () => import("../views/404.vue"),
+    meta: { title: "Your Class" }
   }
 ];
 
