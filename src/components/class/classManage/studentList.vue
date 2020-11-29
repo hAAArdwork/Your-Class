@@ -41,7 +41,7 @@ export default {
   },
   computed: {
     onlyStudent() {
-      return this.studentList.filter(i => i.is_student === true)
+      return this.studentList.filter(i => i.is_student === true);
     }
   },
   methods: {
@@ -49,7 +49,7 @@ export default {
       // 리스트의 종류에 따라 다른 이벤트를 Emit 한다.
       this.$emit("onRemove", id);
     }
-  },
+  }
 };
 </script>
 

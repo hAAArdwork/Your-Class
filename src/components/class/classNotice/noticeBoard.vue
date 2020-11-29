@@ -37,7 +37,7 @@
       <v-data-table
         mobile-breakpoint="0"
         :headers="responsiveHeaders"
-        :items="posts"
+        :items="noticeList"
         :items-per-page="itemPerPage"
         :page.sync="page"
         @page-count="pageCount = $event"
@@ -47,37 +47,45 @@
         item-key="number"
       >
         <template v-slot:expanded-item="{ headers, item }">
-          <td :colspan="headers.length">공지사항 세부 내용 {{ item.title }}</td>
+          <td :colspan="headers.length">공지사항 세부 내용 {{ item.noticeName }}</td>
         </template>
 
-        <template v-slot:[`item.number`]="{ item }">
-          {{ item.number }}
+        <template v-slot:[`item.index`]="{ item }">
+          {{ item.index }}
         </template>
 
-        <template v-slot:[`item.title`]="{ item }">
+        <template v-slot:[`item.noticeName`]="{ item }">
           <div
             :class="
               $vuetify.breakpoint.name == 'sm' || 'xs' ? 'text-truncate' : ''
             "
             :style="`max-width: ${truncateLength}; margin: auto;`"
           >
-            <span @click="onClick(item)">{{ item.title }}</span>
+            <!-- @click="onClick(item.id)" -->
+            <span 
+            @click="
+            $router.push({
+              name: 'noticeDetail',
+              params: { postId: item.id }
+              })
+              "
+            >{{ item.noticeName }}</span>
           </div>
         </template>
 
-        <template v-slot:[`item.author`]="{ item }">
+        <template v-slot:[`item.noticeAuthor`]="{ item }">
           {{
             $vuetify.breakpoint.name != "xs"
-              ? item.author
-              : item.author.split(" ")[0]
+              ? item.noticeAuthor
+              : item.noticeAuthor.split(" ")[0]
           }}
         </template>
 
-        <template v-slot:[`item.dateCreated`]="{ item }">
+        <template v-slot:[`item.noticeUpdateDate`]="{ item }">
           <span class="hidden-xs-only">{{
             $vuetify.breakpoint.name == "sm"
-              ? item.dateCreated.substr(0, 10)
-              : item.dateCreated
+              ? item.noticeUpdateDate.substr(0, 10)
+              : item.noticeUpdateDate
           }}</span>
         </template>
       </v-data-table>
@@ -105,104 +113,11 @@ export default {
     page: 1,
     pageCount: 0,
     headers: [
-      { text: "번호", value: "number", align: "center" },
-      { text: "제목", value: "title", align: "center", sortable: false },
-      { text: "작성자", value: "author", align: "center", sortable: false },
-      { text: "작성일", value: "dateCreated", align: "center", sortable: false }
+      { text: "번호", value: "index", align: "center" },
+      { text: "제목", value: "noticeName", align: "center", sortable: false },
+      { text: "작성자", value: "noticeAuthor", align: "center", sortable: false },
+      { text: "작성일", value: "noticeUpdateDate", align: "center", sortable: false }
     ],
-    posts: [
-      {
-        number: 1,
-        subject: "물리",
-        title: "과목 일정에 대한 공지입니다.",
-        author: "이정우 선생님",
-        dateCreated: "2020-03-01 10:30"
-      },
-      {
-        number: 2,
-        subject: "물리",
-        title: "1장 수업 자료입니다.",
-        author: "이정우 선생님",
-        dateCreated: "2020-03-03 10:30"
-      },
-      {
-        number: 3,
-        subject: "물리",
-        title: "2장 수업 자료입니다.",
-        author: "이정우 선생님",
-        dateCreated: "2020-03-11 10:30"
-      },
-      {
-        number: 4,
-        subject: "물리",
-        title: "3장 수업 자료입니다.",
-        author: "이정우 선생님",
-        dateCreated: "2020-03-13 10:30"
-      },
-      {
-        number: 5,
-        subject: "물리",
-        title: "4장 수업 자료입니다.",
-        author: "이정우 선생님",
-        dateCreated: "2020-03-21 10:30"
-      },
-      {
-        number: 6,
-        subject: "물리",
-        title: "5장 수업 자료입니다.",
-        author: "이정우 선생님",
-        dateCreated: "2020-03-29 10:30"
-      },
-      {
-        number: 7,
-        subject: "물리",
-        title: "1차 과제물에 대한 안내입니다.",
-        author: "이정우 선생님",
-        dateCreated: "2020-04-02 10:30"
-      },
-      {
-        number: 8,
-        subject: "물리",
-        title: "과목 일정 변경에 대한 공지입니다.",
-        author: "이정우 선생님",
-        dateCreated: "2020-04-05 10:30"
-      },
-      {
-        number: 9,
-        subject: "물리",
-        title: "중간고사 일정에 대한 공지입니다.",
-        author: "이정우 선생님",
-        dateCreated: "2020-04-15 10:30"
-      },
-      {
-        number: 10,
-        subject: "물리",
-        title: "수행평가 일정에 대한 공지입니다.",
-        author: "이정우 선생님",
-        dateCreated: "2020-04-16 10:30"
-      },
-      {
-        number: 11,
-        subject: "물리",
-        title: "6장 수업 자료입니다.",
-        author: "이정우 선생님",
-        dateCreated: "2020-04-20 10:30"
-      },
-      {
-        number: 12,
-        subject: "물리",
-        title: "7장 수업 자료입니다.",
-        author: "이정우 선생님",
-        dateCreated: "2020-04-30 10:30"
-      },
-      {
-        number: 13,
-        subject: "물리",
-        title: "2회차 과제에 대한 안내입니다.",
-        author: "이정우 선생님",
-        dateCreated: "2020-05-01 10:30"
-      }
-    ]
   }),
   computed: {
     userData() {
@@ -234,17 +149,13 @@ export default {
         default:
           return this.headers;
       }
-    }
+    },
+    noticeList() {
+      return this.$store.getters["post/noticeList"];
+    },
   },
   methods: {
-    onClick({ number }) {
-      this.$router.push({
-        name: "noticeDetail",
-        query: {
-          post: number
-        }
-      });
-    }
+
   }
 };
 </script>

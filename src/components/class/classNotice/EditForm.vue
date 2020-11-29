@@ -1,7 +1,7 @@
 <template>
   <v-card class="mx-auto rounded-lg">
     <v-card-title>
-      <span class="text-h6 font-weight-bold">새 공지사항 등록</span>
+      <span class="text-h6 font-weight-bold">공지사항 수정</span>
       <v-spacer></v-spacer>
     </v-card-title>
 
@@ -16,14 +16,14 @@
     <v-card-text class="px-sm-12 py-2">
       <v-form v-model="valid">
         <v-text-field
-          v-model="title"
+          v-model="noticeName"
           label="제목"
           :rules="[required('제목'), isLongEnough('제목', 6)]"
         >
         </v-text-field>
 
         <v-textarea
-          v-model="question"
+          v-model="noticeDetail"
           label="공지사항 내용을 입력해주세요."
           rows="10"
           no-resize
@@ -43,11 +43,11 @@
         color="blue darken-1"
         text
         :disabled="!valid || isLoading"
-        @click="createNotice"
+        @click="editNotice"
       >
-        등록하기
+        수정하기
         <v-icon right>
-          mdi-checkbox-marked-circle
+          mdi-pencil
         </v-icon>
       </v-btn>
     </v-card-actions>
@@ -56,55 +56,60 @@
 
 <script>
 export default {
+  beforeCreate() {
+    const postId = this.$route.params.postId;
+
+    this.$axios
+      .get(`post/postDetail/${postId}`)
+      .then(async ({ data }) => {
+        // 전송받은 데이터 'data'에 연결.
+
+        console.log(data);
+        this.noticeName = data.postName;
+        this.noticeDetail = data.postDetail;
+      });
+  },
   computed: {
     isLoading() {
       return this.$store.getters["user/isLoading"];
     }
   },
-  data: () => ({
-    valid: false,
+  data() {
+    return {
+      valid: false,
 
-    title: "",
-    question: "",
+      noticeName: "",
+      noticeDetail: "",
 
-    required(propertyType) {
-      return value => !!value || `${propertyType}를 입력해주세요.`;
-    },
-    isLongEnough(propertyType, limit) {
-      return value =>
-        value.length >= limit ||
-        `${propertyType}은 최소 ${limit}글자 이상이어야 합니다.`;
-    }
-  }),
+      required(propertyType) {
+        return value => !!value || `${propertyType}를 입력해주세요.`;
+      },
+      isLongEnough(propertyType, limit) {
+        return value =>
+          value.length >= limit ||
+          `${propertyType}은 최소 ${limit}글자 이상이어야 합니다.`;
+      }
+    };
+  },
   methods: {
     closeDialog() {
       // 부모 컴포넌트로 이벤트 Emit
       this.$emit("closeDialog");
     },
-    createNotice() {
+    editNotice() {
       // 파일 형식을 백엔드 서버에 전송하기 위하여, FormData 객체를 사용한다.
       let formData = new FormData();
 
       formData.append("classId", this.$route.params.classId);
-      formData.append("postName", this.title);
-      formData.append("postDetail", this.question);
+      formData.append("postName", this.noticeName);
+      formData.append("postDetail", this.noticeDetail);
 
-      this.$store.dispatch("post/createNotice", formData);
+      this.$store.dispatch("post/editNotice", {
+        postId: this.$route.params.postId,
+        formData: formData
+      });
     }
-    //   async changePassword() {
-    //     // 비밀번호 변경을 위해 Vuex State Action을 호출한다.
-    //     await this.$store.dispatch("user/updatePassword", {
-    //       password: this.password,
-    //       passwordConfirm: this.passwordConfirm
-    //     });
 
-    //     // Form Data를 초기화한다.
-    //     this.password = "";
-    //     this.passwordConfirm = "";
-
-    //     // 부모 컴포넌트로 이벤트를 Emit하여, 다이얼로그 창을 닫는다.
-    //     this.$emit("closeDialog");
-    //   }
   }
 };
 </script>
