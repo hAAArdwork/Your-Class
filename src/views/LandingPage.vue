@@ -3,7 +3,7 @@
     <v-container fluid>
       <v-responsive
         class="pa-5 pa-sm-10 mx-auto d-flex align-center"
-        min-height="85vh"
+        min-height="95vh"
         max-width="1250px"
       >
         <v-row class="d-flex align-center">
@@ -64,7 +64,7 @@
       </v-responsive>
     </v-container>
 
-    <v-container fluid>
+    <v-container fluid class="introduction">
       <v-responsive
         class="pa-sm-10 mx-auto mb-10"
         min-height="55vh"
@@ -73,50 +73,84 @@
         <!-- 프로젝트 소개 및 구체적인 설명 -->
         <v-row class="py-10 text--primary text-center">
           <v-col cols="12">
-            <p class="text-h3 font-weight-black accent--text">
+            <p class="text-h4 font-weight-black accent--text">
               소프트웨어공학개론 프로젝트 결과물입니다.
-            </p>
-            <p class="text-h5 font-weight-medium">
-              Vue 2.X를 사용해 구현되었으며, UI 프레임워크는 Vuetify 2.3.13
-              버전을 사용하고 있습니다.
             </p>
           </v-col>
 
-          <v-col cols="12">
-            <p class="text-h6">
-              Lorem Ipsum is simply dummy text of the printing and typesetting
-              industry. Lorem Ipsum has been the industry's standard dummy text
-              ever since the 1500s, when an unknown printer took a galley of
-              type and scrambled it to make a type specimen book. It has
-              survived not only five centuries, but also the leap into
-              electronic typesetting, remaining essentially unchanged. It was
-              popularised in the 1960s with the release of Letraset sheets
-              containing Lorem Ipsum passages, and more recently with desktop
-              publishing software like Aldus PageMaker including versions of
-              Lorem Ipsum.
-            </p>
+          <v-col cols="4" v-for="(item, index) in memberCardData" :key="index">
+            <v-card rounded="lg" elevation="4" max-height="165px">
+              <v-row>
+                <v-col>
+                  <v-img
+                    :src="item.iconPath"
+                    transition="scroll-y-transition"
+                    class="mx-auto"
+                    width="55"
+                  />
+                </v-col>
+              </v-row>
+
+              <v-card-title class="py-2">
+                <span class="mx-auto">{{ item.name }}</span>
+              </v-card-title>
+
+              <v-card-text class="text-center">
+                {{ item.role }}
+              </v-card-text>
+            </v-card>
           </v-col>
         </v-row>
+
         <!-- 각 프레임워크 로고 렌더링 -->
-        <v-row class="d-flex justify-center align-center mb-16">
-          <v-col cols="12" class="text-center text--secondary">
-            <p class="text-h6 font-weight-medium mb-0">
-              This Applcation is Built with...
-            </p>
+        <v-row class="d-flex justify-center align-center">
+          <v-col cols="12" class="text-center">
+            <pre class="text-h5 font-weight-bold primary--text">
+              본 프로젝트는 하기와 같은 기술 스택을 사용해 구현되었습니다.
+            </pre>
+
+            <pre class="text-h6 font-weight-medium">
+              프론트엔드는 Vue 2.X, Vuetify 2.3.13 버전을 사용해 구현 되었으며,
+              백엔드는 Django, Django REST Framework를 사용해 구현 되었습니다.
+
+              최종 배포를 위해 AWS EC2 환경을 사용하고 있습니다.
+            </pre>
           </v-col>
-          <v-col
-            cols="4"
-            md="3"
-            lg="2"
-            v-for="(data, index) in logoData"
-            :key="index"
-          >
+
+          <v-col cols="2">
             <v-img
-              :src="require(`../assets/${data.logo}.svg`)"
-              :width="data.size"
+              transition="fade-transition"
               class="mx-auto"
-              lazy
-            />
+              width="65px"
+              :src="require(`../assets/vue.svg`)"
+            ></v-img>
+          </v-col>
+
+          <v-col cols="2">
+            <v-img
+              transition="fade-transition"
+              class="mx-auto"
+              width="60px"
+              :src="require(`../assets/vuetify.svg`)"
+            ></v-img>
+          </v-col>
+
+          <v-col cols="3">
+            <v-img
+              transition="fade-transition"
+              class="mx-auto"
+              width="130px"
+              :src="require(`../assets/django.svg`)"
+            ></v-img>
+          </v-col>
+
+          <v-col cols="2">
+            <v-img
+              transition="fade-transition"
+              class="mx-auto"
+              width="120px"
+              src="https://d0.awsstatic.com/logos/powered-by-aws.png"
+            ></v-img>
           </v-col>
         </v-row>
       </v-responsive>
@@ -155,14 +189,40 @@ export default {
         title: "학습 일정 관리"
       }
     ],
+
+    memberCardData: [
+      {
+        iconPath:
+          "https://www.flaticon.com/svg/static/icons/svg/2503/2503210.svg",
+        name: "양준영",
+        role: "Front End, Team Leader"
+      },
+      {
+        iconPath:
+          "https://www.flaticon.com/svg/static/icons/svg/2503/2503229.svg",
+        name: "이슬기",
+        role: "Front End, Publisher"
+      },
+      {
+        iconPath:
+          "https://www.flaticon.com/svg/static/icons/svg/2503/2503171.svg",
+        name: "이정우",
+        role: "Back End, Database"
+      }
+    ],
+
     // 프레임워크 로고 관련 데이터
     logoData: [
-      { logo: "vue", size: 105 },
-      { logo: "vuetify", size: 95 },
-      { logo: "firebase", size: 80 }
+      { logo: "vue", size: 55 },
+      { logo: "vuetify", size: 55 },
+      { logo: "django", size: 95 }
     ]
   })
 };
 </script>
 
-<style scoped></style>
+<style scoped>
+.introduction {
+  background: linear-gradient(180deg, #ffffff, #88caff);
+}
+</style>
