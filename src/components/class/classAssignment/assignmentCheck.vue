@@ -18,7 +18,9 @@
         <v-col cols="12">
           <v-card class="mx-auto" width="100%" outlined>
             <v-card-title>
-              {{ assignmentInfo === null ? "" : assignmentInfo.assignmentName }}
+              {{
+                assignmentInfo === null ? "-" : assignmentInfo.assignmentName
+              }}
 
               <v-spacer></v-spacer>
 
@@ -26,7 +28,7 @@
                 마감일 :
                 {{
                   assignmentInfo === null
-                    ? ""
+                    ? "-"
                     : assignmentInfo.assignmentDueDate
                 }}
               </small>
@@ -37,7 +39,9 @@
             <v-card-text>
               <span class="subtitle-1">
                 {{
-                  assignmentInfo === null ? "" : assignmentInfo.assignmentDetail
+                  assignmentInfo === null
+                    ? "-"
+                    : assignmentInfo.assignmentDetail
                 }}
               </span>
             </v-card-text>
@@ -53,7 +57,7 @@
 
               <small>
                 제출일 :
-                {{ submitInfo === null ? "" : submitInfo.updateDate }}
+                {{ submitInfo === null ? "-" : submitInfo.updateDate }}
               </small>
             </v-card-title>
 
@@ -61,7 +65,7 @@
 
             <v-card-text>
               <span class="subtitle-1">
-                {{ submitInfo === null ? "" : submitInfo.detail }}
+                {{ submitInfo === null ? "-" : submitInfo.detail }}
               </span>
             </v-card-text>
 
@@ -78,7 +82,7 @@
                   )
                 "
               >
-                {{ submitInfo === null ? "" : submitInfo.fileName }}
+                {{ submitInfo === null ? "-" : submitInfo.fileName }}
               </span>
 
               <v-spacer></v-spacer>

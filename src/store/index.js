@@ -6,6 +6,7 @@ import user from "./modules/user.js";
 import classes from "./modules/classes.js";
 import assignment from "./modules/assignment.js";
 import post from "./modules/post.js";
+import schedule from "./modules/schedule.js";
 
 Vue.use(Vuex);
 
@@ -23,7 +24,8 @@ const store = new Vuex.Store({
     user,
     classes,
     assignment,
-    post
+    post,
+    schedule
   }
 });
 

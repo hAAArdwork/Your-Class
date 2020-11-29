@@ -38,7 +38,7 @@ axios.interceptors.response.use(
 );
 
 const state = {
-  classList: new Array(),
+  classList: null,
 
   classDetail: {
     title: null,
@@ -135,6 +135,8 @@ const mutations = {
 
 const actions = {
   retrieveClasses: ({ commit }) => {
+    commit("fetchLoading", true);
+
     axios
       .get("subject/enroll")
       .then(({ data }) => {
@@ -163,6 +165,9 @@ const actions = {
         else if (response.status == 404) {
           alert("HTTP 404 - 연결이 원활하지 못합니다. 잠시 후 시도해주세요.");
         }
+      })
+      .finally(() => {
+        commit("fetchLoading", false);
       });
   },
 
