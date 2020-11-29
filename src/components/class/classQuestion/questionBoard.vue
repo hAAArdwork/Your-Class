@@ -35,52 +35,79 @@
 
     <!-- 게시판 테이블 -->
     <v-col cols="12" style="height: 350px;">
-      <v-data-table
+      <v-scroll-y-transition>
+      <!-- <v-data-table
         mobile-breakpoint="0"
         :headers="responsiveHeaders"
-        :items="questions"
+        :items="questionList"
         :page.sync="page"
         :items-per-page="itemPerPage"
         @page-count="pageCount = $event"
         hide-default-footer
         :sort-desc="[true]"
-        :sort-by="['number']"
-        item-key="number"
+        :sort-by="['index']"
+        item-key="index"
         @click="onClick(item)"
-      >
-        <template v-slot:[`item.number`]="{ item }">
-          <span>{{ item.number }}</span>
+      > -->
+        <v-data-table
+          v-if="questionList.length != 0"
+          :headers="responsiveHeaders"
+          :items="questionList"
+          :items-per-page="itemPerPage"
+          :page.sync="page"
+          :sort-desc="[true]"
+          :sort-by="['index']"
+          @page-count="pageCount = $event"
+          mobile-breakpoint="0"
+          item-key="index"
+          hide-default-footer
+        >      
+        <template v-slot:expanded-item="{ headers, item }">
+          <td :colspan="headers.length">
+            공지사항 세부 내용 {{ item.questionName }}
+          </td>
         </template>
 
-        <template v-slot:[`item.title`]="{ item }">
+        <template v-slot:[`item.index`]="{ item }">
+          <span>{{ item.index }}</span>
+        </template>
+
+        <template v-slot:[`item.questionName`]="{ item }">
           <div
             :class="
               $vuetify.breakpoint.name == 'sm' || 'xs' ? 'text-truncate' : ''
             "
             :style="`max-width: ${truncateLength}; margin: auto;`"
-            @click="onClick(item)"
-            @
           >
-            <span>{{ item.title }}</span>
+            <span
+              class="clickable"
+              @click="
+                $router.push({
+                  name: 'questionDetail',
+                  params: { postId: item.id }
+                })
+              "            
+            >{{ item.questionName }}</span>
           </div>
         </template>
 
-        <template v-slot:[`item.author`]="{ item }">
+        <template v-slot:[`item.questionAuthor`]="{ item }">
           {{
             $vuetify.breakpoint.name != "xs"
-              ? item.author
-              : item.author.split(" ")[0]
+              ? item.questionAuthor
+              : item.questionAuthor.split(" ")[0]
           }}
         </template>
 
-        <template v-slot:[`item.dateCreated`]="{ item }">
+        <template v-slot:[`item.questionUpdateDate`]="{ item }">
           <span class="hidden-xs-only">{{
             $vuetify.breakpoint.name == "sm"
-              ? item.dateCreated.substr(0, 10)
-              : item.dateCreated
+              ? item.questionUpdateDate.substr(0, 10)
+              : item.questionUpdateDate
           }}</span>
         </template>
       </v-data-table>
+      </v-scroll-y-transition>
     </v-col>
 
     <!-- 게시판 Pagination 버튼 -->
@@ -94,9 +121,12 @@
 </template>
 
 <script>
-import QuestionForm from "../classQuestion/questionFrom.vue";
+import QuestionForm from "../classQuestion/questionForm.vue";
 
 export default {
+  beforeCreate() {
+    this.$store.dispatch("post/retrieveQuestionList", this.$route.params.classId);
+  },
   components: {
     QuestionForm: QuestionForm
   },
@@ -106,80 +136,18 @@ export default {
     page: 1,
     pageCount: 0,
     headers: [
-      { text: "번호", value: "number", align: "center" },
-      { text: "제목", value: "title", align: "center", sortable: false },
-      { text: "작성자", value: "author", align: "center", sortable: false },
-      { text: "작성일", value: "dateCreated", align: "center", sortable: false }
+      { text: "번호", value: "index", align: "center" },
+      { text: "제목", value: "questionName", align: "center", sortable: false },
+      { text: "작성자", value: "questionAuthor", align: "center", sortable: false },
+      { text: "작성일", value: "questionUpdateDate", align: "center", sortable: false }
     ],
-    questions: [
-      {
-        number: 1,
-        title: "1장 과제에 대한 질문",
-        author: "이정우 ",
-        dateCreated: "2020-03-01 10:30",
-        content: ""
-      },
-      {
-        number: 2,
-        title: "1장 과제에 대한 질문2",
-        author: "이정우 ",
-        dateCreated: "2020-03-03 10:30",
-        content: ""
-      },
-      {
-        number: 3,
-        title: "2장 과제에 대한 질문",
-        author: "이정우 ",
-        dateCreated: "2020-03-11 10:30",
-        content: ""
-      },
-      {
-        number: 4,
-        title: "시험 일정에 관한 질문",
-        author: "이정우 ",
-        dateCreated: "2020-03-13 10:30",
-        content: ""
-      },
-      {
-        number: 5,
-        title: "3장 과제에 대한 질문",
-        author: "이정우 ",
-        dateCreated: "2020-03-21 10:30",
-        content: ""
-      },
-      {
-        number: 6,
-        title: "3장 수업에 대한 질문",
-        author: "이정우 ",
-        dateCreated: "2020-03-29 10:30",
-        content: ""
-      },
-      {
-        number: 7,
-        title: "수업 관련 질문",
-        author: "이정우",
-        dateCreated: "2020-04-02 10:30",
-        content: ""
-      },
-      {
-        number: 8,
-        title: "수업 관련 질문",
-        author: "이정우",
-        dateCreated: "2020-04-02 10:30",
-        content: ""
-      },
-      {
-        number: 9,
-        title: "수업 관련 질문",
-        author: "이정우",
-        dateCreated: "2020-04-02 10:30",
-        content: ""
-      }
-    ]
   }),
   computed: {
     userData() {
       return this.$store.getters["user/userData"];
+    },
+    questionList() {
+      return this.$store.getters["post/questionList"];
     },
     itemPerPage() {
       switch (this.$vuetify.breakpoint.name) {
@@ -207,16 +175,6 @@ export default {
         default:
           return this.headers;
       }
-    }
-  },
-  methods: {
-    onClick({ number }) {
-      this.$router.push({
-        name: "questionDetail",
-        query: {
-          post: number
-        }
-      });
     }
   }
 };

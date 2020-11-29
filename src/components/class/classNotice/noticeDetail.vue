@@ -234,9 +234,7 @@ export default {
     // Form Validation
     valid: false,
     comment: "",
-
     targetComment: "", // 수정 대상 댓글을 담기 위한 변수
-
     deleteTarget: null, // 삭제 대상 공지 또는 댓글의 ID를 담기 위한 변수
     targetType: "" // 삭제 대상의 타입 (공지 or 댓글)을 담기 위한 변수
   }),
