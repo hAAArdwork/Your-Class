@@ -26,6 +26,14 @@
         <p class="class-info text-h4">최근 게시물</p>
       </v-col>
 
+      <v-col
+        v-if="recentPosts.length === 0"
+        cols="12"
+        style="height: 206px"
+        class="d-flex align-center justify-center"
+      >
+      </v-col>
+
       <!-- 과목과 관련된 3개의 최신 게시물 렌더링 -->
       <v-col
         cols="12"
@@ -39,15 +47,18 @@
               <v-card-title class="py-2">
                 <!-- 게시글 제목이 긴 경우, ...로 잘라서 렌더링한다. -->
                 <div class="mx-auto font-weight-bold text-truncate">
-                  {{ data.title }}
+                  {{ data.postName }}
                 </div>
               </v-card-title>
 
               <v-divider />
 
               <v-card-subtitle class="text-center">
-                <span class="d-block">{{ data.author }}</span>
-                <span>{{ data.dateCreated }}</span>
+                <span class="d-block">
+                  {{ data.postAuthor }}
+                  {{ !data.postAuthor.isStudent ? "선생님" : "" }}</span
+                >
+                <span>{{ data.postUpdateDate }}</span>
               </v-card-subtitle>
 
               <v-card-actions>
@@ -56,6 +67,12 @@
                   width="100px"
                   height="25px"
                   rounded
+                  @click="
+                    $router.push({
+                      name: 'noticeDetail',
+                      params: { postId: data.id }
+                    })
+                  "
                 >
                   <span class="font-weight-bold">상세보기</span>
                 </v-btn>
@@ -78,7 +95,6 @@
       </v-col>
 
       <!-- 마감 기한이 임박한 과제물 3개 또는 4개 렌더링 -->
-
       <v-col
         v-else
         cols="12"
@@ -94,13 +110,7 @@
               rounded="xl"
               width="100%"
               :elevation="hover ? 8 : 4"
-              @click="
-                $router.push({
-                  name: 'AssignmentSubmit',
-                  params: { assignmentId: item.id }
-                })
-              "
-              tr
+              @click="assignmentShorcut(item.id)"
             >
               <v-card-title>
                 <div class="font-weight-bold text-truncate">
@@ -172,6 +182,18 @@ export default {
 
         this.isLoading = false;
       });
+
+    this.$axios
+      .get(`post/postList/${this.$route.params.classId}`)
+      .then(({ data }) => {
+        console.log(data);
+        for (let item of data) {
+          item.postAuthor = item.postUserId.name;
+          item.postUpdateDate = item.postUpdateDate.substring(0, 10);
+        }
+
+        this.recentPosts = data;
+      });
   },
 
   computed: {
@@ -184,6 +206,11 @@ export default {
           return this.assignments.slice(0, 3);
       }
     },
+
+    userData() {
+      return this.$store.getters["user/userData"];
+    },
+
     classInfo() {
       return this.$store.getters["classes/classDetail"];
     }
@@ -192,26 +219,7 @@ export default {
   data: () => ({
     isLoading: true,
 
-    recentPosts: [
-      {
-        id: 0,
-        title: "1장 과제에 대한 질문",
-        author: "김진형",
-        dateCreated: "2020/10/31"
-      },
-      {
-        id: 1,
-        title: "2장 과제에 대한 질문",
-        author: "양준영",
-        dateCreated: "2020/10/27"
-      },
-      {
-        id: 2,
-        title: "강좌 공지사항입니다.",
-        author: "이정우 선생님",
-        dateCreated: "2020/10/26"
-      }
-    ],
+    recentPosts: [],
 
     assignments: []
   }),
@@ -228,6 +236,20 @@ export default {
       const result = Math.floor(distance / (1000 * 60 * 60 * 24));
 
       return result;
+    },
+
+    assignmentShorcut(assignmentId) {
+      if (this.userData.isStudent) {
+        this.$router.push({
+          name: "AssignmentSubmit",
+          params: { assignmentId: assignmentId }
+        });
+      } else {
+        this.$router.push({
+          name: "AssignmnetSubmitCheck",
+          params: { assignmentId: assignmentId }
+        });
+      }
     }
   }
 };
