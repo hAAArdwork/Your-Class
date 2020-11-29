@@ -14,11 +14,11 @@
     <v-divider></v-divider>
 
     <v-card-text class="px-sm-12 py-2">
-      <v-form v-model="valid">
+      <v-form v-model="valid" @submit.prevent="">
         <v-text-field
           v-model="noticeName"
           label="제목"
-          :rules="[required('제목'), isLongEnough('제목', 6)]"
+          :rules="[required('제목'), isLongEnough('제목', 5)]"
         >
         </v-text-field>
 
@@ -27,7 +27,7 @@
           label="공지사항 내용을 입력해주세요."
           rows="10"
           no-resize
-          :rules="[required('내용'), isLongEnough('내용', 30)]"
+          :rules="[required('내용'), isLongEnough('내용', 15)]"
           counter
         >
         </v-textarea>
@@ -36,19 +36,19 @@
 
     <v-card-actions>
       <v-spacer></v-spacer>
-      <v-btn color="blue darken-1" text @click="closeDialog">
+      <v-btn color="error" text @click="closeDialog">
         취소
       </v-btn>
       <v-btn
-        color="blue darken-1"
+        color="blue lighten-2"
         text
         :disabled="!valid || isLoading"
         @click="editNotice"
       >
-        수정하기
-        <v-icon right>
+        <v-icon left>
           mdi-pencil
         </v-icon>
+        수정하기
       </v-btn>
     </v-card-actions>
   </v-card>
@@ -56,30 +56,18 @@
 
 <script>
 export default {
-  beforeCreate() {
-    const postId = this.$route.params.postId;
-
-    this.$axios
-      .get(`post/postDetail/${postId}`)
-      .then(async ({ data }) => {
-        // 전송받은 데이터 'data'에 연결.
-
-        console.log(data);
-        this.noticeName = data.postName;
-        this.noticeDetail = data.postDetail;
-      });
+  props: {
+    content: Object
   },
-  computed: {
-    isLoading() {
-      return this.$store.getters["user/isLoading"];
-    }
-  },
+
   data() {
     return {
+      isLoading: false,
+
       valid: false,
 
-      noticeName: "",
-      noticeDetail: "",
+      noticeName: this.content.name,
+      noticeDetail: this.content.detail,
 
       required(propertyType) {
         return value => !!value || `${propertyType}를 입력해주세요.`;
@@ -96,7 +84,10 @@ export default {
       // 부모 컴포넌트로 이벤트 Emit
       this.$emit("closeDialog");
     },
+
     editNotice() {
+      this.isLoading = true;
+
       // 파일 형식을 백엔드 서버에 전송하기 위하여, FormData 객체를 사용한다.
       let formData = new FormData();
 
@@ -104,12 +95,17 @@ export default {
       formData.append("postName", this.noticeName);
       formData.append("postDetail", this.noticeDetail);
 
-      this.$store.dispatch("post/editNotice", {
+      this.$store.dispatch("post/updateNotice", {
         postId: this.$route.params.postId,
         formData: formData
       });
-    }
 
+      setTimeout(() => {
+        this.isLoading = false;
+
+        this.closeDialog();
+      }, 1000);
+    }
   }
 };
 </script>

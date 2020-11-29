@@ -16,11 +16,11 @@
     <v-card-text class="px-sm-8 py-2">
       <v-form v-model="valid">
         <v-textarea
-          v-model="comment"
+          v-model="detail"
           rows="3"
           no-resize
           counter
-          :rules="[required('댓글 내용'), isLongEnough('댓글 내용', 10)]"
+          :rules="[required('댓글 내용')]"
         >
         </v-textarea>
       </v-form>
@@ -28,19 +28,19 @@
 
     <v-card-actions>
       <v-spacer></v-spacer>
-      <v-btn color="blue darken-1" text @click="closeDialog">
+      <v-btn color="error" text @click="closeDialog">
         취소
       </v-btn>
       <v-btn
-        color="blue darken-1"
+        color="blue lighten-2"
         text
         :disabled="!valid || isLoading"
-        @click="submitQuestion"
+        @click="editComment"
       >
-        등록하기
-        <v-icon right>
-          mdi-checkbox-marked-circle
+        <v-icon left>
+          mdi-pencil
         </v-icon>
+        수정하기
       </v-btn>
     </v-card-actions>
   </v-card>
@@ -49,26 +49,21 @@
 <script>
 export default {
   props: {
-    content: String
+    targetComment: Object
   },
-  computed: {
-    isLoading() {
-      return this.$store.getters["user/isLoading"];
-    }
-  },
+
   data() {
     return {
+      isLoading: false,
+
       valid: false,
 
-      comment: this.content,
+      id: this.targetComment.id,
+      detail: this.targetComment.commentDetail,
+      postId: this.targetComment.commentPostId.id,
 
       required(propertyType) {
         return value => !!value || `${propertyType}를 입력해주세요.`;
-      },
-      isLongEnough(propertyType, limit) {
-        return value =>
-          value.length >= limit ||
-          `${propertyType}은 최소 ${limit}글자 이상이어야 합니다.`;
       }
     };
   },
@@ -77,21 +72,22 @@ export default {
       // 부모 컴포넌트로 이벤트 Emit
       this.$emit("closeDialog");
     },
-    submitQuestion() {}
-    //   async changePassword() {
-    //     // 비밀번호 변경을 위해 Vuex State Action을 호출한다.
-    //     await this.$store.dispatch("user/updatePassword", {
-    //       password: this.password,
-    //       passwordConfirm: this.passwordConfirm
-    //     });
 
-    //     // Form Data를 초기화한다.
-    //     this.password = "";
-    //     this.passwordConfirm = "";
+    editComment() {
+      this.isLoading = true;
 
-    //     // 부모 컴포넌트로 이벤트를 Emit하여, 다이얼로그 창을 닫는다.
-    //     this.$emit("closeDialog");
-    //   }
+      this.$store.dispatch("post/updateComment", {
+        commentId: this.id,
+        commentDetail: this.detail,
+        postId: this.postId
+      });
+
+      setTimeout(() => {
+        this.isLoading = false;
+
+        this.closeDialog();
+      }, 250);
+    }
   }
 };
 </script>

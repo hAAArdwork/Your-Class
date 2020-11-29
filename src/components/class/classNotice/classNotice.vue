@@ -6,50 +6,7 @@
 
 <script>
 export default {
-  beforeCreate() {
-    this.$store.dispatch(
-      "post/retrieveNoticeList",
-      this.$route.params.classId
-    );
-  },
-  
-  data: () => ({
-    expanded: [],
-    page: 1,
-    pageCount: 0,
-  }),
-  computed: {
-    userData() {
-      return this.$store.getters["user/userData"];
-    },
-    itemPerPage() {
-      switch (this.$vuetify.breakpoint.name) {
-        case "xs":
-          return 6;
-        default:
-          return 6;
-      }
-    },
-    truncateLength() {
-      switch (this.$vuetify.breakpoint.name) {
-        case "xs":
-          return "125px";
-        case "sm":
-          return "145px";
-        default:
-          return "";
-      }
-    },
-    responsiveHeaders() {
-      switch (this.$vuetify.breakpoint.name) {
-        case "xs": {
-          return this.headers.slice(0, 3);
-        }
-        default:
-          return this.headers;
-      }
-    }
-  }
+  data: () => ({})
 };
 </script>
 

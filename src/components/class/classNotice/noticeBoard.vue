@@ -34,61 +34,67 @@
     </v-col>
 
     <v-col cols="12" style="height: 350px;">
-      <v-data-table
-        mobile-breakpoint="0"
-        :headers="responsiveHeaders"
-        :items="noticeList"
-        :items-per-page="itemPerPage"
-        :page.sync="page"
-        @page-count="pageCount = $event"
-        hide-default-footer
-        :sort-desc="[true]"
-        :sort-by="['number']"
-        item-key="number"
-      >
-        <template v-slot:expanded-item="{ headers, item }">
-          <td :colspan="headers.length">공지사항 세부 내용 {{ item.noticeName }}</td>
-        </template>
+      <v-scroll-y-transition>
+        <v-data-table
+          v-if="noticeList.length != 0"
+          :headers="responsiveHeaders"
+          :items="noticeList"
+          :items-per-page="itemPerPage"
+          :page.sync="page"
+          :sort-desc="[true]"
+          :sort-by="['index']"
+          @page-count="pageCount = $event"
+          mobile-breakpoint="0"
+          item-key="index"
+          hide-default-footer
+        >
+          <template v-slot:expanded-item="{ headers, item }">
+            <td :colspan="headers.length">
+              공지사항 세부 내용 {{ item.noticeName }}
+            </td>
+          </template>
 
-        <template v-slot:[`item.index`]="{ item }">
-          {{ item.index }}
-        </template>
+          <template v-slot:[`item.index`]="{ item }">
+            {{ item.index }}
+          </template>
 
-        <template v-slot:[`item.noticeName`]="{ item }">
-          <div
-            :class="
-              $vuetify.breakpoint.name == 'sm' || 'xs' ? 'text-truncate' : ''
-            "
-            :style="`max-width: ${truncateLength}; margin: auto;`"
-          >
-            <!-- @click="onClick(item.id)" -->
-            <span 
-            @click="
-            $router.push({
-              name: 'noticeDetail',
-              params: { postId: item.id }
-              })
+          <template v-slot:[`item.noticeName`]="{ item }">
+            <div
+              :class="
+                $vuetify.breakpoint.name == 'sm' || 'xs' ? 'text-truncate' : ''
               "
-            >{{ item.noticeName }}</span>
-          </div>
-        </template>
+              :style="`max-width: ${truncateLength}; margin: auto;`"
+            >
+              <span
+                class="clickable"
+                @click="
+                  $router.push({
+                    name: 'noticeDetail',
+                    params: { postId: item.id }
+                  })
+                "
+                >{{ item.noticeName }}</span
+              >
+            </div>
+          </template>
 
-        <template v-slot:[`item.noticeAuthor`]="{ item }">
-          {{
-            $vuetify.breakpoint.name != "xs"
-              ? item.noticeAuthor
-              : item.noticeAuthor.split(" ")[0]
-          }}
-        </template>
+          <template v-slot:[`item.noticeAuthor`]="{ item }">
+            {{
+              $vuetify.breakpoint.name != "xs"
+                ? item.noticeAuthor
+                : item.noticeAuthor.split(" ")[0]
+            }}
+          </template>
 
-        <template v-slot:[`item.noticeUpdateDate`]="{ item }">
-          <span class="hidden-xs-only">{{
-            $vuetify.breakpoint.name == "sm"
-              ? item.noticeUpdateDate.substr(0, 10)
-              : item.noticeUpdateDate
-          }}</span>
-        </template>
-      </v-data-table>
+          <template v-slot:[`item.noticeUpdateDate`]="{ item }">
+            <span class="hidden-xs-only">{{
+              $vuetify.breakpoint.name == "sm"
+                ? item.noticeUpdateDate.substr(0, 10)
+                : item.noticeUpdateDate
+            }}</span>
+          </template>
+        </v-data-table>
+      </v-scroll-y-transition>
     </v-col>
 
     <v-col cols="12">
@@ -104,9 +110,14 @@
 import NoticeForm from "../classNotice/noticeForm.vue";
 
 export default {
+  beforeCreate() {
+    this.$store.dispatch("post/retrieveNoticeList", this.$route.params.classId);
+  },
+
   components: {
     NoticeForm: NoticeForm
   },
+
   data: () => ({
     isWriting: false,
 
@@ -115,13 +126,27 @@ export default {
     headers: [
       { text: "번호", value: "index", align: "center" },
       { text: "제목", value: "noticeName", align: "center", sortable: false },
-      { text: "작성자", value: "noticeAuthor", align: "center", sortable: false },
-      { text: "작성일", value: "noticeUpdateDate", align: "center", sortable: false }
-    ],
+      {
+        text: "작성자",
+        value: "noticeAuthor",
+        align: "center",
+        sortable: false
+      },
+      {
+        text: "작성일",
+        value: "noticeUpdateDate",
+        align: "center",
+        sortable: false
+      }
+    ]
   }),
+
   computed: {
     userData() {
       return this.$store.getters["user/userData"];
+    },
+    noticeList() {
+      return this.$store.getters["post/noticeList"];
     },
     itemPerPage() {
       switch (this.$vuetify.breakpoint.name) {
@@ -136,7 +161,7 @@ export default {
         case "xs":
           return "125px";
         case "sm":
-          return "145px";
+          return "200px";
         default:
           return "";
       }
@@ -149,14 +174,9 @@ export default {
         default:
           return this.headers;
       }
-    },
-    noticeList() {
-      return this.$store.getters["post/noticeList"];
-    },
+    }
   },
-  methods: {
-
-  }
+  methods: {}
 };
 </script>
 
@@ -173,8 +193,14 @@ export default {
 .class-info {
   font-weight: 600;
 }
+
 .card-text-title {
   font-size: 20px;
   margin-bottom: 0px;
+}
+
+.clickable:hover {
+  cursor: pointer;
+  color: cornflowerblue;
 }
 </style>

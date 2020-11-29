@@ -14,11 +14,11 @@
     <v-divider></v-divider>
 
     <v-card-text class="px-sm-12 py-2">
-      <v-form v-model="valid">
+      <v-form v-model="valid" @submit.prevent="">
         <v-text-field
           v-model="title"
           label="제목"
-          :rules="[required('제목'), isLongEnough('제목', 6)]"
+          :rules="[required('제목'), isLongEnough('제목', 5)]"
         >
         </v-text-field>
 
@@ -27,7 +27,7 @@
           label="공지사항 내용을 입력해주세요."
           rows="10"
           no-resize
-          :rules="[required('내용'), isLongEnough('내용', 30)]"
+          :rules="[required('내용'), isLongEnough('내용', 15)]"
           counter
         >
         </v-textarea>
@@ -56,12 +56,9 @@
 
 <script>
 export default {
-  computed: {
-    isLoading() {
-      return this.$store.getters["user/isLoading"];
-    }
-  },
   data: () => ({
+    isLoading: false,
+
     valid: false,
 
     title: "",
@@ -76,12 +73,15 @@ export default {
         `${propertyType}은 최소 ${limit}글자 이상이어야 합니다.`;
     }
   }),
+
   methods: {
     closeDialog() {
       // 부모 컴포넌트로 이벤트 Emit
       this.$emit("closeDialog");
     },
     createNotice() {
+      this.isLoading = true;
+
       // 파일 형식을 백엔드 서버에 전송하기 위하여, FormData 객체를 사용한다.
       let formData = new FormData();
 
@@ -90,21 +90,13 @@ export default {
       formData.append("postDetail", this.question);
 
       this.$store.dispatch("post/createNotice", formData);
+
+      setTimeout(() => {
+        this.isLoading = false;
+
+        this.closeDialog();
+      }, 1000);
     }
-    //   async changePassword() {
-    //     // 비밀번호 변경을 위해 Vuex State Action을 호출한다.
-    //     await this.$store.dispatch("user/updatePassword", {
-    //       password: this.password,
-    //       passwordConfirm: this.passwordConfirm
-    //     });
-
-    //     // Form Data를 초기화한다.
-    //     this.password = "";
-    //     this.passwordConfirm = "";
-
-    //     // 부모 컴포넌트로 이벤트를 Emit하여, 다이얼로그 창을 닫는다.
-    //     this.$emit("closeDialog");
-    //   }
   }
 };
 </script>

@@ -135,7 +135,7 @@ const routes = [
             meta: { title: "공지사항" }
           },
           {
-            path: "detail/:postId",
+            path: ":postId/detail",
             name: "noticeDetail",
             component: () =>
               import("../components/class/classNotice/noticeDetail.vue"),
@@ -187,7 +187,7 @@ const routes = [
           },
           // [교사] 관련 페이지
           {
-            path: "check/:assignmentId",
+            path: ":assignmentId/check",
             name: "AssignmnetSubmitCheck",
             component: () =>
               import(
@@ -205,7 +205,7 @@ const routes = [
             meta: { title: "과제등록" }
           },
           {
-            path: "/:assignmentId/edit",
+            path: ":assignmentId/edit",
             props: true,
             name: "AssignmentEdit",
             component: () =>
