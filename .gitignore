@@ -1,7 +1,10 @@
 .DS_Store
+# NPM Modules
 node_modules
-/dist
 
+# Google Firebase
+.firebaserc
+.firebase/
 
 # local env files
 .env.local
