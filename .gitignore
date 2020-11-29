@@ -4,6 +4,7 @@ node_modules
 
 # Google Firebase
 .firebaserc
+firebase.json
 .firebase/
 
 # local env files
