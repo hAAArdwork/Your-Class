@@ -231,7 +231,7 @@ const routes = [
             meta: { title: "질의응답" }
           },
           {
-            path: "detail",
+            path: ":postId/detail",
             name: "questionDetail",
             component: () =>
               import("../components/class/classQuestion/questionDetail.vue"),

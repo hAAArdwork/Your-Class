@@ -43,7 +43,7 @@
         color="blue darken-1"
         text
         :disabled="!valid || isLoading"
-        @click="submitQuestion"
+        @click="createQuestion"
       >
         등록하기
         <v-icon right>
@@ -56,12 +56,9 @@
 
 <script>
 export default {
-  computed: {
-    isLoading() {
-      return this.$store.getters["user/isLoading"];
-    }
-  },
   data: () => ({
+    isLoading: false,
+
     valid: false,
 
     title: "",
@@ -81,21 +78,24 @@ export default {
       // 부모 컴포넌트로 이벤트 Emit
       this.$emit("closeDialog");
     },
-    submitQuestion() {}
-    //   async changePassword() {
-    //     // 비밀번호 변경을 위해 Vuex State Action을 호출한다.
-    //     await this.$store.dispatch("user/updatePassword", {
-    //       password: this.password,
-    //       passwordConfirm: this.passwordConfirm
-    //     });
+    createQuestion() {
+      this.isLoading = true;
 
-    //     // Form Data를 초기화한다.
-    //     this.password = "";
-    //     this.passwordConfirm = "";
+      // 파일 형식을 백엔드 서버에 전송하기 위하여, FormData 객체를 사용한다.
+      let formData = new FormData();
 
-    //     // 부모 컴포넌트로 이벤트를 Emit하여, 다이얼로그 창을 닫는다.
-    //     this.$emit("closeDialog");
-    //   }
+      formData.append("classId", this.$route.params.classId);
+      formData.append("postName", this.title);
+      formData.append("postDetail", this.question);
+
+      this.$store.dispatch("post/createQuestion", formData);
+
+      setTimeout(() => {
+        this.isLoading = false;
+
+        this.closeDialog();
+      }, 1000);      
+    }
   }
 };
 </script>
