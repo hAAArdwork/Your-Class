@@ -12,12 +12,11 @@
         />
 
         <v-img
-          alt="Vuetify Name"
           class="shrink hidden-xs-only"
           contain
           min-width="100"
           :src="require('./assets/logoText.png')"
-          width="165"
+          width="185px"
         />
       </div>
 
