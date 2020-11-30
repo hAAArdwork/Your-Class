@@ -158,14 +158,14 @@ const routes = [
               import("../components/class/classAssignment/assignmentList.vue"),
             meta: { title: "과제확인" }
           },
-          // [학생] 관런 페이지
+          // 학생 관런 페이지
           {
             path: ":assignmentId/submit",
             props: true,
             name: "AssignmentSubmit",
             component: () =>
               import(
-                "../components/class/classAssignment/assignmentSubmit.vue"
+                "../components/class/classAssignment/submitAssignment.vue"
               ),
             meta: { title: "과제제출" }
           },
@@ -173,7 +173,7 @@ const routes = [
             path: ":assignmentId/detail",
             name: "AssignmentSubmitDetail",
             component: () =>
-              import("../components/class/classAssignment/assignmentCheck.vue"),
+              import("../components/class/classAssignment/submitDetail.vue"),
             meta: { title: "제출 정보 확인" }
           },
           {
@@ -184,14 +184,12 @@ const routes = [
               import("../components/class/classAssignment/submitEdit.vue"),
             meta: { title: "제출 정보 수정" }
           },
-          // [교사] 관련 페이지
+          // 교사 관련 페이지
           {
             path: ":assignmentId/check",
             name: "AssignmnetSubmitCheck",
             component: () =>
-              import(
-                "../components/class/classAssignment/assignmentSubmitList.vue"
-              ),
+              import("../components/class/classAssignment/submitList.vue"),
             meta: { title: "제출 현황 확인" }
           },
           {
@@ -292,8 +290,6 @@ router.beforeEach(async (to, from, next) => {
       // 비어있는 경우 서버에 요청한다.
       else {
         await Store.dispatch("user/requestUserData");
-
-        console.log("유저 데이터 Fetch 후 다음 라우터로 진행합니다.");
 
         next();
       }

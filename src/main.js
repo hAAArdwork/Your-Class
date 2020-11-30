@@ -12,11 +12,17 @@ axios.defaults.baseURL =
 // HTTP Request 인터셉터
 axios.interceptors.request.use(
   function(config) {
-    console.log(config);
+    const accessToken = localStorage.getItem("accessToken");
+
+    // localStorage에 accessToken이 존재하면, HTTP Request Header에 추가한다.
+    if (accessToken) {
+      config.headers["Authorization"] = `Bearer ${accessToken}`;
+    }
+
     return config;
   },
   function(error) {
-    console.log(error);
+    // console.log(error);
     return Promise.reject(error);
   }
 );

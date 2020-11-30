@@ -1,40 +1,6 @@
 import router from "@/router";
 import axios from "axios";
 
-// HTTP Request 인터셉터
-axios.interceptors.request.use(
-  function(config) {
-    const accessToken = localStorage.getItem("accessToken");
-
-    // localStorage에 accessToken이 존재하면, HTTP Request Header에 추가한다.
-    if (accessToken) {
-      config.headers["Authorization"] = `Bearer ${accessToken}`;
-    }
-
-    return config;
-  },
-  function(error) {
-    console.log(error);
-    return Promise.reject(error);
-  }
-);
-
-// HTTP Response 인터셉터
-axios.interceptors.response.use(
-  function(response) {
-    // console.log(response);
-    // 응답 데이터를 가공
-    // ...
-    return response;
-  },
-  function(error) {
-    console.log(error);
-    // 오류 응답을 처리
-    // ...
-    return Promise.reject(error);
-  }
-);
-
 function parseDateTime(fullDate) {
   return fullDate.substring(0, 10) + " " + fullDate.substring(11, 16);
 }
@@ -128,17 +94,13 @@ const actions = {
                   `assignment/isSubmit/detail/${userId}/${payload.assignmentId}`
                 )
                 .then(({ data }) => {
-                  console.log(data);
                   submitter.number = index;
                   submitter.assignmentId = data.assignmentId.id;
                   submitter.submitId = data.id;
                   submitter.submitDetail = data.submitDetail;
                   submitter.submitFile = data.submitFile;
                   submitter.submitFileName = data.submitFileName;
-                  submitter.submitDate =
-                    data.submitUpdateDate.substring(0, 10) +
-                    " " +
-                    data.submitUpdateDate.substring(11, 16);
+                  submitter.submitDate = parseDateTime(data.submitUpdateDate);
                 });
             });
 
@@ -146,8 +108,6 @@ const actions = {
 
           index++;
         }
-
-        console.log(submitList);
 
         commit("fetchSubmitList", submitList);
       })
@@ -325,14 +285,12 @@ const actions = {
             })
             .catch(() => {});
 
-          assignmentInfo.assignmentDueDate =
-            assignmentInfo.assignmentDueDate.substring(0, 10) +
-            " " +
-            assignmentInfo.assignmentDueDate.substring(11, 16);
-          assignmentInfo.assignmentUpdateDate =
-            assignmentInfo.assignmentUpdateDate.substring(0, 10) +
-            " " +
-            assignmentInfo.assignmentUpdateDate.substring(11, 16);
+          assignmentInfo.assignmentDueDate = parseDateTime(
+            assignmentInfo.assignmentDueDate
+          );
+          assignmentInfo.assignmentUpdateDate = parseDateTime(
+            assignmentInfo.assignmentUpdateDate
+          );
 
           assignmentList.push(assignmentInfo);
         }

@@ -56,8 +56,8 @@
               <v-card-subtitle class="text-center">
                 <span class="d-block">
                   {{ data.postAuthor }}
-                  {{ !data.postAuthor.isStudent ? "선생님" : "" }}</span
-                >
+                  {{ data.postUserId.is_student ? "학생" : "선생님" }}
+                </span>
                 <span>{{ data.postUpdateDate }}</span>
               </v-card-subtitle>
 
@@ -124,7 +124,11 @@
                   class="font-weight-bold"
                   :color="getDueDate(item.assignmentDueDate) < 3 ? 'error' : ''"
                 >
-                  {{ getDueDate(item.assignmentDueDate) }}일
+                  {{
+                    getDueDate(item.assignmentDueDate) == 0
+                      ? "오늘"
+                      : `${getDueDate(item.assignmentDueDate)}일`
+                  }}
                 </v-chip>
               </v-card-title>
             </v-card>

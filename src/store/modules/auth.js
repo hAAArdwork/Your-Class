@@ -170,15 +170,12 @@ const actions = {
 
     // 토큰이 존재하지 않는 경우, 메소드를 종료한다.
     if (!accessToken && !refreshToken) {
-      console.log("토큰이 존재하지 않습니다. 로그인 해주세요.");
       return;
     }
 
     // 두 토큰의 만료기간까지 남은 시간을 계산한다.
     const accessTimeLeft = new Date(accessExpires) - new Date();
     const refreshTimeLeft = new Date(refreshExpires) - new Date();
-
-    console.log(accessTimeLeft, refreshTimeLeft);
 
     // 두 토큰의 만료 시간을 토대로, 토큰이 갱신(refresh) 가능한지 검토한다.
     // true: 토큰 갱신 가능, false: 토큰 갱신 불가능, null: 토큰 갱신 불필요.
@@ -205,8 +202,6 @@ const actions = {
     if (flag == null) {
       commit("login", tokenData);
 
-      console.log("토큰 재발급 없이 자동 로그인 완료!");
-
       return;
     }
 
@@ -228,8 +223,6 @@ const actions = {
           accessToken: newAccessToken,
           accessTokenExpires: newAccessTokenExpires
         });
-
-        console.log("accessToken 재발급 후 자동 로그인 완료!");
       })
       .catch(error => {
         console.log("Failed", error.response.data);

@@ -10,10 +10,6 @@
     </v-col>
 
     <v-col cols="4" class="d-flex justify-end">
-      <v-btn class="mx-4" color="accent" @click="downloadAll()">
-        일괄 다운로드
-      </v-btn>
-
       <v-btn color="accent" @click="$router.go(-1)">
         <v-icon>mdi-arrow-left</v-icon>
       </v-btn>
@@ -130,12 +126,6 @@ export default {
   }),
 
   methods: {
-    downloadAll() {
-      alert("전체 다운로드");
-    },
-    download() {
-      alert("다운로드");
-    },
     // 업로드 된 과제 첨부 파일을 다운로드한다.
     downloadFile(submitId, submitFileName) {
       this.$axios({

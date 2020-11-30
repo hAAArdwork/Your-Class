@@ -1,40 +1,6 @@
 import router from "@/router";
 import axios from "axios";
 
-// HTTP Request 인터셉터
-axios.interceptors.request.use(
-  function(config) {
-    const accessToken = localStorage.getItem("accessToken");
-
-    // localStorage에 accessToken이 존재하면, HTTP Request Header에 추가한다.
-    if (accessToken) {
-      config.headers["Authorization"] = `Bearer ${accessToken}`;
-    }
-
-    return config;
-  },
-  function(error) {
-    // console.log(error);
-    return Promise.reject(error);
-  }
-);
-
-// HTTP Response 인터셉터
-axios.interceptors.response.use(
-  function(response) {
-    // console.log(response);
-    // 응답 데이터를 가공
-    // ...
-    return response;
-  },
-  function(error) {
-    console.log(error);
-    // 오류 응답을 처리
-    // ...
-    return Promise.reject(error);
-  }
-);
-
 const state = {
   noticeList: new Array(),
   questionList: new Array(),
@@ -55,7 +21,7 @@ const mutations = {
   fetchNoticeList(state, noticeList) {
     state.noticeList = noticeList;
   },
-  
+
   fetchQuestionList(state, questionList) {
     state.questionList = questionList;
   },
@@ -73,7 +39,6 @@ const mutations = {
     state.postAuthorEmail = notice.postUserId.email;
   },
 
-  
   fetchQuestionDetail(state, question) {
     state.postId = question.id;
     state.postName = question.postName;
@@ -213,11 +178,11 @@ const actions = {
             questionUpdateDate: item.postUpdateDate
           };
           questionInfo.questionUpdateDate =
-          questionInfo.questionUpdateDate.substring(0, 10) +
+            questionInfo.questionUpdateDate.substring(0, 10) +
             " " +
             questionInfo.questionUpdateDate.substring(11, 16);
 
-            questionList.push(questionInfo);
+          questionList.push(questionInfo);
           index++;
         }
 
@@ -297,7 +262,6 @@ const actions = {
         alert("질문 삭제에 실패했습니다.");
       });
   },
-
 
   // 댓글 작성
   createComment: ({ commit }, formData) => {
