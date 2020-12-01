@@ -120,7 +120,7 @@
           <v-col cols="2">
             <v-img
               transition="fade-transition"
-              class="mx-auto"
+              class="mx-auto tech-logo"
               width="65px"
               :src="require(`../assets/vue.svg`)"
             ></v-img>
@@ -129,7 +129,7 @@
           <v-col cols="2">
             <v-img
               transition="fade-transition"
-              class="mx-auto"
+              class="mx-auto tech-logo"
               width="60px"
               :src="require(`../assets/vuetify.svg`)"
             ></v-img>
@@ -138,7 +138,7 @@
           <v-col cols="3">
             <v-img
               transition="fade-transition"
-              class="mx-auto"
+              class="mx-auto tech-logo"
               width="130px"
               :src="require(`../assets/django.svg`)"
             ></v-img>
@@ -147,7 +147,7 @@
           <v-col cols="2">
             <v-img
               transition="fade-transition"
-              class="mx-auto"
+              class="mx-auto tech-logo"
               width="120px"
               src="https://d0.awsstatic.com/logos/powered-by-aws.png"
             ></v-img>
@@ -199,15 +199,15 @@ export default {
       },
       {
         iconPath:
-          "https://www.flaticon.com/svg/static/icons/svg/2503/2503229.svg",
-        name: "이슬기",
-        role: "Front End, Publisher"
-      },
-      {
-        iconPath:
           "https://www.flaticon.com/svg/static/icons/svg/2503/2503171.svg",
         name: "이정우",
         role: "Back End, Database"
+      },
+      {
+        iconPath:
+          "https://www.flaticon.com/svg/static/icons/svg/2503/2503229.svg",
+        name: "이슬기",
+        role: "Front End"
       }
     ],
 
@@ -223,6 +223,6 @@ export default {
 
 <style scoped>
 .introduction {
-  background: linear-gradient(180deg, #ffffff, #88caff);
+  background: linear-gradient(180deg, #ffffff, #b0dcff);
 }
 </style>

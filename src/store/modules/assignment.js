@@ -226,6 +226,39 @@ const actions = {
       });
   },
 
+  // [학생] 과제 리스트
+  retrieveAssignmentList: ({ commit }, classId) => {
+    axios
+      .get(`assignment/list/${classId}`)
+      .then(async ({ data }) => {
+        let assignmentList = new Array();
+
+        for (let item of data) {
+          const assignmentInfo = item;
+
+          //제출 여부 get
+          await axios
+            .get(`assignment/isSubmit/${item.id}`)
+            .then(({ data }) => {
+              assignmentInfo.isSubmitted = data.isSubmitted;
+            })
+            .catch(() => {});
+
+          assignmentInfo.assignmentDueDate = parseDateTime(
+            assignmentInfo.assignmentDueDate
+          );
+          assignmentInfo.assignmentUpdateDate = parseDateTime(
+            assignmentInfo.assignmentUpdateDate
+          );
+
+          assignmentList.push(assignmentInfo);
+        }
+
+        commit("fetchAssignmentList", assignmentList);
+      })
+      .catch(() => {});
+  },
+
   // [교사] 단일 과제 획득
   retrieveAssignment: ({ commit }, assignmentId) => {
     axios.get(`assignment/detail/${assignmentId}`).then(({ data }) => {
@@ -265,39 +298,6 @@ const actions = {
     axios.delete(`assignment/detail/${assignmentId}`).then(() => {
       confirm("과제가 삭제되었습니다.");
     });
-  },
-
-  // [학생] 과제 리스트
-  retrieveAssignmentList: ({ commit }, classId) => {
-    axios
-      .get(`assignment/list/${classId}`)
-      .then(async ({ data }) => {
-        let assignmentList = new Array();
-
-        for (let item of data) {
-          const assignmentInfo = item;
-
-          //제출 여부 get
-          await axios
-            .get(`assignment/isSubmit/${item.id}`)
-            .then(({ data }) => {
-              assignmentInfo.isSubmitted = data.isSubmitted;
-            })
-            .catch(() => {});
-
-          assignmentInfo.assignmentDueDate = parseDateTime(
-            assignmentInfo.assignmentDueDate
-          );
-          assignmentInfo.assignmentUpdateDate = parseDateTime(
-            assignmentInfo.assignmentUpdateDate
-          );
-
-          assignmentList.push(assignmentInfo);
-        }
-
-        commit("fetchAssignmentList", assignmentList);
-      })
-      .catch(() => {});
   }
 };
 

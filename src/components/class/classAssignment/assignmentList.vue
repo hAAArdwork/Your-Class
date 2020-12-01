@@ -53,6 +53,18 @@
                   </v-col>
 
                   <v-col cols="4" class="text-end">
+                    <v-chip
+                      v-if="new Date() < new Date(assignment.assignmentDueDate)"
+                      color="success"
+                      small
+                    >
+                      진행
+                    </v-chip>
+
+                    <v-chip v-else color="error" small>
+                      마감
+                    </v-chip>
+
                     <span class="text--secondary mx-2">
                       <strong>마감일 :</strong>
                       {{ assignment.assignmentDueDate }}
@@ -108,8 +120,15 @@
                           params: { assignmentId: assignment.id }
                         })
                       "
+                      :disabled="
+                        new Date() >= new Date(assignment.assignmentDueDate)
+                      "
                       outlined
-                      >과제 제출
+                      >{{
+                        new Date() >= new Date(assignment.assignmentDueDate)
+                          ? "기한 종료"
+                          : "과제 제출"
+                      }}
                     </v-btn>
 
                     <!-- 교사용 제출물 확인 및 삭제 버튼 -->
@@ -170,7 +189,9 @@ export default {
       return this.$store.getters["user/userData"];
     },
     assignmentList() {
-      return this.$store.getters["assignment/assignmentList"];
+      const array = this.$store.getters["assignment/assignmentList"];
+
+      return array.reverse();
     }
   },
 
