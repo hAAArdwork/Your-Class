@@ -39,3 +39,6 @@ COVID-19 사태로 비대면 수업이 확장됨에 따라 비대면 학습 도�
 ## 웹사이트 방문해보기
 [Your Class](http://ec2-13-124-168-48.ap-northeast-2.compute.amazonaws.com/#/)
 
+## 백엔드 (Django) 문서 보기
+[백엔드 레포지토리](https://github.com/duhee77/Your-class-Backend)
+
